@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portfolio — Single File</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- START: Base Layout Fix --- */
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+    /* --- END: Base Layout Fix --- */
+
+    /* Font & Color Palette Integration */
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #1a1d1c; /* Darkest shade for background */
+      color: #E9EBE4; /* Lightest shade for text */
+    }
+
+    /* Scroll Lock for Work Page */
+    body.no-scroll {
+      overflow: hidden;
+      height: 100vh;
+    }
+    
+    /* Minor extras */
+    .fade-in { animation: fadeIn 0.6s ease both; }
+    @keyframes fadeIn { from {opacity:0; transform: translateY(6px)} to {opacity:1; transform:none} }
+    .glow-card { box-shadow: 0 0 0 1px rgba(233, 235, 228, 0.08), 0 12px 30px rgba(0,0,0,0.35), inset 0 0 40px rgba(10,10,10,0.3); }
+
+    /* transition styles for page fade */
+    .page-section {
+      transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+    }
+    .page-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Flipbook styles */
+    .flipbook-wrapper {
+      transform-style: preserve-3d; /* Fixes 3D rendering artifacts */
+    }
+    .flipbook-container {
+      perspective: 2500px;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d; 
+    }
+    .project-card {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.5s;
+      opacity: 1;
+      transform: rotateY(0deg);
+      z-index: 2;
+    }
+    .project-card.is-flipped {
+      transform: rotateY(-180deg);
+      opacity: 0;
+      z-index: 1;
+    }
+    .project-card.is-next {
+        transform: rotateY(180deg);
+        opacity: 0;
+        z-index: 1;
+    }
+
+    /* Interactive Background Shapes */
+    .shapes-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: -1;
+    }
+    .shape {
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(141, 163, 145, 0.1); /* Using palette color */
+        transition: transform 0.1s linear;
+        animation: float 20s infinite linear alternate;
+    }
+    .shape.s1 { width: 80px; height: 80px; top: 15%; left: 10%; animation-duration: 25s; }
+    .shape.s2 { width: 40px; height: 40px; top: 70%; left: 20%; animation-duration: 30s; border-radius: 30%; }
+    .shape.s3 { width: 120px; height: 120px; top: 50%; left: 80%; animation-duration: 18s; background-color: rgba(110, 128, 122, 0.1); }
+    .shape.s4 { width: 60px; height: 60px; top: 85%; left: 60%; animation-duration: 22s; border-radius: 40%; }
+    .shape.s5 { width: 50px; height: 50px; top: 20%; left: 75%; animation-duration: 28s; background-color: rgba(169, 189, 165, 0.1); }
+
+    @keyframes float {
+        from { transform: translate(0px, 0px) rotate(0deg); }
+        to { transform: translate(40px, -60px) rotate(180deg); }
+    }
+
+    /* Live Canvas Background */
+    #particle-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+    }
+    
+    /* Top & Bottom Vignette for About Page */
+    .vignette {
+        position: fixed;
+        left: 0;
+        width: 100%;
+        z-index: 30;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    .vignette-top { top: 0; height: 8rem; background: linear-gradient(to bottom, #1a1d1c, transparent); }
+    .vignette-bottom { bottom: 0; height: 8rem; background: linear-gradient(to top, #1a1d1c, transparent); }
+    body.about-visible .vignette { opacity: 1; }
+
+    .break-long-words {
+      word-break: break-all;
+    }
+
+    /* --- START: Loader Styles --- */
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: #1a1d1c;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #8DA391;
+      box-shadow: 0 0 20px #8DA391, 0 0 40px #8DA391;
+      animation: pulse 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+    .loader-hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    /* --- END: Loader Styles --- */
+
+    /* --- START: Cursor Glow Styles --- */
+    #cursor-glow {
+        position: fixed;
+        width: 400px; 
+        height: 400px;
+        background: radial-gradient(circle, rgba(141, 163, 145, 0.12) 0%, transparent 50%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 50; 
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        will-change: transform, opacity;
+    }
+    
+    @media (hover: hover) and (pointer: fine) {
+      body:hover #cursor-glow {
+        opacity: 1;
+      }
+    }
+
+    #cursor-glow.is-active {
+        opacity: 1;
+        transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    /* --- END: Cursor Glow Styles --- */
+
+    /* --- Global Custom Scrollbar Styles --- */
+    ::-webkit-scrollbar {
+      width: 14px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #8DA391;
+      border-radius: 10px;
+      border: 4px solid #1a1d1c;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background-color: #A9BDA5;
+    }
+
+    /* For Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #8DA391 #1a1d1c;
+    }
+
+    /* --- Overlay CSS --- */
+    .project-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 10, 10, 0.7);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    .project-overlay.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .project-overlay-content {
+      position: relative;
+      background-color: #1a1d1c;
+      border: 1px solid rgba(233, 235, 228, 0.15);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 85vh;
+      transform: scale(0.95);
+      transition: transform 0.4s ease;
+      overflow: hidden; 
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-overlay.is-visible .project-overlay-content {
+      transform: scale(1);
+    }
+    #overlayScrollWrapper {
+        overflow-y: auto;
+        flex-grow: 1;
+        padding-right: 1.5rem; 
+        margin-right: -1.5rem;
+    }
+
+    .close-button {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      cursor: pointer;
+      color: rgba(233, 235, 228, 0.7);
+      transition: color 0.2s ease, transform 0.2s ease;
+      z-index: 120;
+    }
+    .close-button:hover {
+      color: #E9EBE4;
+      transform: scale(1.1);
+    }
+
+    /* --- Image Lightbox Styles --- */
+    .lightbox-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(5px);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .lightbox-overlay.is-visible {
+        opacity: 1;
+        visibility: visible;
+    }
+    .lightbox-image {
+        max-width: 90vw;
+        max-height: 90vh;
+        transform: scale(0.95);
+        transition: transform 0.3s ease;
+    }
+    .lightbox-overlay.is-visible .lightbox-image {
+        transform: scale(1);
+    }
+    .lightbox-trigger {
+        cursor: zoom-in;
+    }
+
+    /* --- ADDED: Responsive Video Container --- */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      background: #000;
+      border-radius: 0.5rem; /* Match image rounding */
+      margin: 1.5rem 0; /* Match image margin */
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* --- Mobile Responsive Styles --- */
+    @media (max-width: 768px) {
+      .fixed.top-6.left-6 { transform: scale(0.9); transform-origin: top left; }
+      
+      .social-icons {
+        flex-direction: row;
+        right: 1.5rem;
+        transform: scale(0.9);
+        transform-origin: bottom right;
+      }
+
+      nav.fixed.top-1\/2 {
+        top: auto;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        flex-direction: row;
+        transform: none;
+      }
+      
+      #work {
+        padding: 6rem 1rem 8rem 1rem;
+        box-sizing: border-box;
+      }
+      .arrow-indicator { opacity: 0.6 !important; }
+    }
+    
+    /* --- Tablet Responsive Styles --- */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      #work section { padding: 0 2rem; }
+      .flipbook-wrapper {
+        max-width: 680px;
+        height: 480px;
+      }
+      .arrow-indicator { opacity: 0.6 !important; }
+      
+      #about .mx-auto.max-w-6xl {
+        padding-left: 7rem;
+      }
+    }
+  </style>
+</head>
+<body class="overflow-x-hidden no-scroll">
+
+  <!-- Loader -->
+  <div id="loader" class="loader-overlay">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- Main content wrapper -->
+  <div id="main-content" class="opacity-0 invisible transition-opacity duration-500">
+    <div id="cursor-glow"></div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="shapes-container">
+      <div class="shape s1" data-speed="-0.3"></div>
+      <div class="shape s2" data-speed="0.5"></div>
+      <div class="shape s3" data-speed="-0.2"></div>
+      <div class="shape s4" data-speed="0.4"></div>
+      <div class="shape s5" data-speed="-0.5"></div>
+    </div>
+
+    <!-- Persistent UI Elements -->
+    <div class="fixed top-7 left-7 z-40">
+      <a href="#" class="font-semibold tracking-wide text-2xl">Hari<span class="text-[#8DA391]"></span></a>
+      <p class="text-base text-[#E9EBE4]/70">UX/Visual Designer</p>
+    </div>
+
+    <nav class="
+    fixed z-40 gap-2
+    flex bottom-6 left-4 flex-row
+    lg:top-1/2 lg:-translate-y-1/2 lg:left-6 lg:bottom-auto lg:flex-col
+    ">
+      <button id="navWork" class="px-4 py-2 rounded-full bg-[#6E807A]/40 hover:bg-[#6E807A]/60 text-base font-medium">
+        Work
+      </button>
+      <button id="navAbout" class="px-4 py-2 rounded-full hover:bg-[#6E807A]/40 text-base font-medium">
+        About
+      </button>
+    </nav>
+
+
+    <div class="social-icons fixed bottom-8 md:bottom-6 right-6 z-40 flex flex-row lg:flex-col items-center gap-4 text-[#E9EBE4]/80">
+        <a href="https://linkedin.com" class="hover:text-[#E9EBE4]" aria-label="LinkedIn">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+        </a>
+        <a href="https://instagram.com" class="hover:text-[#E9EBE4]" aria-label="Instagram">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664-4.771 4.919-4.919 1.266-.058 1.644-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+        </a>
+        <a href="mailto:alex@example.com" class="hover:text-[#E9EBE4]" aria-label="Email">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
+        </a>
+    </div>
+    <!-- End of Persistent UI -->
+
+    <!-- Gradient Vignettes for About Page -->
+    <div class="vignette vignette-top"></div>
+    <div class="vignette vignette-bottom"></div>
+
+    <!-- Page Content Area -->
+    <div class="relative">
+        <!-- WORK (Home) -->
+        <!-- FIXED: Set main to h-screen to give children a height reference -->
+        <main id="work" class="page-section h-screen flex items-center justify-center">
+          <section class="w-full max-w-7xl mx-auto px-4 h-full flex items-center">
+            <!-- FIXED: Set responsive height for mobile (70vh) and desktop (520px) -->
+            <div class="flipbook-wrapper relative w-full h-[70vh] md:h-[520px] max-w-4xl group mx-auto">
+                <button id="prevBtn" class="absolute top-0 left-0 w-1/4 h-full z-30"></button>
+                <div id="flipbook" class="flipbook-container">
+                    <!-- Project cards will be injected here by JS -->
+                </div>
+                <button id="nextBtn" class="absolute top-0 right-0 w-1/4 h-full z-30"></button>
+            </div>
+          </section>
+        </main>
+
+        <!-- ABOUT -->
+        <section id="about" class="page-section page-hidden absolute top-0 left-0 w-full min-h-screen flex items-center pt-28 pb-20">
+          <div class="mx-auto max-w-6xl px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <!-- Left Column: Photo and Education -->
+              <div class="md:col-start-1 space-y-8 order-1 md:order-1">
+                <div class="glow-card rounded-2xl bg-[#6E807A]/20 border border-[#E9EBE4]/10 p-0 fade-in flex items-center justify-center aspect-square overflow-hidden">
+                  <img src="images/Profile_image.jpg" alt="A photo of Hari" class="w-full h-full object-cover">
+                </div>
+                <div class="glow-card rounded-2xl bg-[#6E807A]/20 border border-[#E9EBE4]/10 p-6 fade-in">
+                  <h3 class="text-xl font-semibold mb-3">Education</h3>
+                  <div class="space-y-4">
+                    <div>
+                      <h4 class="font-semibold text-base text-[#E9EBE4]">Bachelor of Design (B.Des), Communication Design</h4>
+                      <p class="text-sm text-[#8DA391] mb-1">IIT Bombay, Mumbai, India — 2023</p>
+                      <p class="text-sm text-[#E9EBE4]/80 font-light">Focused on UX, visual design, and storytelling across digital and immersive media.</p>
+                    </div>
+                    <div>
+                      <h4 class="font-semibold text-base text-[#E9EBE4]">Master of Arts (MA), Creative Arts – Visual Communication</h4>
+                      <p class="text-sm text-[#8DA391] mb-1">TU Dublin, Dublin, Ireland — 2025</p>
+                      <p class="text-sm text-[#E9EBE4]/80 font-light">Specialized in visual storytelling, design strategy, and communication across digital media.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Info, Skills, Work Experience -->
+              <div class="md:col-span-2 space-y-8 order-2 md:order-2">
+                  <div class="glow-card rounded-2xl bg-[#6E807A]/20 border border-[#E9EBE4]/10 p-6 fade-in">
+                    <div class="flex flex-wrap justify-between items-center mb-2 gap-4">
+                      <h2 class="text-2xl font-semibold">Hi, I’m Hari</h2>
+                      <a href="images/Resume/Resume_Harigovind.pdf" download class="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#E9EBE4]/20 bg-[#E9EBE4]/10 hover:bg-[#E9EBE4]/20 text-sm whitespace-nowrap transition-colors">
+                        <span>Resume</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                      </a>
+                    </div>
+                    <p class="text-[#E9EBE4]/80 leading-relaxed">I’m a multi‑disciplinary designer working across product design, brand, and interactive media. I enjoy turning complex ideas into simple, elegant experiences.</p>
+                    <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
+                      <div><div class="text-[#E9EBE4]/60">Based</div><div>Dublin, IE</div></div>
+                      <div><div class="text-[#E9EBE4]/60">Role</div><div>Product Designer</div></div>
+                      <div><div class="text-[#E9EBE4]/60">Experience</div><div>2+ years</div></div>
+                      <div><div class="text-[#E9EBE4]/60">Contact</div><a class="underline break-long-words" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a><br><a class="underline break-long-words" href="tel:+3530894783193">+353 0894783193</a></div>
+                    </div>
+                  </div>
+                  <div class="glow-card rounded-2xl bg-[#6E807A]/20 border border-[#E9EBE4]/10 p-6 fade-in">
+                    <h3 class="text-xl font-semibold mb-3">Skills & Tools</h3>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                      <span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">UX Design</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Interaction Design</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Visual Communication</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Wireframing & Prototyping</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">3D Modeling & Asset Design</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Motion Graphics & Animation</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Game Asset Optimization</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Unity Integration</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Design Systems</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Information Architecture</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Typography & Layout Design</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Adobe Creative Suite</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Davinci Resolve</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Storyboarding</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Photography & Videography</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">AR/VR Content Design</span><span class="px-3 py-1.5 rounded-full border border-[#E9EBE4]/10 bg-[#E9EBE4]/10">Blender</span>
+                    </div>
+                  </div>
+                  <div class="glow-card rounded-2xl bg-[#6E807A]/20 border border-[#E9EBE4]/10 fade-in p-6">
+                    <h3 class="text-xl font-semibold mb-4">Work Experience</h3>
+                    <div class="max-h-[24rem] md:max-h-80 overflow-y-auto space-y-6 custom-scrollbar pr-2">
+                      <!-- All experience items here -->
+                      <div>
+                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#E9EBE4]">UX analysis and Content curation</h4><p class="text-xs text-[#E9EBE4]/60">[Jan ‘25 - March ‘25]</p></div>
+                        <p class="text-sm text-[#8DA391] mb-2">Grido</p>
+                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#E9EBE4]/80 font-light">
+                          <li>Designed and launched a card-based content platform using Grido’s AI-powered architecture, simplifying complex data into browsable visual grids.</li>
+                          <li>Curated and structured historical automotive content into accessible, thematic card formats with visual consistency.</li>
+                          <li>Conducted UX analysis as the first external user, identifying usability issues and contributing to early-stage product enhancements.</li>
+                          <li>Reported bugs and workflow gaps, influencing feature updates during beta development.</li>
+                          <li>Collaborated with Grido’s product and design teams to refine UX and support product-market fit.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#E9EBE4]">Creative Director (Freelance)</h4><p class="text-xs text-[#E9EBE4]/60">[Dec ‘23 - Feb ‘24]</p></div>
+                        <p class="text-sm text-[#8DA391] mb-2">Wesualize Studios</p>
+                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#E9EBE4]/80 font-light">
+                          <li>Led creative direction, overseeing concept development and execution of high-impact VFX advertising campaigns.</li>
+                          <li>Developed storyboards integrating 3D elements and animation into live-action footage to enhance visual storytelling.</li>
+                          <li>Directed cross-functional teams of cinematographers and VFX artists, ensuring cohesive execution of creative vision.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#E9EBE4]">Design Intern</h4><p class="text-xs text-[#E9EBE4]/60">[June ‘22 - Aug ‘22]</p></div>
+                        <p class="text-sm text-[#8DA391] mb-2">TCS</p>
+                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#E9EBE4]/80 font-light">
+                          <li>Ideated user flows and transitions across diverse virtual environments.</li>
+                          <li>Conducted research on user-environment interaction within the metaverse.</li>
+                          <li>Created 3D environment and asset concepts using reference sketches and research insights.</li>
+                          <li>Delivered a final presentation highlighting design contributions using a vibrant, user-centric visual style.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#E9EBE4]">Visual Designer</h4><p class="text-xs text-[#E9EBE4]/60">[Dec ‘20 - Jan ‘22]</p></div>
+                        <p class="text-sm text-[#8DA391] mb-2">YoZu</p>
+                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#E9EBE4]/80 font-light">
+                          <li>Designed 3D models and developed a production pipeline in collaboration with the technical team, including model integration into Unity.</li>
+                          <li>Defined a framework for quality assessment, delivery timelines, and asset management for 3D content.</li>
+                          <li>Managed a team of 5 junior artists, ensuring timely and high-quality output.</li>
+                          <li>Supported YoZu’s mission as a voice-based AI assistant for students (grades 6–10) by creating interactive, educational 3D visuals.</li>
+                        </ul>
+                      </div>
+                      <div>
+                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#E9EBE4]">3D Artist</h4><p class="text-xs text-[#E9EBE4]/60">[May ‘22 - June ‘22]</p></div>
+                        <p class="text-sm text-[#8DA391] mb-2">Numeronix</p>
+                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#E9EBE4]/80 font-light">
+                          <li>Designed and optimized low-poly 3D models for characters and in-game assets, ensuring performance efficiency on Android devices.</li>
+                          <li>Refined and finalized assets created by other artists to meet game-ready standards.</li>
+                          <li>Maintained ongoing communication with the client, incorporating feedback to enhance visual quality and project outcomes.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </section>
+    </div>
+  </div>
+
+  <!-- Overlay HTML -->
+  <div id="projectOverlay" class="project-overlay">
+    <div class="project-overlay-content">
+        <div id="overlayScrollWrapper">
+            <!-- Dynamic content will be injected here -->
+        </div>
+    </div>
+    <div id="closeOverlay" class="close-button" aria-label="Close project details">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </div>
+  </div>
+
+  <!-- Lightbox for images -->
+  <div id="imageLightbox" class="lightbox-overlay">
+    <img id="lightboxImage" src="" alt="Expanded project image" class="lightbox-image">
+    <div id="closeLightbox" class="close-button" aria-label="Close image view">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </div>
+  </div>
+
+
+  <script>
+    // --- Project Data ---
+    const isMobile = window.innerWidth < 768;
+
+    const projects = [
+      {
+        title: "Theyyam Threads",
+        category: "Visual Design",
+        description: "A project encapsulating Kerala's Theyyam art form into modern wearable art, blending tradition with contemporary design.",
+        image: "images/Theyyam/Theyyam_1.jpg",
+        year: "2023",
+        tags: ["T-Shirt", "Visual Communication", "Fashion"],
+        details: {
+          content: [
+            { type: 'image', value: 'images/Theyyam/Theyyam_3.jpg' },
+            { type: 'quote', value: "“He was made man that we might be made God”", author: "St. Athanasius of Alexandria" },
+            { type: 'heading', value: 'Project Overview' },
+            { type: 'paragraph', value: "'Theyyam Threads' is a unique project encapsulating the essence of Kerala's vibrant Theyyam art form into modern wearable art. Inspired by the rich cultural heritage of Kerala, this project seamlessly blends tradition with contemporary design, resulting in visually stunning and culturally significant t-shirt designs." },
+            { type: 'image', value: 'images/Theyyam/Theyyam_2.jpg' },
+            { type: 'heading', value: 'Colors' },
+            { type: 'image', value: 'images/Theyyam/Theyyam_col.jpg' },
+            { type: 'heading', value: 'Inspirations' },
+            { type: 'image', value: 'images/Theyyam/Theyyam_insp.jpg' },
+            { type: 'heading', value: 'Development' },
+            { type: 'image', value: 'images/Theyyam/Theyyam_dev1.jpg' },
+            { type: 'paragraph', value: "Sketch was made as a joint effort of me and my friend Adithya. We tried to explore several forms based on our references and came up with the idea of just the facial expression of Theyyam. Some sparks were also added later in front to show the intense artform." },
+            { type: 'image', value: 'images/Theyyam/Theyyam_dev2.jpg' },
+            { type: 'paragraph', value: "Later we decided to go with a  monochrome approach, showing just the black and white elements." },
+            { type: 'image', value: 'images/Theyyam/Theyyam_dev3.jpg' },
+            { type: 'paragraph', value: "Some extra details were added to make the design more likeable by the youth." },
+            { type: 'image', value: 'images/Theyyam/Theyyam_8.jpg' },
+            { type: 'heading', value: 'Learnings' },
+            { type: 'paragraph', value: "Beyond mere aesthetics, this project delves deeper into the cultural significance and historical roots of Theyyam, aiming to foster a deeper appreciation and understanding of Kerala's cultural heritage. Through thoughtful artwork and design choices, 'Theyyam Threads' serves as a platform for cultural exchange and celebration, bridging the gap between tradition and modernity." },
+            { type: 'image', value: 'images/Theyyam/Theyyam_tshirt.jpg' },
+          ]
+        }
+      },
+      {
+        title: "ArtBox",
+        category: "Product Design",
+        description: "A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.",
+        image: isMobile ? "images/Artbox/ArtboxS.jpg" : "images/Artbox/Artbox.jpg",
+        year: "2022",
+        tags: ["Brand", "Packaging", "UX Design", "Service Design"],
+        details: {
+          content: [
+            { type: 'image', value: 'images/Artbox/Artbox_Title.jpg' },
+            { type: 'heading', value: 'Area of Intervention' },
+            { type: 'paragraph', value: "After some deliberation, we narrowed it down to three sectors namely education, health and small businesses. We tried to identify various problems these sectors face to help us weigh in between these." },
+            { type: 'image', value: 'images/Artbox/Artbox_1.jpg' },
+            { type: 'heading', value: 'Design Model' },
+            { type: 'image', value: 'images/Artbox/Artbox_Model.jpg' },
+            { type: 'heading', value: 'Visual Identity' },
+            { type: 'image', value: 'images/Artbox/Artbox_Visual1.jpg' },
+            { type: 'image', value: 'images/Artbox/Artbox_Visual2.jpg' },
+            { type: 'heading', value: 'User Flow' },
+            { type: 'image', value: 'images/Artbox/Artbox_Userflow.jpg' },
+            { type: 'heading', value: 'Prototypes' },
+            { type: 'paragraph', value: "Website" },
+            { type: 'image', value: 'images/Artbox/Artbox_Website.jpg' },
+            { type: 'paragraph', value: "Product" },
+            { type: 'image', value: 'images/Artbox/Artbox_Product.jpg' },
+          ]
+        }
+      },
+      {
+        title: "3D Typography",
+        category: "3D Art",
+        description: "Crafted using Blender, each letter is a blend of creativity and technical skill. ",
+        image: isMobile ? "images/3D/3D_TitleS.jpg" : "images/3D/3D_Title.jpg",
+        year: "2023",
+        tags: ["3D", "Blender", "Art"],
+        details: {
+          content: [
+            { type: 'heading', value: 'About' },
+            { type: 'paragraph', value: "In this 3D Typography Project, I've brought letters A to G to life in stunning three-dimensional form. Crafted using Blender, each letter is a blend of creativity and technical skill. While my academic commitments paused the project, these letters stand as a testament to my passion for design and innovation. Explore the fusion of artistry and technology in this captivating showcase of 3D typography." },
+            { type: 'heading', value: 'Letter a' },
+            { type: 'image', value: 'images/3D/3D_a.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851099588?h=364bda9f34" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Made it into an abstract form.  Added some hair using particle system. And a marble texture was created procedurally using nodes in blender." },
+            { type: 'heading', value: 'Letter b' },
+            { type: 'image', value: 'images/3D/3D_b.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851099981?h=15cfb6a41e" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Went with diesel punk theme for this. Created some flames and light emission animations" },
+            { type: 'heading', value: 'Letter c' },
+            { type: 'image', value: 'images/3D/3D_c.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851101527?h=83dcc45949" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Made C into cheese. Created some extra elements using geometry nodes and scattered them across." },
+            { type: 'heading', value: 'Letter d' },
+            { type: 'image', value: 'images/3D/3D_d.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851102005?h=63d3b474ed" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Created some hair and parented some extra D elements for this one." },
+            { type: 'heading', value: 'Letter e' },
+            { type: 'image', value: 'images/3D/3D_e.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851102127?h=5740f8f60e" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Made two elements and a ring at the middle to transition between the both." },
+            { type: 'heading', value: 'Letter f' },
+            { type: 'image', value: 'images/3D/3D_f.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851102860?h=f40540a40c" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Created random bubbles and made a simple animation using geometry nodes." },
+            { type: 'heading', value: 'Letter g' },
+            { type: 'image', value: 'images/3D/3D_g.jpg' },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935374270?h=080f5fcf22" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'paragraph', value: "Made a grass form for the circular element and a rope to go around it. Animated the wind on the grass, as well as the rope movement." },
+
+          ]
+        }
+      },
+      {
+        title: "Aujus",
+        category: "System Design",
+        description: "A 5-week semester project to understand and design for complex, interconnected socio-economic problems.",
+        image: isMobile ? "images/Aujus/AujusS.jpg" : "images/Aujus/Aujus.jpg",
+        year: "2022",
+        tags: ["System Design", "Service Design", "Wayfinding", "UX/UI"],
+        details: {
+          content: [
+            { type: 'image', value: 'images/Aujus/Aujus_Title.jpg' },
+            { type: 'heading', value: 'Initial Steps' },
+            { type: 'heading', value: 'Understanding Medical Systems' },
+            { type: 'paragraph', value: "We started by looking at problem areas within a medical system, starting with an initial study by looking into the normal procedures happening inside a hospital." },
+            { type: 'paragraph', value: "We looked at various departments and their functions inside hospitals." },
+            { type: 'image', value: 'images/Aujus/Aujus_1.jpg' },
+            { type: 'heading', value: 'Identifying system components' },
+            { type: 'paragraph', value: "We started our process by looking studying how, where and why datas are collected inside hospitals and identified the  system components which helps us to evaluate the system." },
+            { type: 'paragraph', value: "We identified the components through an entity relationship mapping of the hospital." },
+            { type: 'image', value: 'images/Aujus/Aujus_entity.jpg' },
+            { type: 'paragraph', value: "Entity-relationship mapping" },
+            { type: 'image', value: 'images/Aujus/Aujus_comp.jpg' },
+            { type: 'paragraph', value: "Identified system components" },
+            { type: 'heading', value: 'Connection circles' },
+            { type: 'paragraph', value: "In the process of identifying system components we started grouping these identified system components which are patient information, patient diagnosis, and medical research." },
+            { type: 'paragraph', value: "Negative and positive connections are shown with red and green coloured arrows, respectively, with the direction of the connections." },
+            { type: 'image', value: 'images/Aujus/Aujus_Pat.jpg' },
+            { type: 'paragraph', value: "Patient info" },
+            { type: 'image', value: 'images/Aujus/Aujus_Med.jpg' },
+            { type: 'paragraph', value: "Medical Research" },
+            { type: 'image', value: 'images/Aujus/Aujus_Diag.jpg' },
+            { type: 'paragraph', value: "Patient diagnosis" },
+            { type: 'heading', value: 'System Implementation' },
+            { type: 'image', value: 'images/Aujus/Aujus_Sys1.jpg' },
+            { type: 'paragraph', value: "Identified areas of data entry and data accessing in the system." },
+            { type: 'image', value: 'images/Aujus/Aujus_Sys2.jpg' },
+            { type: 'heading', value: 'AUJUS' },
+            { type: 'paragraph', value: "Aujus is a system with centralised medical database where data can be entered and accessed by the patients from anywhere at any point." },
+            { type: 'image', value: 'images/Aujus/Aujus_Card.jpg' },
+            { type: 'image', value: 'images/Aujus/Aujus_Screen.jpg' },
+          ]
+        }
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
+    
+        function preloadImages() {
+            const imageSources = new Set();
+            projects.forEach(p => {
+                imageSources.add(p.image);
+                p.details.content.forEach(item => {
+                    if (item.type === 'image') {
+                        imageSources.add(item.value);
+                    }
+                });
+            });
+
+            const promises = Array.from(imageSources).map(src => {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.src = src;
+                    img.onload = resolve;
+                    img.onerror = reject;
+                });
+            });
+
+            return Promise.all(promises);
+        }
+
+        function initializeApp() {
+            const cursorGlow = document.getElementById('cursor-glow');
+            if (cursorGlow) {
+                let touchTimer;
+
+                const updateGlowPosition = (e) => {
+                    const x = e.clientX || (e.touches && e.touches[0].clientX);
+                    const y = e.clientY || (e.touches && e.touches[0].clientY);
+                    
+                    if (x === undefined) return;
+                    
+                    requestAnimationFrame(() => {
+                        cursorGlow.style.left = `${x}px`;
+                        cursorGlow.style.top = `${y}px`;
+                    });
+                };
+
+                window.addEventListener('mousemove', updateGlowPosition);
+
+                window.addEventListener('touchstart', (e) => {
+                    clearTimeout(touchTimer);
+                    updateGlowPosition(e);
+                    cursorGlow.style.transition = 'transform 0s, opacity 0.1s ease-in';
+                    cursorGlow.classList.add('is-active');
+                }, { passive: true });
+
+                window.addEventListener('touchend', () => {
+                    cursorGlow.style.transition = 'opacity 0.4s ease-out';
+                    touchTimer = setTimeout(() => {
+                        cursorGlow.classList.remove('is-active');
+                    }, 20);
+                }, { passive: true });
+            }
+            
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2.5 + 0.5;
+                    this.speedX = (Math.random() * 1 - 0.5) * 0.5;
+                    this.speedY = (Math.random() * 1 - 0.5) * 0.5;
+                    this.color = 'rgba(141, 163, 145, 0.4)';
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                    if (this.y > canvas.height) this.y = 0;
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                const particleCount = Math.floor(canvas.width * canvas.height / 15000);
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            }
+            initParticles();
+            window.addEventListener('resize', initParticles);
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            const shapes = document.querySelectorAll('.shape');
+            window.addEventListener('mousemove', (e) => {
+                const { clientX, clientY } = e;
+                const x = -(clientX / window.innerWidth - 0.5) * 60;
+                const y = -(clientY / window.innerHeight - 0.5) * 60;
+
+                shapes.forEach(shape => {
+                    const speed = shape.getAttribute('data-speed');
+                    shape.style.transform = `translateX(${x * speed}px) translateY(${y * speed}px)`;
+                });
+            });
+
+            const navWork = document.getElementById('navWork');
+            const navAbout = document.getElementById('navAbout');
+            const secWork = document.getElementById('work');
+            const secAbout = document.getElementById('about');
+
+            function show(page){
+              if(page === 'work'){
+                secWork.classList.remove('page-hidden');
+                secAbout.classList.add('page-hidden');
+                navWork.classList.add('bg-[#6E807A]/40');
+                navAbout.classList.remove('bg-[#6E807A]/40');
+                document.body.classList.add('no-scroll');
+                document.body.classList.remove('about-visible');
+              } else {
+                secAbout.classList.remove('page-hidden');
+                secWork.classList.add('page-hidden');
+                navAbout.classList.add('bg-[#6E807A]/40');
+                navWork.classList.remove('bg-[#6E807A]/40');
+                document.body.classList.remove('no-scroll');
+                document.body.classList.add('about-visible');
+              }
+              window.scrollTo({top:0, behavior:'smooth'});
+            }
+            navWork.addEventListener('click', () => show('work'));
+            navAbout.addEventListener('click', () => show('about'));
+
+            const flipbook = document.getElementById('flipbook');
+            let currentIndex = 0;
+            let projectCards = [];
+            let isFlipping = false;
+
+            projects.forEach((p, i) => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                if (i > 0) card.classList.add('is-next');
+
+                const tagsHTML = p.tags.map(t => `<span class="px-2.5 py-1 rounded-full bg-[#1a1d1c]/30 backdrop-blur-sm border border-[#E9EBE4]/20">${t}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="relative w-full h-full rounded-2xl overflow-hidden border border-[#E9EBE4]/20 shadow-2xl shadow-black/40 group">
+                        <img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#1a1d1c] via-[#1a1d1c]/60 to-transparent"></div>
+                        
+                        <div class="arrow-indicator absolute top-0 left-0 h-full w-1/4 flex items-start pt-[25%] justify-start p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-black/30 to-transparent">
+                          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
+                        </div>
+                        <div class="arrow-indicator absolute top-0 right-0 h-full w-1/4 flex items-start pt-[25%] justify-end p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-l from-black/30 to-transparent">
+                          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                        
+                        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                            <button data-index="${i}" class="open-project-btn inline-block text-base font-medium px-6 py-3 rounded-full bg-[#1a1d1c]/80 hover:bg-[#1a1d1c] border border-[#E9EBE4]/20 backdrop-blur-md transition-all transform group-hover:scale-100 scale-90">View Details</button>
+                        </div>
+
+                        <div class="relative h-full flex flex-col justify-end p-6 md:p-8 text-[#E9EBE4]">
+                            <div>
+                                <div class="flex justify-between items-start">
+                                    <h3 class="text-2xl font-semibold pr-4">${p.title} — ${p.category}</h3>
+                                    <span class="text-[#E9EBE4]/70 text-sm whitespace-nowrap">${p.year}</span>
+                                </div>
+                                <p class="text-[#E9EBE4]/80 mt-2 text-base overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${p.description}</p>
+                                <div class="mt-4 flex flex-wrap gap-2 text-xs">${tagsHTML}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                flipbook.appendChild(card);
+                projectCards.push(card);
+            });
+
+            function flip(direction) {
+                if (isFlipping) return;
+                isFlipping = true;
+
+                const currentCard = projectCards[currentIndex];
+                const nextIndex = (direction === 'next')
+                    ? (currentIndex + 1) % projects.length
+                    : (currentIndex - 1 + projects.length) % projects.length;
+                const nextCard = projectCards[nextIndex];
+
+                nextCard.classList.remove('is-flipped', 'is-next');
+                if (direction === 'next') {
+                    nextCard.classList.add('is-next');
+                }
+                
+                setTimeout(() => {
+                    if (direction === 'next') {
+                        currentCard.classList.add('is-flipped');
+                    } else {
+                        currentCard.classList.add('is-next');
+                    }
+                    nextCard.classList.remove('is-flipped', 'is-next');
+                    
+                    currentIndex = nextIndex;
+                }, 20);
+
+                setTimeout(() => { isFlipping = false; }, 700);
+            }
+
+            document.getElementById('prevBtn').addEventListener('click', () => flip('prev'));
+            document.getElementById('nextBtn').addEventListener('click', () => flip('next'));
+
+            const projectOverlay = document.getElementById('projectOverlay');
+            const overlayScrollWrapper = document.getElementById('overlayScrollWrapper');
+            const closeOverlayBtn = document.getElementById('closeOverlay');
+            const openProjectBtns = document.querySelectorAll('.open-project-btn');
+
+            const imageLightbox = document.getElementById('imageLightbox');
+            const lightboxImage = document.getElementById('lightboxImage');
+            const closeLightboxBtn = document.getElementById('closeLightbox');
+
+            function populateOverlay(project) {
+                overlayScrollWrapper.innerHTML = '';
+
+                const titleEl = document.createElement('h2');
+                titleEl.className = 'text-3xl font-bold mb-2';
+                titleEl.textContent = project.title;
+                overlayScrollWrapper.appendChild(titleEl);
+
+                const categoryEl = document.createElement('p');
+                categoryEl.className = 'text-sm text-[#8DA391] mb-6';
+                categoryEl.textContent = project.category;
+                overlayScrollWrapper.appendChild(categoryEl);
+
+                project.details.content.forEach(item => {
+                    let element;
+                    if (item.type === 'heading') {
+                        element = document.createElement('h3');
+                        element.className = 'text-xl font-semibold mt-6 mb-2';
+                        element.textContent = item.value;
+                    } else if (item.type === 'paragraph') {
+                        element = document.createElement('p');
+                        element.className = 'text-[#E9EBE4]/80 leading-relaxed';
+                        element.textContent = item.value;
+                    } else if (item.type === 'image') {
+                        element = document.createElement('img');
+                        element.className = 'w-full h-auto rounded-lg my-6 lightbox-trigger';
+                        element.src = item.value;
+                        element.alt = `${project.title} detail image`;
+                    } else if (item.type === 'quote') {
+                        element = document.createElement('blockquote');
+                        element.className = 'my-6 border-l-4 border-[#8DA391] pl-4 italic text-lg text-[#E9EBE4]/90';
+                        const quoteText = String(item.value || '').replace(/^["“]|["”]$/g, '');
+                        element.innerHTML = `“${quoteText}”` + (item.author ? `<footer class="mt-2 text-sm text-[#E9EBE4]/60 text-right">— ${item.author}</footer>` : '');
+                    } else if (item.type === 'video') {
+                        element = document.createElement('div');
+                        element.className = 'video-container';
+                        element.innerHTML = item.value;
+                    }
+                    if (element) {
+                        overlayScrollWrapper.appendChild(element);
+                    }
+                });
+            }
+
+            function openModal(index) {
+              const project = projects[index];
+              populateOverlay(project);
+              projectOverlay.classList.add('is-visible');
+              document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+              projectOverlay.classList.remove('is-visible');
+              if (!document.body.classList.contains('about-visible')) {
+                document.body.classList.add('no-scroll');
+              }
+              document.body.style.overflow = '';
+            }
+            
+            function openLightbox(src) {
+                lightboxImage.src = src;
+                imageLightbox.classList.add('is-visible');
+            }
+
+            function closeLightbox() {
+                imageLightbox.classList.remove('is-visible');
+            }
+
+            openProjectBtns.forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                const projectIndex = e.currentTarget.dataset.index;
+                openModal(projectIndex);
+              });
+            });
+
+            closeOverlayBtn.addEventListener('click', closeModal);
+            projectOverlay.addEventListener('click', (e) => {
+              if (e.target === projectOverlay) closeModal();
+            });
+
+            overlayScrollWrapper.addEventListener('click', (e) => {
+                if (e.target.classList.contains('lightbox-trigger')) {
+                    openLightbox(e.target.src);
+                }
+            });
+
+            closeLightboxBtn.addEventListener('click', closeLightbox);
+            imageLightbox.addEventListener('click', (e) => {
+                if (e.target === imageLightbox) closeLightbox();
+            });
+
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'Escape') {
+                if (imageLightbox.classList.contains('is-visible')) {
+                    closeLightbox();
+                } else if (projectOverlay.classList.contains('is-visible')) {
+                    closeModal();
+                }
+              }
+            });
+
+            let touchstartX = 0;
+            let touchendX = 0;
+            const swipeThreshold = 50;
+
+            function handleGesture() {
+                const deltaX = touchendX - touchstartX;
+                if (Math.abs(deltaX) > swipeThreshold) {
+                    if (touchendX < touchstartX) {
+                        flip('next');
+                    }
+                    if (touchendX > touchstartX) {
+                        flip('prev');
+                    }
+                }
+            }
+
+            flipbook.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+            }, {passive: true});
+
+            flipbook.addEventListener('touchend', e => {
+                touchendX = e.changedTouches[0].screenX;
+                handleGesture();
+            }, {passive: true});
+        }
+
+        preloadImages()
+            .then(() => {
+                loader.classList.add('loader-hidden');
+                mainContent.classList.remove('opacity-0', 'invisible');
+                
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+
+                initializeApp();
+            })
+            .catch(error => {
+                console.error("Error preloading images:", error);
+                loader.classList.add('loader-hidden');
+                mainContent.classList.remove('opacity-0', 'invisible');
+                initializeApp();
+            });
+    });
+  </script>
+</body>
+</html>
