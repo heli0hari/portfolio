@@ -14,6 +14,7 @@
     html, body {
       height: 100%;
       overflow-x: hidden;
+      overscroll-behavior: none; /* reduce rubber-band */
     }
 
     /* Font & Color Palette Integration */
@@ -42,6 +43,14 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
+    }
+
+    /* ---- Lock WORK to viewport (no vertical scroll) ---- */
+    #work { height: 100svh; overflow: hidden; }
+
+    /* Optional iOS rubber-band reduction while in .no-scroll */
+    @supports (-webkit-touch-callout: none) {
+      body.no-scroll { position: fixed; width: 100%; }
     }
 
     /* Flipbook styles */
@@ -91,7 +100,7 @@
     .shape {
         position: absolute;
         border-radius: 50%;
-        background-color: rgba(141, 163, 145, 0.1); /* Using palette color */
+        background-color: rgba(141, 163, 145, 0.1);
         transition: transform 0.1s linear;
         animation: float 20s infinite linear alternate;
     }
@@ -130,9 +139,7 @@
     .vignette-bottom { bottom: 0; height: 8rem; background: linear-gradient(to top, #1a1d1c, transparent); }
     body.about-visible .vignette { opacity: 1; }
 
-    .break-long-words {
-      word-break: break-all;
-    }
+    .break-long-words { word-break: break-all; }
 
     /* --- START: Loader Styles --- */
     .loader-overlay {
@@ -154,19 +161,10 @@
       animation: pulse 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
     }
     @keyframes pulse {
-      0%, 100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
-      50% {
-        transform: scale(1.1);
-        opacity: 1;
-      }
+      0%, 100% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.1); opacity: 1; }
     }
-    .loader-hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
+    .loader-hidden { opacity: 0; visibility: hidden; }
     /* --- END: Loader Styles --- */
 
     /* --- START: Cursor Glow Styles --- */
@@ -183,13 +181,9 @@
         transition: opacity 0.4s ease;
         will-change: transform, opacity;
     }
-    
     @media (hover: hover) and (pointer: fine) {
-      body:hover #cursor-glow {
-        opacity: 1;
-      }
+      body:hover #cursor-glow { opacity: 1; }
     }
-
     #cursor-glow.is-active {
         opacity: 1;
         transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -197,26 +191,15 @@
     /* --- END: Cursor Glow Styles --- */
 
     /* --- Global Custom Scrollbar Styles --- */
-    ::-webkit-scrollbar {
-      width: 14px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+    ::-webkit-scrollbar { width: 14px; }
+    ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb {
       background-color: #8DA391;
       border-radius: 10px;
       border: 4px solid #1a1d1c;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: #A9BDA5;
-    }
-
-    /* For Firefox */
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: #8DA391 #1a1d1c;
-    }
+    ::-webkit-scrollbar-thumb:hover { background-color: #A9BDA5; }
+    * { scrollbar-width: thin; scrollbar-color: #8DA391 #1a1d1c; }
 
     /* --- Overlay CSS --- */
     .project-overlay {
@@ -235,10 +218,7 @@
       visibility: hidden;
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
-    .project-overlay.is-visible {
-      opacity: 1;
-      visibility: visible;
-    }
+    .project-overlay.is-visible { opacity: 1; visibility: visible; }
     
     .project-overlay-content {
       position: relative;
@@ -255,9 +235,7 @@
       display: flex;
       flex-direction: column;
     }
-    .project-overlay.is-visible .project-overlay-content {
-      transform: scale(1);
-    }
+    .project-overlay.is-visible .project-overlay-content { transform: scale(1); }
     #overlayScrollWrapper {
         overflow-y: auto;
         flex-grow: 1;
@@ -274,10 +252,7 @@
       transition: color 0.2s ease, transform 0.2s ease;
       z-index: 120;
     }
-    .close-button:hover {
-      color: #E9EBE4;
-      transform: scale(1.1);
-    }
+    .close-button:hover { color: #E9EBE4; transform: scale(1.1); }
 
     /* --- Image Lightbox Styles --- */
     .lightbox-overlay {
@@ -297,76 +272,45 @@
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    .lightbox-overlay.is-visible {
-        opacity: 1;
-        visibility: visible;
-    }
+    .lightbox-overlay.is-visible { opacity: 1; visibility: visible; }
     .lightbox-image {
         max-width: 90vw;
         max-height: 90vh;
         transform: scale(0.95);
         transition: transform 0.3s ease;
     }
-    .lightbox-overlay.is-visible .lightbox-image {
-        transform: scale(1);
-    }
-    .lightbox-trigger {
-        cursor: zoom-in;
-    }
+    .lightbox-overlay.is-visible .lightbox-image { transform: scale(1); }
+    .lightbox-trigger { cursor: zoom-in; }
 
-    /* --- ADDED: Responsive Video Container --- */
+    /* --- Responsive Video Container --- */
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       max-width: 100%;
       background: #000;
-      border-radius: 0.5rem; /* Match image rounding */
-      margin: 1.5rem 0; /* Match image margin */
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
     }
     .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     }
     
     /* --- Mobile Responsive Styles --- */
     @media (max-width: 768px) {
       .fixed.top-6.left-6 { transform: scale(0.9); transform-origin: top left; }
-      
-      .social-icons {
-        flex-direction: row;
-        right: 1.5rem;
-        transform: scale(0.9);
-        transform-origin: bottom right;
-      }
-
-      nav.fixed.top-1\/2 {
-        top: auto;
-        bottom: 1.5rem;
-        left: 1.5rem;
-        flex-direction: row;
-        transform: none;
-      }
-      
+      .social-icons { flex-direction: row; right: 1.5rem; transform: scale(0.9); transform-origin: bottom right; }
+      nav.fixed.top-1\/2 { top: auto; bottom: 1.5rem; left: 1.5rem; flex-direction: row; transform: none; }
       .arrow-indicator { opacity: 0.6 !important; }
     }
     
     /* --- Tablet Responsive Styles --- */
     @media (min-width: 769px) and (max-width: 1024px) {
-      #work section { padding: 0 2rem; }
-      .flipbook-wrapper {
-        max-width: 680px;
-        height: 480px;
-      }
+      #work section { padding: 0 1rem; }
+      .flipbook-wrapper { max-width: 680px; height: 480px; }
       .arrow-indicator { opacity: 0.6 !important; }
-      
-      #about .mx-auto.max-w-6xl {
-        padding-left: 7rem;
-      }
+      #about .mx-auto.max-w-6xl { padding-left: 7rem; }
     }
   </style>
 </head>
