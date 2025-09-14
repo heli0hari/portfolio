@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Portfolio — Single File</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Space Grotesk -->
@@ -16,6 +16,17 @@
       overflow-x: hidden;
       overscroll-behavior: none; /* reduce rubber-band */
     }
+
+    /* Lock page vertically while Work is visible */
+    html.body-lock,
+    body.body-lock {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;   /* stop rubber-band */
+    }
+
 
     /* Font & Color Palette Integration */
     body {
@@ -46,7 +57,9 @@
     }
 
     /* ---- Lock WORK to viewport (no vertical scroll) ---- */
-    #work { height: 100svh; overflow: hidden; }
+    #work { height: 100dvh;                          /* modern browsers */
+            height: calc(var(--vh, 1vh) * 100);      /* iOS fallback */
+            overflow: hidden;                         /* nothing should scroll here */ }
 
     /* Optional iOS rubber-band reduction while in .no-scroll */
     @supports (-webkit-touch-callout: none) {
@@ -55,7 +68,8 @@
 
     /* Flipbook styles */
     .flipbook-wrapper {
-      transform-style: preserve-3d; /* Fixes 3D rendering artifacts */
+      transform-style: preserve-3d;
+      touch-action: pan-x; /* Fixes 3D rendering artifacts */
     }
     .flipbook-container {
       perspective: 2500px;
@@ -810,22 +824,27 @@
 
             function show(page){
               if(page === 'work'){
-                secWork.classList.remove('page-hidden');
-                secAbout.classList.add('page-hidden');
-                navWork.classList.add('bg-[#6E807A]/40');
-                navAbout.classList.remove('bg-[#6E807A]/40');
-                document.body.classList.add('no-scroll');
-                document.body.classList.remove('about-visible');
-              } else {
-                secAbout.classList.remove('page-hidden');
-                secWork.classList.add('page-hidden');
-                navAbout.classList.add('bg-[#6E807A]/40');
-                navWork.classList.remove('bg-[#6E807A]/40');
-                document.body.classList.remove('no-scroll');
-                document.body.classList.add('about-visible');
-              }
-              window.scrollTo({top:0, behavior:'smooth'});
-            }
+                 secWork.classList.remove('page-hidden');
+                 secAbout.classList.add('page-hidden');
+                  navWork.classList.add('bg-[#6E807A]/40');
+                  navAbout.classList.remove('bg-[#6E807A]/40');
+
+                  document.body.classList.add('no-scroll','body-lock');
+                  document.documentElement.classList.add('body-lock');  // <— NEW
+                  document.body.classList.remove('about-visible');
+                } else {
+                  secAbout.classList.remove('page-hidden');
+                  secWork.classList.add('page-hidden');
+                  navAbout.classList.add('bg-[#6E807A]/40');
+                  navWork.classList.remove('bg-[#6E807A]/40');
+
+                  document.body.classList.remove('no-scroll','body-lock');
+                  document.documentElement.classList.remove('body-lock'); // <— NEW
+                  document.body.classList.add('about-visible');
+                }
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
             navWork.addEventListener('click', () => show('work'));
             navAbout.addEventListener('click', () => show('about'));
 
@@ -872,6 +891,14 @@
                 flipbook.appendChild(card);
                 projectCards.push(card);
             });
+
+            function setVH() {
+                        const vh = window.innerHeight * 0.01;
+                        document.documentElement.style.setProperty('--vh', `${vh}px`);
+                              }
+                      setVH();
+                          window.addEventListener('resize', setVH);
+                          window.addEventListener('orientationchange', setVH);
 
             function flip(direction) {
                 if (isFlipping) return;
