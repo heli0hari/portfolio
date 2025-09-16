@@ -107,17 +107,56 @@
       opacity: 1;
       transform: rotateY(0deg);
       z-index: 2;
+      will-change: transform, opacity; /* This is the fix for the animation glitch */
     }
     .project-card.is-flipped {
-      transform: rotateY(-180deg);
+      transform: rotateY(180deg);
       opacity: 0;
       z-index: 1;
     }
     .project-card.is-next {
-        transform: rotateY(180deg);
+        transform: rotateY(-180deg);
         opacity: 0;
         z-index: 1;
     }
+        /* --- Image Gallery Styles --- */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Creates a 2x2 grid */
+      gap: 1rem; /* Space between images */
+      margin: 1.5rem 0;
+    }
+    .image-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(22, 64, 77, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .image-gallery img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+
+    /* --- START: Interactive Hint Animation --- */
+    @keyframes subtle-flip {
+      0%, 100% {
+        transform: rotateY(0deg);
+      }
+      50% {
+        transform: rotateY(20deg);
+      }
+    }
+    .project-card.interactive-hint {
+      animation: subtle-flip 3s ease-in-out infinite;
+      animation-delay: 1s; /* Start after a small delay */
+    }
+    /* Stop animation on hover */
+    .flipbook-wrapper:hover .project-card.interactive-hint {
+      animation: none;
+    }
+    /* --- END: Interactive Hint Animation --- */
 
     /* Interactive Background Shapes */
     .shapes-container {
@@ -185,19 +224,27 @@
       justify-content: center;
       transition: opacity 0.5s ease, visibility 0.5s ease;
     }
-    .loader-spinner {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background-color: #A6CDC6;
-      box-shadow: 0 0 20px #A6CDC6, 0 0 40px #A6CDC6;
-      animation: pulse 1.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
-    }
-    @keyframes pulse {
-      0%, 100% { transform: scale(0.9); opacity: 0.7; }
-      50% { transform: scale(1.1); opacity: 1; }
-    }
     .loader-hidden { opacity: 0; visibility: hidden; }
+
+    .loader-wrapper {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    .loader-circle-bg, .loader-circle-fg {
+      fill: none;
+      stroke-width: 4;
+    }
+    .loader-circle-bg {
+      stroke: rgba(22, 64, 77, 0.1); /* #16404D with 10% opacity */
+    }
+    .loader-circle-fg {
+      stroke: #A6CDC6; /* Main accent color */
+      stroke-linecap: round;
+      transform-origin: 50% 50%;
+      transform: rotate(-90deg);
+      transition: stroke-dashoffset 0.2s ease;
+    }
     /* --- END: Loader Styles --- */
 
     /* --- START: Cursor Glow Styles --- */
@@ -283,11 +330,11 @@
       cursor: pointer;
       color: rgba(22, 64, 77, 0.7);
       transition: color 0.2s ease, transform 0.2s ease;
-      z-index: 120;
+      z-index: 310; /* Make sure it's above lightbox */
     }
     .close-button:hover { color: #16404D; transform: scale(1.1); }
 
-    /* --- Image Lightbox Styles --- */
+        /* --- Image Lightbox Styles --- */
     .lightbox-overlay {
         position: fixed;
         top: 0;
@@ -304,30 +351,169 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
+        overflow: hidden; /* Hide overflowing zoomed image */
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(22, 64, 77, 0.4);
+      color: white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s ease, background-color 0.2s ease;
+      z-index: 210;
+    }
+    .lightbox-nav:hover {
+      opacity: 1;
+      background-color: rgba(22, 64, 77, 0.7);
+    }
+    .lightbox-nav.prev {
+      left: 1.5rem;
+    }
+    .lightbox-nav.next {
+      right: 1.5rem;
+    }
+    .lightbox-nav.hidden {
+      display: none;
     }
     .lightbox-overlay.is-visible { opacity: 1; visibility: visible; }
+    
+    #lightboxContainer {
+      transition: transform 0.2s ease-out; /* For smooth zooming */
+    }
+    
     .lightbox-image {
         max-width: 90vw;
         max-height: 90vh;
         transform: scale(0.95);
         transition: transform 0.3s ease;
+        cursor: grab;
+        user-select: none;
+        -webkit-user-drag: none;
+    }
+    .lightbox-image.is-panning {
+      cursor: grabbing;
     }
     .lightbox-overlay.is-visible .lightbox-image { transform: scale(1); }
     .lightbox-trigger { cursor: zoom-in; }
 
-    /* --- Responsive Video Container --- */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
+    .lightbox-controls {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 210;
+      display: flex;
+      gap: 1rem;
+      background-color: rgba(22, 64, 77, 0.7);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+    }
+    .lightbox-controls button {
+      color: white;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+    .lightbox-controls button:hover {
+      opacity: 1;
+    }
+
+    /* --- Iframe Lightbox Styles --- */
+    .iframe-lightbox {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(251, 245, 221, 0.9);
+      backdrop-filter: blur(5px);
+      z-index: 300;
+      padding: 2.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .iframe-lightbox.is-visible { opacity: 1; visibility: visible; }
+    .iframe-lightbox-content {
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(22, 64, 77, 0.15);
+      border-radius: 0.5rem;
       overflow: hidden;
-      max-width: 100%;
-      background: #000;
+    }
+    .iframe-lightbox-content iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    
+    /* --- Responsive Video & Iframe Containers --- */
+    .video-container, .iframe-wrapper {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
       border-radius: 0.5rem;
       margin: 1.5rem 0;
     }
-    .video-container iframe {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    .video-container {
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      background: #000;
+    }
+    .iframe-wrapper {
+      padding-top: 75%; /* 4:3 Aspect Ratio for Desktop */
+      border: 1px solid rgba(22, 64, 77, 0.15);
+    }
+    @media (max-width: 768px) {
+      .iframe-wrapper {
+        padding-top: 177.77%; /* 9:16 Vertical Aspect Ratio for Mobile */
+      }
+    }
+    .video-container iframe, .iframe-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    
+    .iframe-fullscreen-trigger {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background-color: rgba(22, 64, 77, 0.7);
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 10;
+    }
+    .iframe-wrapper:hover .iframe-fullscreen-trigger {
+      opacity: 1;
+      transform: scale(1);
+    }
+    /* Make button visible on touch devices */
+    @media (hover: none) and (pointer: coarse) {
+      .iframe-fullscreen-trigger {
+        opacity: 1;
+        transform: scale(1);
+        background-color: rgba(22, 64, 77, 0.5);
+      }
     }
     
     /* --- Mobile Responsive Styles --- */
@@ -351,7 +537,15 @@
 
   <!-- Loader -->
   <div id="loader" class="loader-overlay">
-    <div class="loader-spinner"></div>
+    <div class="loader-wrapper">
+      <svg viewBox="0 0 36 36">
+        <circle class="loader-circle-bg" cx="18" cy="18" r="15.9155"></circle>
+        <circle id="loader-circle" class="loader-circle-fg"
+          stroke-dasharray="100, 100"
+          stroke-dashoffset="100"
+          cx="18" cy="18" r="15.9155"></circle>
+      </svg>
+    </div>
   </div>
 
   <!-- Main content wrapper -->
@@ -547,8 +741,37 @@
 
   <!-- Lightbox for images -->
   <div id="imageLightbox" class="lightbox-overlay">
-    <img id="lightboxImage" src="" alt="Expanded project image" class="lightbox-image">
+    <div id="lightboxContainer">
+        <img id="lightboxImage" src="" alt="Expanded project image" class="lightbox-image">
+    </div>
+
+    <button id="prevImageBtn" class="lightbox-nav prev" aria-label="Previous image">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+    </button>
+    <button id="nextImageBtn" class="lightbox-nav next" aria-label="Next image">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+    </button>
+
+    <div id="lightboxControls" class="lightbox-controls">
+        <button id="zoomOutBtn" aria-label="Zoom out">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
+        </button>
+        <button id="zoomInBtn" aria-label="Zoom in">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m-3-3h6"></path></svg>
+        </button>
+    </div>
+
     <div id="closeLightbox" class="close-button" aria-label="Close image view">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+    </div>
+  </div>
+
+  <!-- Lightbox for Iframe -->
+  <div id="iframeLightbox" class="iframe-lightbox">
+    <div class="iframe-lightbox-content">
+        <iframe id="lightboxIframe" src="" title="Fullscreen Project View" allowfullscreen></iframe>
+    </div>
+    <div id="closeIframeLightbox" class="close-button" aria-label="Close iframe view">
         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
     </div>
   </div>
@@ -559,6 +782,83 @@
     const isMobile = window.innerWidth < 768;
 
     const projects = [
+      {
+        title: "City, Beneath the Surface",
+        category: "Data Visualization",
+        description: "An interactive data visualization and public installation that reveals the invisible labor sustaining cities by transforming public sentiment into dynamic visual form.",
+        image: isMobile ? "images/City/City_MainS.jpg" : "images/City/City_Main.jpg",
+        year: "2025",
+        tags: ["Information Design", "UX Design", "Data Visualization", "Public Installation", "Interactive Design"],
+        details: {
+          content: [
+            { type: 'image', value: 'images/City/City_Title.jpg' },
+            { type: 'quote', value: "“No work is insignificant. All labor that uplifts humanity has dignity and importance and should be undertaken with painstaking excellence.”", author: "Martin Luther King Jr." },
+            { type: 'heading', value: 'Project Overview' },
+            { type: 'paragraph', value: "City, Beneath the Surface is a data-driven interactive installation that reframes how we perceive care-based labor in cities. It visualizes the hidden hierarchies of essential workers — bus drivers, waste collectors, maintenance crews, and others — as dynamic bubble networks, transforming public sentiment and contextual data into living, responsive visuals.  \n\nBy situating the installation in everyday public spaces (bus stops, train stations), the project brings recognition to often unseen labor, sparking reflection on the value of those who sustain urban life." },
+            { type: 'heading', value: 'Context & Motivation' },
+            { type: 'list', value: ["Growing up in India, I observed cultural stigma toward manual and public-facing labor, often framed as “low-status” work.",
+                                    "In contrast, while studying in Dublin, I noticed greater respect and infrastructural support for these workers, yet still a lack of emotional recognition.",
+                                    "This project became both a personal reconciliation and a design intervention, aiming to shift public narratives by making invisible labor visible"]},
+            { type: 'image', value: 'images/City/City_Personal.jpg' },
+            { type: 'quote', value: "“YOU WILL END UP PICKING TRASH, IF YOU DON'T STUDY WELL”", author: "A Random Teacher from My School" },
+            { type: 'heading', value: 'Problem Statement' },
+            { type: 'paragraph', value: "Despite being essential, care-based workers remain socially undervalued. Public frustration with systemic failures is often misdirected toward visible figures like drivers or cleaners, reinforcing stigma and invisibility" },
+            { type: 'heading', value: 'Research Question' },
+            { type: 'paragraph', value: "How might contextual data visualization be used to reframe public narratives surrounding care-based labor?" },
+            { type: 'image', value: 'images/City/City_Ran.jpg' },
+            { type: 'heading', value: 'Objectives' },
+            { type: 'list', value: ["Expose the hidden tiers of labor that sustain the city.",
+                                    "Collect and visualize sentiment data around urban workers.",
+                                    "Build a responsive installation that shifts based on public interaction.",
+                                    "Challenge stigma by connecting emotions, data, and design."]},
+            { type: 'heading', value: 'Design Concept' },
+            { type: 'image', value: 'images/City/City_Diag.jpg' },
+            { type: 'list', value: ["Dynamic Bubbles: Each sector of urban labor (waste, water, transport, construction, electrical, sanitation, emergency, etc.) is represented as a parent bubble. Roles and sub-roles emerge around it, creating a living hierarchy of workers.",
+                                    "Network Visualization: The installation shows how different sectors connect and interdepend to keep the city functioning, emphasizing systemic collaboration rather than isolated roles.",
+                                    "Public Interaction: Users can tap or click bubbles to reveal details about roles, responsibilities, and worker counts within each sector.",
+                                    "Augmented Reality Layer: In the mobile app, the AR view links the virtual system to real-world objects. For example, pointing at a bus, trash can, or streetlight reveals the associated bubble, its sector, and data about the number of workers behind it.",
+                                    "Atmosphere: Idle animations and floating motion give the system a “living” quality, symbolizing the ongoing, often unnoticed work beneath the city."]},
+            { type: 'heading', value: 'Theoretical Frameworks' },
+            { type: 'list', value: ["Everyday Life and Cultural Theory (Ben Highmore) → Centers ordinary, undervalued labor as culturally significant."]},
+            { type: 'image', value: 'images/City/City_T1.jpg' },
+            { type: 'list', value: ["Maintenance and Care (Shannon Mattern) → Frames maintenance as essential, emotional, and infrastructural labor."]},
+            { type: 'image', value: 'images/City/City_T2.jpg' },
+            { type: 'list', value: ["Convergence Culture (Henry Jenkins) → Informs how public narratives and digital participation shape collective meaning."]},
+            { type: 'image', value: 'images/City/City_T3.jpg' },
+            { type: 'paragraph', value: "<em>These frameworks guided the design in making invisible work visible, reframing workers not just as functional roles but as vital cultural and social contributors.</em>"},
+            { type: 'heading', value: 'Tools & Development' },
+            { type: 'list', value: ["Early Prototyping: Initial concepts tested in p5.js to explore visual states and interaction ideas. Some other concepts were also explored, using 3D models and map data of the city."]},
+            { type: 'paragraph', value: "Prototype using map data and 3D models in blender" },
+            { type: 'image', value: 'images/City/City_Prot1.jpg' },
+            { type: 'paragraph', value: "Second Prototype using p5.js" },
+            { type: 'image', value: 'images/City/City_Prot2.jpg' },
+            { type: 'list', value: ["Final Implementation: Live Interactive Installation"]},
+            { type: 'paragraph', value: "Built as a web-based interactive installation with an accompanying mobile AR app." },
+            { type: 'list', value: ["Development Workflow: Iteratively coded using ChatGPT, Claude.ai, and Google AI Studio, with final refinements and debugging done manually."]},
+            { type: 'image', value: 'images/City/City_AI.jpg' },
+            { type: 'list', value: ["Delivery Platforms: Public Installation → large screen or projection in transit hubs. Mobile Application → includes Hierarchy View and AR View linking bubbles to real-world city objects."]},
+            { type: 'heading', value: 'User Journey - Storyboard' },
+            { type: 'image', value: 'images/City/City_User.jpg' },
+            { type: 'heading', value: 'Final Output' },
+            { type: 'list', value: ["Mobile AR App UI Prototypes: Extends the installation into everyday life, letting users scan familiar city objects to uncover the workers and systems behind them.",]},
+            { type: 'image', value: 'images/City/City_App.jpg' },
+            { type: 'list', value: ["Interactive Visualization: A responsive bubble system representing the city’s essential workers.",]},
+            { type: 'iframe', value: { src: 'https://city-beneath-surface.netlify.app/', title: 'City, Beneath the Surface - Live Installation' } },
+            { type: 'paragraph', value: 'You can also <a href="https://city-beneath-surface.netlify.app/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">open the installation in a new tab</a> to explore it fully.' },
+            { type: 'list', value: ["Exhibition Setup: Designed for public spaces where passersby can engage with the installation and explore hidden labor systems.",
+                                    "Message: Cities thrive because of invisible labor — this project transforms that invisibility into a visible, interactive network.",]},
+            { type: 'heading', value: 'Reflection' },
+            { type: 'paragraph', value: "This project taught me how design, data, and empathy can merge into impactful public interventions. It demonstrated:" },
+            { type: 'list', value: ["The power of interactive visualization in making complex labor systems approachable and humanized.",
+                                    "How accurate datasets (not just sentiment) can ground storytelling in realism while still keeping the experience poetic and engaging.",
+                                    "The potential and limits of AI-assisted coding as a design partner, and the importance of taking creative control in the final refinements.",
+                                    "The need to balance clarity and exploration, ensuring accessibility for the general public while keeping the experience compelling for institutions and stakeholders."]},
+            { type: 'image', value: 'images/City/City_Last.jpg' },
+
+            
+          ]
+        }
+      },
       {
         title: "Theyyam Threads",
         category: "Visual Design",
@@ -704,14 +1004,86 @@
           ]
         }
       },
+      {
+        title: "Revved Up - 3D Cars in motion",
+        category: "3D",
+        description: "Animated 3D cars, including original models created in Blender, showcasing modeling and motion skills. ",
+        image: "images/Cars/Cars_Main.jpg",
+        year: "2023",
+        tags: ["3D Modeling", "Blender", "Art", "Animation"],
+        details: {
+          content: [
+            { type: 'heading', value: 'About' },
+            { type: 'paragraph', value: "In this project, I've meticulously crafted and animated a collection of stunning car models using Blender, a powerful 3D modeling and animation software. Through the magic of animation, I have made some of these cars come to life, showcasing their agility, power, and elegance in dynamic motion." },
+            { type: 'heading', value: 'Models' },
+            { type: 'image', value: 'images/Cars/Cars_Img1.jpg' },
+            { type: 'paragraph', value: "Some models made from scratch" },
+            { type: 'image', value: 'images/Cars/Cars_Img2.jpg' },
+            { type: 'heading', value: 'Real-time View' },
+            { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="Honda Civic First Generation" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/9d71ea92a33c4a1e82cc589730822f63/embed?autospin=1&transparent=1&ui_hint=2"> </iframe> </div>` },
+            { type: 'sketchfab', value: `<<div class="sketchfab-embed-wrapper"> <iframe title="SB1 Civic in Naked Style" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/fab52fc398b44564be1b22f8a4dbf23c/embed?autospin=1&transparent=1&ui_theme=dark"> </iframe> </div>` },
+            { type: 'heading', value: 'Videos' },
+            { type: 'paragraph', value: "The animation showcases 3D cars modeled in Blender, driving through richly detailed environments composed of sourced elements. The project highlights both modeling and animation skills, bringing vehicles to life within dynamic scenes." },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935375739?h=783ccfb540" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935377589?h=b915c93a62" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+            { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935377842?h=b5226399db" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
+
+          ]
+        }
+      },
+      {
+        title: "Christmas Party - Dublin",
+        category: "Photography",
+        description: "A low-light photo series capturing the energy, emotion, and joy of a student Christmas party. ",
+        image: "images/Christ/Christ_Main.jpg",
+        year: "2024",
+        tags: ["Photography", "Lightroom", "Photoshop"],
+        details: {
+          content: [
+            { type: 'heading', value: 'About' },
+            { type: 'paragraph', value: "This photo series captures the electric energy and intimacy of a student-led Christmas party. From close-knit conversations under warm lights to moments of pure joy on the dance floor, these images celebrate youth, expression, and the unfiltered warmth of festive gatherings. The shoot focuses on movement, emotion, and the interplay of dynamic lighting in a club environment. I approached this project with a low-light documentary style, aiming to preserve the authenticity of the atmosphere without flash interference. Each shot was composed to retain the ambient hues, stage lights, and crowd interactions that define nightlife storytelling." },
+            { type: 'heading', value: 'Lights and connection' },
+            { type: 'paragraph', value: "where dance becomes conversation" },
+            { type: 'image', value: 'images/Christ/Christ_1.jpg' },
+            { type: 'paragraph', value: 'Shortlisted for the Fujifilm Life As You See It Competition 2025. <a href="https://www.fujifilm-houseofphotography.com/life-as-you-see-it-2025/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">CLick here to know more about the Competition.</a>' },
+            { type: 'heading', value: 'Gear' },
+            { type: 'list', value: ["Fujifilm X-T5 + 30mm f/1.4 Lens"]},
+            { type: 'paragraph', value: " Ideal for low-light detail, shallow depth of field, and capturing color fidelity in dim conditions." },
+            { type: 'list', value: ["Sony A6400 + 18-55mm f/3.5–5.6"]},
+            { type: 'paragraph', value: " Versatile for wider scenes, DJ booth shots, and dynamic zoom-in portraits." },
+            { type: 'heading', value: 'Gallery' },
+            { type: 'gallery', value: [
+                'images/Christ/Christ_2.jpg',
+                'images/Christ/Christ_3.jpg',
+                'images/Christ/Christ_4.jpg',
+                'images/Christ/Christ_5.jpg'
+            ]},
+            { type: 'heading', value: 'Post-Processing' },
+            { type: 'list', value: ["Color correction for ambient light consistency, using Adobe Lightroom", "Noise reduction selectively applied to maintain texture.", "Cropped for cinematic balance while preserving crowd energy."]},
+            { type: 'paragraph', value: "This Christmas party series was more than just an exercise in event photography, it was a study in atmosphere, spontaneity, and human connections. Working in a challenging low-light environment pushed me to embrace the unpredictability of club lighting and focus on capturing raw, honest moments rather than posed perfections. The project reinforced the value of observation, knowing when to step in, when to wait, and how to let the ambient mood shape each frame. As a photographer, it reminded me that even in the most chaotic settings, there's always a story unfolding, if you’re willing to look for it." },
+            { type: 'image', value: 'images/Christ/Christ_6.jpg' },
+
+                        
+          ]
+        }
+      },
      
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
         const loader = document.getElementById('loader');
         const mainContent = document.getElementById('main-content');
+        const loaderCircle = document.getElementById('loader-circle');
+        const circumference = loaderCircle.r.baseVal.value * 2 * Math.PI;
+        loaderCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        loaderCircle.style.strokeDashoffset = circumference;
     
-        function preloadImages() {
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100) * circumference;
+            loaderCircle.style.strokeDashoffset = offset;
+        }
+
+        function preloadImages(onProgress) {
             const imageSources = new Set();
             projects.forEach(p => {
                 imageSources.add(p.image);
@@ -721,17 +1093,37 @@
                     }
                 });
             });
+            // Add profile image to preloader
+            imageSources.add('images/Profile_image2.jpg');
 
-            const promises = Array.from(imageSources).map(src => {
+            const sources = Array.from(imageSources);
+            const totalImages = sources.length;
+            let loadedImages = 0;
+
+            if (totalImages === 0) {
+                return Promise.resolve();
+            }
+
+            const promises = sources.map(src => {
                 return new Promise((resolve, reject) => {
                     const img = new Image();
                     img.src = src;
-                    img.onload = resolve;
-                    img.onerror = reject;
+                    img.onload = () => {
+                        loadedImages++;
+                        const progress = (loadedImages / totalImages) * 100;
+                        onProgress(progress);
+                        resolve();
+                    };
+                    img.onerror = () => {
+                        loadedImages++; // Still count it to not stall the loader
+                        const progress = (loadedImages / totalImages) * 100;
+                        onProgress(progress);
+                        reject(`Failed to load ${src}`);
+                    };
                 });
             });
 
-            return Promise.all(promises);
+            return Promise.all(promises.map(p => p.catch(e => e))); // Continue even if some images fail
         }
 
         function initializeApp() {
@@ -850,7 +1242,7 @@
                   navAbout.classList.remove('bg-[#A6CDC6]/40');
 
                   document.body.classList.add('no-scroll','body-lock');
-                  document.documentElement.classList.add('body-lock');  // <— NEW
+                  document.documentElement.classList.add('body-lock');
                   document.body.classList.remove('about-visible');
                 } else {
                   secAbout.classList.remove('page-hidden');
@@ -859,15 +1251,16 @@
                   navWork.classList.remove('bg-[#A6CDC6]/40');
 
                   document.body.classList.remove('no-scroll','body-lock');
-                  document.documentElement.classList.remove('body-lock'); // <— NEW
+                  document.documentElement.classList.remove('body-lock');
                   document.body.classList.add('about-visible');
                 }
-  window.scrollTo({ top: 0, behavior: 'instant' });
-}
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }
 
             navWork.addEventListener('click', () => show('work'));
             navAbout.addEventListener('click', () => show('about'));
 
+            const flipbookWrapper = document.querySelector('.flipbook-wrapper');
             const flipbook = document.getElementById('flipbook');
             let currentIndex = 0;
             let projectCards = [];
@@ -875,27 +1268,34 @@
 
             projects.forEach((p, i) => {
                 const card = document.createElement('div');
-                card.className = 'project-card';
+                card.className = 'project-card interactive-hint';
                 if (i > 0) card.classList.add('is-next');
 
                 const tagsHTML = p.tags.map(t => `<span class="px-2.5 py-1 rounded-full bg-[#FBF5DD]/30 backdrop-blur-sm border border-[#16404D]/20">${t}</span>`).join('');
+                
+                // NEW: Logic to handle single vs multiple images
+                const imageHTML = p.imageDesktop 
+                  ? `
+                    <img class="absolute inset-0 w-full h-full object-cover card-image-desktop" src="${p.imageDesktop}" alt="${p.title}" />
+                    <img class="absolute inset-0 w-full h-full object-cover card-image-mobile" src="${p.imageMobile}" alt="${p.title}" />
+                  `
+                  : `
+                    <img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />
+                  `;
 
                 card.innerHTML = `
                     <div class="relative w-full h-full rounded-2xl overflow-hidden border border-[#16404D]/20 shadow-2xl shadow-black/20 group">
-                        <img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />
+                        ${imageHTML}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#FBF5DD] via-[#FBF5DD]/60 to-transparent"></div>
-                        
                         <div class="arrow-indicator absolute top-0 left-0 h-full w-1/4 flex items-start pt-[25%] justify-start p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-black/20 to-transparent">
                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
                         </div>
                         <div class="arrow-indicator absolute top-0 right-0 h-full w-1/4 flex items-start pt-[25%] justify-end p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-l from-black/20 to-transparent">
                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
                         </div>
-                        
                         <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                             <button data-index="${i}" class="open-project-btn inline-block text-base font-medium px-6 py-3 rounded-full bg-[#FBF5DD]/80 hover:bg-[#FBF5DD] border border-[#16404D]/20 backdrop-blur-md transition-all transform group-hover:scale-100 scale-90">View Details</button>
                         </div>
-
                         <div class="relative h-full flex flex-col justify-end p-6 md:p-8 text-[#16404D]">
                             <div>
                                 <div class="flex justify-between items-start">
@@ -913,28 +1313,25 @@
             });
 
             function setVH() {
-                        const vh = window.innerHeight * 0.01;
-                        document.documentElement.style.setProperty('--vh', `${vh}px`);
-                              }
-                      setVH();
-                          window.addEventListener('resize', setVH);
-                          window.addEventListener('orientationchange', setVH);
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
 
             function flip(direction) {
                 if (isFlipping) return;
                 isFlipping = true;
-
                 const currentCard = projectCards[currentIndex];
                 const nextIndex = (direction === 'next')
                     ? (currentIndex + 1) % projects.length
                     : (currentIndex - 1 + projects.length) % projects.length;
                 const nextCard = projectCards[nextIndex];
-
                 nextCard.classList.remove('is-flipped', 'is-next');
                 if (direction === 'next') {
                     nextCard.classList.add('is-next');
                 }
-                
                 setTimeout(() => {
                     if (direction === 'next') {
                         currentCard.classList.add('is-flipped');
@@ -942,10 +1339,8 @@
                         currentCard.classList.add('is-next');
                     }
                     nextCard.classList.remove('is-flipped', 'is-next');
-                    
                     currentIndex = nextIndex;
                 }, 20);
-
                 setTimeout(() => { isFlipping = false; }, 700);
             }
 
@@ -956,24 +1351,38 @@
             const overlayScrollWrapper = document.getElementById('overlayScrollWrapper');
             const closeOverlayBtn = document.getElementById('closeOverlay');
             const openProjectBtns = document.querySelectorAll('.open-project-btn');
-
+            
+            // --- START: All Lightbox related variables and functions ---
+            
+            // Element References
             const imageLightbox = document.getElementById('imageLightbox');
+            const lightboxContainer = document.getElementById('lightboxContainer');
             const lightboxImage = document.getElementById('lightboxImage');
             const closeLightboxBtn = document.getElementById('closeLightbox');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
+            const prevImageBtn = document.getElementById('prevImageBtn');
+            const nextImageBtn = document.getElementById('nextImageBtn');
+            
+            const iframeLightbox = document.getElementById('iframeLightbox');
+            const lightboxIframe = document.getElementById('lightboxIframe');
+            const closeIframeLightboxBtn = document.getElementById('closeIframeLightbox');
+            
+            // Lightbox State
+            let scale = 1, isPanning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 }, initialPinchDistance = null;
+            let currentLightboxImages = [];
+            let currentLightboxIndex = 0;
 
             function populateOverlay(project) {
                 overlayScrollWrapper.innerHTML = '';
-
                 const titleEl = document.createElement('h2');
                 titleEl.className = 'text-3xl font-bold mb-2';
                 titleEl.textContent = project.title;
                 overlayScrollWrapper.appendChild(titleEl);
-
                 const categoryEl = document.createElement('p');
                 categoryEl.className = 'text-sm text-[#DDA853] mb-6';
                 categoryEl.textContent = project.category;
                 overlayScrollWrapper.appendChild(categoryEl);
-
                 project.details.content.forEach(item => {
                     let element;
                     if (item.type === 'heading') {
@@ -983,7 +1392,7 @@
                     } else if (item.type === 'paragraph') {
                         element = document.createElement('p');
                         element.className = 'text-[#16404D]/80 leading-relaxed';
-                        element.textContent = item.value;
+                        element.innerHTML = item.value.replace(/\n/g, '<br>');
                     } else if (item.type === 'image') {
                         element = document.createElement('img');
                         element.className = 'w-full h-auto rounded-lg my-6 lightbox-trigger';
@@ -994,10 +1403,41 @@
                         element.className = 'my-6 border-l-4 border-[#DDA853] pl-4 italic text-lg text-[#16404D]/90';
                         const quoteText = String(item.value || '').replace(/^["“]|["”]$/g, '');
                         element.innerHTML = `“${quoteText}”` + (item.author ? `<footer class="mt-2 text-sm text-[#16404D]/60 text-right">— ${item.author}</footer>` : '');
-                    } else if (item.type === 'video') {
+                    } else if (item.type === 'video' || item.type === 'sketchfab') {
                         element = document.createElement('div');
                         element.className = 'video-container';
                         element.innerHTML = item.value;
+                    } else if (item.type === 'iframe') {
+                        element = document.createElement('div');
+                        element.className = 'iframe-wrapper';
+                        const iframeEl = document.createElement('iframe');
+                        iframeEl.src = item.value.src;
+                        iframeEl.title = item.value.title;
+                        iframeEl.setAttribute('allowfullscreen', '');
+                        const trigger = document.createElement('div');
+                        trigger.className = 'iframe-fullscreen-trigger';
+                        trigger.dataset.src = item.value.src;
+                        trigger.innerHTML = `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 8V4m0 0h4M4 4l5 5m11 5v4m0 0h-4m4 0l-5-5M4 16v4m0 0h4m-4 0l5-5m11-5V4m0 0h-4m4 0l-5 5"></path></svg>`;
+                        element.appendChild(iframeEl);
+                        element.appendChild(trigger);
+                    } else if (item.type === 'gallery') {
+                        element = document.createElement('div');
+                        element.className = 'image-gallery';
+                        item.value.forEach(src => {
+                            const img = document.createElement('img');
+                            img.src = src;
+                            img.className = 'lightbox-trigger';
+                            img.alt = project.title + ' gallery image';
+                            element.appendChild(img);
+                        });
+                    } else if (item.type === 'list') {
+                        element = document.createElement('ul');
+                        element.className = 'list-disc pl-6 my-4 space-y-2 text-[#16404D]/80';
+                        item.value.forEach(point => {
+                            const li = document.createElement('li');
+                            li.textContent = point;
+                            element.appendChild(li);
+                        });
                     }
                     if (element) {
                         overlayScrollWrapper.appendChild(element);
@@ -1006,101 +1446,233 @@
             }
 
             function openModal(index) {
-              const project = projects[index];
-              populateOverlay(project);
-              projectOverlay.classList.add('is-visible');
-              document.body.style.overflow = 'hidden';
+                const project = projects[index];
+                populateOverlay(project);
+                projectOverlay.classList.add('is-visible');
+                document.body.style.overflow = 'hidden';
             }
 
             function closeModal() {
-              projectOverlay.classList.remove('is-visible');
-              if (!document.body.classList.contains('about-visible')) {
-                document.body.classList.add('no-scroll');
-              }
-              document.body.style.overflow = '';
+                projectOverlay.classList.remove('is-visible');
+                if (!document.body.classList.contains('about-visible')) {
+                    document.body.classList.add('no-scroll');
+                }
+                document.body.style.overflow = '';
+            }
+
+            function updateTransform() {
+                lightboxContainer.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+            }
+
+            function resetLightboxTransform() {
+                scale = 1; pointX = 0; pointY = 0; initialPinchDistance = null;
+                lightboxContainer.style.transition = 'transform 0s';
+                updateTransform();
+                lightboxContainer.style.transition = 'transform 0.2s ease-out';
             }
             
-            function openLightbox(src) {
-                lightboxImage.src = src;
+            function showImageAtIndex(index) {
+                currentLightboxIndex = index;
+                lightboxImage.src = currentLightboxImages[index];
+                resetLightboxTransform();
+            }
+
+            function showNextImage() {
+                if (currentLightboxImages.length <= 1) return;
+                const nextIndex = (currentLightboxIndex + 1) % currentLightboxImages.length;
+                showImageAtIndex(nextIndex);
+            }
+
+            function showPrevImage() {
+                if (currentLightboxImages.length <= 1) return;
+                const prevIndex = (currentLightboxIndex - 1 + currentLightboxImages.length) % currentLightboxImages.length;
+                showImageAtIndex(prevIndex);
+            }
+
+            function openLightbox(images, index) {
+                currentLightboxImages = images;
                 imageLightbox.classList.add('is-visible');
+                
+                if (images.length > 1) {
+                    prevImageBtn.classList.remove('hidden');
+                    nextImageBtn.classList.remove('hidden');
+                } else {
+                    prevImageBtn.classList.add('hidden');
+                    nextImageBtn.classList.add('hidden');
+                }
+                showImageAtIndex(index);
             }
 
             function closeLightbox() {
                 imageLightbox.classList.remove('is-visible');
             }
 
+            function handleZoom(delta, clientX, clientY) {
+                const rect = lightboxContainer.getBoundingClientRect();
+                const xs = (clientX - rect.left - pointX) / scale;
+                const ys = (clientY - rect.top - pointY) / scale;
+                const newScale = Math.max(1, Math.min(5, scale * Math.exp(delta)));
+                if (newScale === 1) {
+                    pointX = 0; pointY = 0;
+                } else {
+                    pointX = clientX - rect.left - xs * newScale;
+                    pointY = clientY - rect.top - ys * newScale;
+                }
+                scale = newScale;
+                updateTransform();
+            }
+
+            function openIframeLightbox(src) {
+                lightboxIframe.src = src;
+                iframeLightbox.classList.add('is-visible');
+            }
+
+            function closeIframeLightbox() {
+                iframeLightbox.classList.remove('is-visible');
+                lightboxIframe.src = '';
+            }
+
             openProjectBtns.forEach(btn => {
-              btn.addEventListener('click', (e) => {
-                const projectIndex = e.currentTarget.dataset.index;
-                openModal(projectIndex);
-              });
+                btn.addEventListener('click', (e) => {
+                    const projectIndex = e.currentTarget.dataset.index;
+                    openModal(projectIndex);
+                });
             });
 
             closeOverlayBtn.addEventListener('click', closeModal);
             projectOverlay.addEventListener('click', (e) => {
-              if (e.target === projectOverlay) closeModal();
+                if (e.target === projectOverlay) closeModal();
             });
 
             overlayScrollWrapper.addEventListener('click', (e) => {
-                if (e.target.classList.contains('lightbox-trigger')) {
-                    openLightbox(e.target.src);
+                const trigger = e.target.closest('.lightbox-trigger');
+                if (trigger) {
+                    const allImagesInProject = Array.from(overlayScrollWrapper.querySelectorAll('.lightbox-trigger'));
+                    const imagesSrc = allImagesInProject.map(img => img.src);
+                    const clickedIndex = allImagesInProject.findIndex(img => img === trigger);
+                    openLightbox(imagesSrc, clickedIndex);
+                }
+                if (e.target.closest('.iframe-fullscreen-trigger')) {
+                    openIframeLightbox(e.target.closest('.iframe-fullscreen-trigger').dataset.src);
                 }
             });
 
             closeLightboxBtn.addEventListener('click', closeLightbox);
             imageLightbox.addEventListener('click', (e) => {
-                if (e.target === imageLightbox) closeLightbox();
+                if (e.target === imageLightbox && scale === 1) closeLightbox();
+            });
+
+            nextImageBtn.addEventListener('click', showNextImage);
+            prevImageBtn.addEventListener('click', showPrevImage);
+
+            zoomInBtn.addEventListener('click', () => handleZoom(0.2, window.innerWidth / 2, window.innerHeight / 2));
+            zoomOutBtn.addEventListener('click', () => handleZoom(-0.2, window.innerWidth / 2, window.innerHeight / 2));
+            
+            imageLightbox.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                handleZoom(-e.deltaY / 100, e.clientX, e.clientY);
+            });
+
+            let activeTouches = [];
+            lightboxContainer.addEventListener('pointerdown', (e) => {
+                if (scale <= 1) return;
+                if (e.pointerType === 'touch') {
+                    activeTouches.push(e);
+                    if (activeTouches.length === 2) {
+                        initialPinchDistance = Math.hypot(activeTouches[0].clientX - activeTouches[1].clientX, activeTouches[0].clientY - activeTouches[1].clientY);
+                    }
+                } else if (e.button === 0) {
+                    start = { x: e.clientX - pointX, y: e.clientY - pointY };
+                    isPanning = true;
+                    lightboxImage.classList.add('is-panning');
+                }
+                if(scale > 1) e.preventDefault();
+            });
+
+            lightboxContainer.addEventListener('pointermove', (e) => {
+                if (e.pointerType === 'touch' && activeTouches.length === 2) {
+                    const index = activeTouches.findIndex(p => p.pointerId === e.pointerId);
+                    if (index !== -1) activeTouches[index] = e;
+                    
+                    const newPinchDistance = Math.hypot(activeTouches[0].clientX - activeTouches[1].clientX, activeTouches[0].clientY - activeTouches[1].clientY);
+                    const delta = newPinchDistance - initialPinchDistance;
+                    const centerX = (activeTouches[0].clientX + activeTouches[1].clientX) / 2;
+                    const centerY = (activeTouches[0].clientY + activeTouches[1].clientY) / 2;
+                    handleZoom(delta / 100, centerX, centerY);
+                    initialPinchDistance = newPinchDistance;
+                } else if (isPanning) {
+                    pointX = e.clientX - start.x;
+                    pointY = e.clientY - start.y;
+                    updateTransform();
+                }
+            });
+
+            const stopInteraction = (e) => {
+                if (e.pointerType === 'touch') {
+                    const index = activeTouches.findIndex(p => p.pointerId === e.pointerId);
+                    if (index !== -1) activeTouches.splice(index, 1);
+                    if (activeTouches.length < 2) initialPinchDistance = null;
+                } else {
+                    isPanning = false;
+                    lightboxImage.classList.remove('is-panning');
+                }
+            };
+
+            lightboxContainer.addEventListener('pointerup', stopInteraction);
+            lightboxContainer.addEventListener('pointerleave', stopInteraction);
+            lightboxContainer.addEventListener('pointercancel', stopInteraction);
+            
+            closeIframeLightboxBtn.addEventListener('click', closeIframeLightbox);
+            iframeLightbox.addEventListener('click', (e) => {
+                if (e.target === iframeLightbox) closeIframeLightbox();
             });
 
             document.addEventListener('keydown', (e) => {
-              if (e.key === 'Escape') {
-                if (imageLightbox.classList.contains('is-visible')) {
-                    closeLightbox();
+                if (iframeLightbox.classList.contains('is-visible')) {
+                    if (e.key === 'Escape') closeIframeLightbox();
+                } else if (imageLightbox.classList.contains('is-visible')) {
+                    if (e.key === 'Escape') closeLightbox();
+                    if (e.key === 'ArrowRight') showNextImage();
+                    if (e.key === 'ArrowLeft') showPrevImage();
                 } else if (projectOverlay.classList.contains('is-visible')) {
-                    closeModal();
+                    if (e.key === 'Escape') closeModal();
                 }
-              }
             });
 
-            let touchstartX = 0;
-            let touchendX = 0;
+            let touchstartX = 0, touchendX = 0;
             const swipeThreshold = 50;
-
             function handleGesture() {
                 const deltaX = touchendX - touchstartX;
                 if (Math.abs(deltaX) > swipeThreshold) {
-                    if (touchendX < touchstartX) {
-                        flip('next');
-                    }
-                    if (touchendX > touchstartX) {
-                        flip('prev');
-                    }
+                    if (touchendX < touchstartX) flip('next');
+                    if (touchendX > touchstartX) flip('prev');
                 }
             }
-
             flipbook.addEventListener('touchstart', e => {
                 touchstartX = e.changedTouches[0].screenX;
-            }, {passive: true});
-
+            }, { passive: true });
             flipbook.addEventListener('touchend', e => {
                 touchendX = e.changedTouches[0].screenX;
                 handleGesture();
-            }, {passive: true});
+            }, { passive: true });
         }
 
-        preloadImages()
+        preloadImages(setProgress)
             .then(() => {
-                loader.classList.add('loader-hidden');
-                mainContent.classList.remove('opacity-0', 'invisible');
-                
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
+                setTimeout(() => { // Add a small delay for the 100% to be visible
+                    loader.classList.add('loader-hidden');
+                    mainContent.classList.remove('opacity-0', 'invisible');
+                    
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                    }, 500);
 
-                initializeApp();
+                    initializeApp();
+                }, 300);
             })
             .catch(error => {
                 console.error("Error preloading images:", error);
+                // Still initialize the app even if images fail
                 loader.classList.add('loader-hidden');
                 mainContent.classList.remove('opacity-0', 'invisible');
                 initializeApp();
