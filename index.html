@@ -91,12 +91,12 @@
       will-change: transform, opacity;
     }
     .project-card.is-flipped {
-      transform: rotateY(180deg) rotateX(10deg);
+      transform: rotateY(-180deg) rotateX(-60deg);
       opacity: 0;
       z-index: 1;
     }
     .project-card.is-next {
-      transform: rotateY(-180deg) rotateX(-10deg);
+      transform: rotateY(180deg) rotateX(60deg);
       opacity: 0;
       z-index: 1;
     }
@@ -130,7 +130,7 @@
     /* Interactive Hint Animation */
     @keyframes subtle-flip {
       0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
-      50% { transform: rotateY(15deg) rotateX(5deg); }
+      50% { transform: rotateY(20deg) rotateX(10deg); }
     }
     .project-card.interactive-hint {
       animation: subtle-flip 3s ease-in-out infinite;
