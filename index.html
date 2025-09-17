@@ -15,25 +15,21 @@
     html, body {
       height: 100%;
       overflow-x: hidden;
-      overscroll-behavior: none; /* reduce rubber-band */
+      overscroll-behavior: none;
     }
-
-    /* Lock page vertically while Work is visible */
-    html.body-lock,
-    body.body-lock {
+    html.body-lock, body.body-lock {
       position: fixed;
       inset: 0;
       width: 100%;
       overflow: hidden;
-      overscroll-behavior: none;   /* stop rubber-band */
+      overscroll-behavior: none;
     }
-
 
     /* Font & Color Palette Integration */
     body {
       font-family: 'Space Grotesk', sans-serif;
-      background-color: #FBF5DD; /* Lightest shade for background */
-      color: #16404D; /* Darkest shade for text */
+      background-color: #FBF5DD;
+      color: #16404D;
     }
 
     /* Scroll Lock for Work Page */
@@ -47,7 +43,7 @@
     @keyframes fadeIn { from {opacity:0; transform: translateY(6px)} to {opacity:1; transform:none} }
     .glow-card { box-shadow: 0 0 0 1px rgba(22, 64, 77, 0.08), 0 12px 30px rgba(0,0,0,0.1), inset 0 0 40px rgba(255,255,255,0.3); }
 
-    /* transition styles for page fade */
+    /* Page Sections */
     .page-section {
       transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
     }
@@ -57,38 +53,23 @@
       pointer-events: none;
     }
 
-  /* Keep WORK glued to the viewport so it never scrolls */
-#work {
-  position: fixed;     /* <— pin it */
-  inset: 0;            /* top:0; right:0; bottom:0; left:0 */
-  height: 100dvh;      /* stay viewport-high */
-  height: calc(var(--vh, 1vh) * 100); /* iOS fallback */
-  overflow: hidden;
-  z-index: 0;          /* sit underneath About */
-}
-
-/* When a page-section is hidden, also block interactions */
-.page-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;   /* <— important so you don't tap Work while About is up */
-}
-
-/* Make sure About renders above fixed Work */
-#about {
-  position: relative;
-  z-index: 1;
-}
-
-    /* Optional iOS rubber-band reduction while in .no-scroll */
-    @supports (-webkit-touch-callout: none) {
-      body.no-scroll { position: fixed; width: 100%; }
+    #work {
+      position: fixed;
+      inset: 0;
+      height: 100dvh;
+      height: calc(var(--vh, 1vh) * 100);
+      overflow: hidden;
+      z-index: 0;
+    }
+    #about {
+      position: relative;
+      z-index: 1;
     }
 
     /* Flipbook styles */
     .flipbook-wrapper {
       transform-style: preserve-3d;
-      touch-action: pan-x; /* Fixes 3D rendering artifacts */
+      touch-action: pan-x;
     }
     .flipbook-container {
       perspective: 2500px;
@@ -107,23 +88,30 @@
       opacity: 1;
       transform: rotateY(0deg);
       z-index: 2;
-      will-change: transform, opacity; /* This is the fix for the animation glitch */
+      will-change: transform, opacity;
     }
     .project-card.is-flipped {
-      transform: rotateY(180deg);
+      transform: rotateY(180deg) rotateX(-80deg); /* Changed to diagonal */
       opacity: 0;
       z-index: 1;
     }
     .project-card.is-next {
-        transform: rotateY(-180deg);
+        transform: rotateY(-180deg) rotateX(80deg); /* Changed to diagonal */
         opacity: 0;
         z-index: 1;
     }
-        /* --- Image Gallery Styles --- */
+    .card-image-desktop { display: block; }
+    .card-image-mobile { display: none; }
+    @media (max-width: 768px) {
+      .card-image-desktop { display: none; }
+      .card-image-mobile { display: block; }
+    }
+
+    /* --- Image Gallery Styles --- */
     .image-gallery {
       display: grid;
-      grid-template-columns: repeat(2, 1fr); /* Creates a 2x2 grid */
-      gap: 1rem; /* Space between images */
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
       margin: 1.5rem 0;
     }
     .image-gallery img {
@@ -139,201 +127,87 @@
       box-shadow: 0 8px 15px rgba(0,0,0,0.1);
     }
 
-    /* --- START: Interactive Hint Animation --- */
+    /* Interactive Hint Animation */
     @keyframes subtle-flip {
       0%, 100% {
-        transform: rotateY(0deg);
+        transform: rotateY(0deg) rotateX(0deg);
       }
       50% {
-        transform: rotateY(20deg);
+        transform: rotateY(15deg) rotateX(-10deg); /* Changed to diagonal */
       }
     }
     .project-card.interactive-hint {
       animation: subtle-flip 3s ease-in-out infinite;
-      animation-delay: 1s; /* Start after a small delay */
+      animation-delay: 1s;
     }
-    /* Stop animation on hover */
-    .flipbook-wrapper:hover .project-card.interactive-hint {
-      animation: none;
-    }
-    /* --- END: Interactive Hint Animation --- */
-
-    /* Interactive Background Shapes */
-    .shapes-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        overflow: hidden;
-        z-index: -1;
-    }
-    .shape {
-        position: absolute;
-        border-radius: 50%;
-        background-color: rgba(166, 205, 198, 0.2);
-        transition: transform 0.1s linear;
-        animation: float 20s infinite linear alternate;
-    }
-    .shape.s1 { width: 80px; height: 80px; top: 15%; left: 10%; animation-duration: 25s; }
-    .shape.s2 { width: 40px; height: 40px; top: 70%; left: 20%; animation-duration: 30s; border-radius: 30%; }
-    .shape.s3 { width: 120px; height: 120px; top: 50%; left: 80%; animation-duration: 18s; background-color: rgba(221, 168, 83, 0.2); }
-    .shape.s4 { width: 60px; height: 60px; top: 85%; left: 60%; animation-duration: 22s; border-radius: 40%; }
-    .shape.s5 { width: 50px; height: 50px; top: 20%; left: 75%; animation-duration: 28s; background-color: rgba(166, 205, 198, 0.2); }
-
-    @keyframes float {
-        from { transform: translate(0px, 0px) rotate(0deg); }
-        to { transform: translate(40px, -60px) rotate(180deg); }
+    @media (hover: hover) {
+      .flipbook-wrapper:hover .project-card.interactive-hint {
+        animation: none;
+      }
     }
 
-    /* Live Canvas Background */
-    #particle-canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -2;
-    }
-    
-    /* Top & Bottom Vignette for About Page */
-    .vignette {
-        position: fixed;
-        left: 0;
-        width: 100%;
-        z-index: 30;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 0.5s ease-in-out;
-    }
-    .vignette-top { top: 0; height: 8rem; background: linear-gradient(to bottom, #FBF5DD, transparent); }
-    .vignette-bottom { bottom: 0; height: 8rem; background: linear-gradient(to top, #FBF5DD, transparent); }
-    body.about-visible .vignette { opacity: 1; }
-
-    .break-long-words { word-break: break-all; }
-
-    /* --- START: Loader Styles --- */
-    .loader-overlay {
+        /* --- Page Backdrop for Overlay --- */
+    .page-backdrop {
       position: fixed;
       inset: 0;
-      background-color: #FBF5DD;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-    .loader-hidden { opacity: 0; visibility: hidden; }
-
-    .loader-wrapper {
-      position: relative;
-      width: 80px;
-      height: 80px;
-    }
-    .loader-circle-bg, .loader-circle-fg {
-      fill: none;
-      stroke-width: 4;
-    }
-    .loader-circle-bg {
-      stroke: rgba(22, 64, 77, 0.1); /* #16404D with 10% opacity */
-    }
-    .loader-circle-fg {
-      stroke: #A6CDC6; /* Main accent color */
-      stroke-linecap: round;
-      transform-origin: 50% 50%;
-      transform: rotate(-90deg);
-      transition: stroke-dashoffset 0.2s ease;
-    }
-    /* --- END: Loader Styles --- */
-
-    /* --- START: Cursor Glow Styles --- */
-    #cursor-glow {
-        position: fixed;
-        width: 400px; 
-        height: 400px;
-        background: radial-gradient(circle, rgba(166, 205, 198, 0.25) 0%, transparent 50%);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 50; 
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-        will-change: transform, opacity;
-    }
-    @media (hover: hover) and (pointer: fine) {
-      body:hover #cursor-glow { opacity: 1; }
-    }
-    #cursor-glow.is-active {
-        opacity: 1;
-        transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    /* --- END: Cursor Glow Styles --- */
-
-    /* --- Global Custom Scrollbar Styles --- */
-    ::-webkit-scrollbar { width: 14px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb {
-      background-color: #A6CDC6;
-      border-radius: 10px;
-      border: 4px solid #FBF5DD;
-    }
-    ::-webkit-scrollbar-thumb:hover { background-color: #DDA853; }
-    * { scrollbar-width: thin; scrollbar-color: #A6CDC6 #FBF5DD; }
-
-    /* --- Overlay CSS --- */
-    .project-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(251, 245, 221, 0.7);
-      backdrop-filter: blur(10px);
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background-color: rgba(22, 64, 77, 0.3); /* A semi-transparent version of your dark text color */
+      backdrop-filter: blur(4px); /* This adds the stylish blur effect */
+      z-index: 99; /* Positioned just below the project overlay */
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
+    .page-backdrop.is-visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* --- Background & UI Elements --- */
+    .shapes-container, #particle-canvas, .vignette, #cursor-glow { position: fixed; }
+    .shapes-container, #particle-canvas { top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .shapes-container { z-index: -1; }
+    #particle-canvas { z-index: -2; }
+    .shape { position: absolute; border-radius: 50%; background-color: rgba(166, 205, 198, 0.2); transition: transform 0.1s linear; animation: float 20s infinite linear alternate; }
+    .shape.s1 { width: 80px; height: 80px; top: 15%; left: 10%; animation-duration: 25s; }
+    .shape.s2 { width: 40px; height: 40px; top: 70%; left: 20%; animation-duration: 30s; border-radius: 30%; }
+    .shape.s3 { width: 120px; height: 120px; top: 50%; left: 80%; animation-duration: 18s; background-color: rgba(221, 168, 83, 0.2); }
+    .shape.s4 { width: 60px; height: 60px; top: 85%; left: 60%; animation-duration: 22s; border-radius: 40%; }
+    .shape.s5 { width: 50px; height: 50px; top: 20%; left: 75%; animation-duration: 28s; }
+    @keyframes float { from { transform: translate(0px, 0px) rotate(0deg); } to { transform: translate(40px, -60px) rotate(180deg); } }
+    .vignette { left: 0; width: 100%; z-index: 30; pointer-events: none; opacity: 0; transition: opacity 0.5s ease-in-out; }
+    .vignette-top { top: 0; height: 8rem; background: linear-gradient(to bottom, #FBF5DD, transparent); }
+    .vignette-bottom { bottom: 0; height: 8rem; background: linear-gradient(to top, #FBF5DD, transparent); }
+    body.about-visible .vignette { opacity: 1; }
+    #cursor-glow { width: 400px; height: 400px; background: radial-gradient(circle, rgba(166, 205, 198, 0.25) 0%, transparent 50%); border-radius: 50%; pointer-events: none; z-index: 50; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.4s ease; will-change: transform, opacity; }
+    @media (hover: hover) and (pointer: fine) { body:hover #cursor-glow { opacity: 1; } }
+    #cursor-glow.is-active { opacity: 1; transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+    /* Loader Styles */
+    .loader-overlay { position: fixed; inset: 0; background-color: #FBF5DD; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
+    .loader-hidden { opacity: 0; visibility: hidden; }
+    .loader-wrapper { position: relative; width: 80px; height: 80px; }
+    .loader-circle-bg, .loader-circle-fg { fill: none; stroke-width: 4; }
+    .loader-circle-bg { stroke: rgba(22, 64, 77, 0.1); }
+    .loader-circle-fg { stroke: #A6CDC6; stroke-linecap: round; transform-origin: 50% 50%; transform: rotate(-90deg); transition: stroke-dashoffset 0.2s ease; }
+
+    /* Scrollbar Styles */
+    ::-webkit-scrollbar { width: 14px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background-color: #A6CDC6; border-radius: 10px; border: 4px solid #FBF5DD; }
+    ::-webkit-scrollbar-thumb:hover { background-color: #DDA853; }
+    * { scrollbar-width: thin; scrollbar-color: #A6CDC6 #FBF5DD; }
+
+    /* Project Overlay */
+    .project-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(251, 245, 221, 0.7); backdrop-filter: blur(10px); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; }
     .project-overlay.is-visible { opacity: 1; visibility: visible; }
-    
-    .project-overlay-content {
-      position: relative;
-      background-color: #FBF5DD;
-      border: 1px solid rgba(22, 64, 77, 0.15);
-      border-radius: 16px;
-      width: 90%;
-      max-width: 800px;
-      max-height: 85vh;
-      transform: scale(0.95);
-      transition: transform 0.4s ease;
-      overflow: hidden; 
-      padding: 2.5rem;
-      display: flex;
-      flex-direction: column;
-    }
+    .project-overlay-content { position: relative; background-color: #FBF5DD; border: 1px solid rgba(22, 64, 77, 0.15); border-radius: 16px; width: 90%; max-width: 800px; max-height: 85vh; transform: scale(0.95); transition: transform 0.4s ease; overflow: hidden; padding: 2.5rem; display: flex; flex-direction: column; }
     .project-overlay.is-visible .project-overlay-content { transform: scale(1); }
-    #overlayScrollWrapper {
-        overflow-y: auto;
-        flex-grow: 1;
-        padding-right: 1.5rem; 
-        margin-right: -1.5rem;
-    }
+    #overlayScrollWrapper { overflow-y: auto; flex-grow: 1; padding-right: 1.5rem; margin-right: -1.5rem; }
 
-    .close-button {
-      position: fixed;
-      top: 2rem;
-      right: 2rem;
-      cursor: pointer;
-      color: rgba(22, 64, 77, 0.7);
-      transition: color 0.2s ease, transform 0.2s ease;
-      z-index: 310; /* Make sure it's above lightbox */
-    }
+    /* Lightbox (Image & Iframe) Styles */
+    .close-button { position: fixed; top: 2rem; right: 2rem; cursor: pointer; color: rgba(22, 64, 77, 0.7); transition: color 0.2s ease, transform 0.2s ease; z-index: 310; }
     .close-button:hover { color: #16404D; transform: scale(1.1); }
-
+    
         /* --- Image Lightbox Styles --- */
     .lightbox-overlay {
         position: fixed;
@@ -351,79 +225,8 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s ease;
-        overflow: hidden; /* Hide overflowing zoomed image */
-    }
-
-    .lightbox-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(22, 64, 77, 0.4);
-      color: white;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s ease, background-color 0.2s ease;
-      z-index: 210;
-    }
-    .lightbox-nav:hover {
-      opacity: 1;
-      background-color: rgba(22, 64, 77, 0.7);
-    }
-    .lightbox-nav.prev {
-      left: 1.5rem;
-    }
-    .lightbox-nav.next {
-      right: 1.5rem;
-    }
-    .lightbox-nav.hidden {
-      display: none;
-    }
-    .lightbox-overlay.is-visible { opacity: 1; visibility: visible; }
-    
-    #lightboxContainer {
-      transition: transform 0.2s ease-out; /* For smooth zooming */
-    }
-    
-    .lightbox-image {
-        max-width: 90vw;
-        max-height: 90vh;
-        transform: scale(0.95);
-        transition: transform 0.3s ease;
-        cursor: grab;
-        user-select: none;
-        -webkit-user-drag: none;
-    }
-    .lightbox-image.is-panning {
-      cursor: grabbing;
-    }
-    .lightbox-overlay.is-visible .lightbox-image { transform: scale(1); }
-    .lightbox-trigger { cursor: zoom-in; }
-
-    .lightbox-controls {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 210;
-      display: flex;
-      gap: 1rem;
-      background-color: rgba(22, 64, 77, 0.7);
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-    }
-    .lightbox-controls button {
-      color: white;
-      opacity: 0.8;
-      transition: opacity 0.2s ease;
-    }
-    .lightbox-controls button:hover {
-      opacity: 1;
+        overflow: hidden; /* Important for pan */
+        touch-action: none; /* CRITICAL FIX for pinch-zoom */
     }
 
     /* --- Iframe Lightbox Styles --- */
@@ -441,94 +244,50 @@
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0.3s ease;
     }
-    .iframe-lightbox.is-visible { opacity: 1; visibility: visible; }
-    .iframe-lightbox-content {
-      width: 100%;
-      height: 100%;
-      border: 1px solid rgba(22, 64, 77, 0.15);
-      border-radius: 0.5rem;
-      overflow: hidden;
-    }
-    .iframe-lightbox-content iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
+    .lightbox-overlay { z-index: 200; padding: 1rem; overflow: hidden; touch-action: none; }
+    .iframe-lightbox { z-index: 300; padding: 2.5rem; }
+    .lightbox-overlay.is-visible, .iframe-lightbox.is-visible { opacity: 1; visibility: visible; }
     
-    /* --- Responsive Video & Iframe Containers --- */
-    .video-container, .iframe-wrapper {
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      border-radius: 0.5rem;
-      margin: 1.5rem 0;
-    }
-    .video-container {
-      padding-top: 56.25%; /* 16:9 Aspect Ratio */
-      background: #000;
-    }
-    .iframe-wrapper {
-      padding-top: 75%; /* 4:3 Aspect Ratio for Desktop */
-      border: 1px solid rgba(22, 64, 77, 0.15);
-    }
-    @media (max-width: 768px) {
-      .iframe-wrapper {
-        padding-top: 177.77%; /* 9:16 Vertical Aspect Ratio for Mobile */
-      }
-    }
-    .video-container iframe, .iframe-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
+    #lightboxContainer { transition: transform 0.2s ease-out; }
+    .lightbox-image { max-width: 90vw; max-height: 90vh; cursor: grab; user-select: none; -webkit-user-drag: none; }
+    .lightbox-image.is-panning { cursor: grabbing; }
+    .lightbox-trigger { cursor: zoom-in; }
+
+    .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(22, 64, 77, 0.4); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease, background-color 0.2s ease; z-index: 210; }
+    .lightbox-nav:hover { opacity: 1; background-color: rgba(22, 64, 77, 0.7); }
+    .lightbox-nav.prev { left: 1.5rem; }
+    .lightbox-nav.next { right: 1.5rem; }
+    .lightbox-nav.hidden { display: none; }
+
+    .lightbox-controls { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 210; display: flex; gap: 1rem; background-color: rgba(22, 64, 77, 0.7); padding: 0.5rem 1rem; border-radius: 9999px; }
+    .lightbox-controls button { color: white; opacity: 0.8; transition: opacity 0.2s ease; }
+    .lightbox-controls button:hover { opacity: 1; }
+
+    .iframe-lightbox-content { width: 100%; height: 100%; border: 1px solid rgba(22, 64, 77, 0.15); border-radius: 0.5rem; overflow: hidden; }
+    .iframe-lightbox-content iframe { width: 100%; height: 100%; border: 0; }
     
-    .iframe-fullscreen-trigger {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      background-color: rgba(22, 64, 77, 0.7);
-      color: white;
-      border-radius: 50%;
-      cursor: pointer;
-      opacity: 0;
-      transform: scale(0.9);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      z-index: 10;
-    }
-    .iframe-wrapper:hover .iframe-fullscreen-trigger {
-      opacity: 1;
-      transform: scale(1);
-    }
-    /* Make button visible on touch devices */
-    @media (hover: none) and (pointer: coarse) {
-      .iframe-fullscreen-trigger {
-        opacity: 1;
-        transform: scale(1);
-        background-color: rgba(22, 64, 77, 0.5);
-      }
-    }
+    .video-container, .iframe-wrapper { position: relative; overflow: hidden; width: 100%; border-radius: 0.5rem; margin: 1.5rem 0; }
+    .video-container { padding-top: 56.25%; background: #000; }
+    .iframe-wrapper { padding-top: 75%; border: 1px solid rgba(22, 64, 77, 0.15); }
+    @media (max-width: 768px) { .iframe-wrapper { padding-top: 177.77%; } }
+    .video-container iframe, .iframe-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
     
-    /* --- Mobile Responsive Styles --- */
+    .iframe-fullscreen-trigger { position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background-color: rgba(22, 64, 77, 0.7); color: white; border-radius: 50%; cursor: pointer; opacity: 0; transform: scale(0.9); transition: opacity 0.3s ease, transform 0.3s ease; z-index: 10; }
+    .iframe-wrapper:hover .iframe-fullscreen-trigger { opacity: 1; transform: scale(1); }
+    @media (hover: none) and (pointer: coarse) { .iframe-fullscreen-trigger { opacity: 1; transform: scale(1); background-color: rgba(22, 64, 77, 0.5); } }
+    
+    /* --- Responsive & Tablet Styles --- */
+    @media (max-width: 1024px) {
+      .arrow-indicator { display: none !important; }
+    }
     @media (max-width: 768px) {
       .fixed.top-6.left-6 { transform: scale(0.9); transform-origin: top left; }
       .social-icons { flex-direction: row; right: 1.5rem; transform: scale(0.9); transform-origin: bottom right; }
       nav.fixed.top-1\/2 { top: auto; bottom: 1.5rem; left: 1.5rem; flex-direction: row; transform: none; }
-      .arrow-indicator { opacity: 0.6 !important; }
     }
-    
-    /* --- Tablet Responsive Styles --- */
     @media (min-width: 769px) and (max-width: 1024px) {
       #work section { padding: 0 1rem; }
       .flipbook-wrapper { max-width: 680px; height: 480px; }
-      .arrow-indicator { opacity: 0.6 !important; }
       #about .mx-auto.max-w-6xl { padding-left: 7rem; }
     }
   </style>
@@ -540,10 +299,7 @@
     <div class="loader-wrapper">
       <svg viewBox="0 0 36 36">
         <circle class="loader-circle-bg" cx="18" cy="18" r="15.9155"></circle>
-        <circle id="loader-circle" class="loader-circle-fg"
-          stroke-dasharray="100, 100"
-          stroke-dashoffset="100"
-          cx="18" cy="18" r="15.9155"></circle>
+        <circle id="loader-circle" class="loader-circle-fg" stroke-dasharray="100, 100" stroke-dashoffset="100" cx="18" cy="18" r="15.9155"></circle>
       </svg>
     </div>
   </div>
@@ -551,9 +307,7 @@
   <!-- Main content wrapper -->
   <div id="main-content" class="opacity-0 invisible transition-opacity duration-500">
     <div id="cursor-glow"></div>
-
     <canvas id="particle-canvas"></canvas>
-
     <div class="shapes-container">
       <div class="shape s1" data-speed="-0.3"></div>
       <div class="shape s2" data-speed="0.5"></div>
@@ -564,62 +318,39 @@
 
     <!-- Persistent UI Elements -->
     <div class="fixed top-7 left-7 z-40">
-      <a href="#" class="font-semibold tracking-wide text-2xl">Hari<span class="text-[#DDA853]"></span></a>
+      <a href="#" class="font-semibold tracking-wide text-2xl">Hari</a>
       <p class="text-base text-[#16404D]/70">UX/Visual Designer</p>
     </div>
-
-    <nav class="
-    fixed z-40 gap-2
-    flex bottom-6 left-4 flex-row
-    lg:top-1/2 lg:-translate-y-1/2 lg:left-6 lg:bottom-auto lg:flex-col
-    ">
-      <button id="navWork" class="px-4 py-2 rounded-full bg-[#A6CDC6]/40 hover:bg-[#A6CDC6]/60 text-base font-medium">
-        Work
-      </button>
-      <button id="navAbout" class="px-4 py-2 rounded-full hover:bg-[#A6CDC6]/40 text-base font-medium">
-        About
-      </button>
+    <nav class="fixed z-40 gap-2 flex bottom-6 left-4 flex-row lg:top-1/2 lg:-translate-y-1/2 lg:left-6 lg:bottom-auto lg:flex-col">
+      <button id="navWork" class="px-4 py-2 rounded-full bg-[#A6CDC6]/40 hover:bg-[#A6CDC6]/60 text-base font-medium">Work</button>
+      <button id="navAbout" class="px-4 py-2 rounded-full hover:bg-[#A6CDC6]/40 text-base font-medium">About</button>
     </nav>
-
-
     <div class="social-icons fixed bottom-8 md:bottom-6 right-6 z-40 flex flex-row lg:flex-col items-center gap-4 text-[#16404D]/80">
         <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener noreferrer" class="hover:text-[#16404D]" aria-label="LinkedIn">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
         </a>
         <a href="https://instagram.com/haxrxri" target="_blank" rel="noopener noreferrer" class="hover:text-[#16404D]" aria-label="Instagram">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.058 1.644.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
-        </a>
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.058 1.644.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>        </a>
         <a href="mailto:harigovind.ie@gmail.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#16404D]" aria-label="Email">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
         </a>
     </div>
-    <!-- End of Persistent UI -->
-
-    <!-- Gradient Vignettes for About Page -->
-    <div class="vignette vignette-top"></div>
-    <div class="vignette vignette-bottom"></div>
 
     <!-- Page Content Area -->
     <div class="relative">
-        <!-- WORK (Home) -->
         <main id="work" class="page-section h-screen flex items-center justify-center">
-          <!-- FIXED: Added padding to this inner section instead of the main element -->
           <section class="w-full max-w-7xl mx-auto h-full px-4 pt-24 pb-32 md:py-0 flex items-center">
             <div class="flipbook-wrapper relative w-full h-full md:h-[520px] max-w-4xl group mx-auto">
                 <button id="prevBtn" class="absolute top-0 left-0 w-1/4 h-full z-30"></button>
-                <div id="flipbook" class="flipbook-container">
-                    <!-- Project cards will be injected here by JS -->
-                </div>
+                <div id="flipbook" class="flipbook-container"></div>
                 <button id="nextBtn" class="absolute top-0 right-0 w-1/4 h-full z-30"></button>
             </div>
           </section>
         </main>
 
-        <!-- ABOUT -->
         <section id="about" class="page-section page-hidden absolute top-0 left-0 w-full min-h-screen flex items-center pt-28 pb-20">
           <div class="mx-auto max-w-6xl px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <!-- Left Column: Photo and Education -->
               <div class="md:col-start-1 space-y-8 order-1 md:order-1">
                 <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 p-0 fade-in flex items-center justify-center aspect-square overflow-hidden">
                   <img src="images/Profile_image2.jpg" alt="A photo of Hari" class="w-full h-full object-cover">
@@ -640,8 +371,6 @@
                   </div>
                 </div>
               </div>
-
-              <!-- Right Column: Info, Skills, Work Experience -->
               <div class="md:col-span-2 space-y-8 order-2 md:order-2">
                   <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 p-6 fade-in">
                     <div class="flex flex-wrap justify-between items-center mb-2 gap-4">
@@ -667,7 +396,7 @@
                   </div>
                   <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 fade-in p-6">
                     <h3 class="text-xl font-semibold mb-4">Work Experience</h3>
-                    <div class="max-h-[24rem] md:max-h-80 overflow-y-auto space-y-6 custom-scrollbar pr-2">
+                    <div id="workExperienceScroller" class="max-h-[24rem] md:max-h-80 overflow-y-auto space-y-6 custom-scrollbar pr-2">
                       <!-- All experience items here -->
                       <div>
                         <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#16404D]">UX analysis and Content curation</h4><p class="text-xs text-[#16404D]/60">[Jan ‘25 - March ‘25]</p></div>
@@ -727,12 +456,12 @@
     </div>
   </div>
 
+  <div id="pageBackdrop" class="page-backdrop"></div>
+
   <!-- Overlay HTML -->
   <div id="projectOverlay" class="project-overlay">
     <div class="project-overlay-content">
-        <div id="overlayScrollWrapper">
-            <!-- Dynamic content will be injected here -->
-        </div>
+        <div id="overlayScrollWrapper"></div>
     </div>
     <div id="closeOverlay" class="close-button" aria-label="Close project details">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -744,14 +473,12 @@
     <div id="lightboxContainer">
         <img id="lightboxImage" src="" alt="Expanded project image" class="lightbox-image">
     </div>
-
     <button id="prevImageBtn" class="lightbox-nav prev" aria-label="Previous image">
         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
     </button>
     <button id="nextImageBtn" class="lightbox-nav next" aria-label="Next image">
         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
     </button>
-
     <div id="lightboxControls" class="lightbox-controls">
         <button id="zoomOutBtn" aria-label="Zoom out">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
@@ -760,7 +487,6 @@
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m-3-3h6"></path></svg>
         </button>
     </div>
-
     <div id="closeLightbox" class="close-button" aria-label="Close image view">
         <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
     </div>
@@ -776,17 +502,13 @@
     </div>
   </div>
 
-
   <script>
-    // --- Project Data ---
-    const isMobile = window.innerWidth < 768;
-
     const projects = [
       {
         title: "City, Beneath the Surface",
         category: "Data Visualization",
         description: "An interactive data visualization and public installation that reveals the invisible labor sustaining cities by transforming public sentiment into dynamic visual form.",
-        image: isMobile ? "images/City/City_MainS.jpg" : "images/City/City_Main.jpg",
+        image: "images/City/City_Main.jpg",
         year: "2025",
         tags: ["Information Design", "UX Design", "Data Visualization", "Public Installation", "Interactive Design"],
         details: {
@@ -854,8 +576,6 @@
                                     "The potential and limits of AI-assisted coding as a design partner, and the importance of taking creative control in the final refinements.",
                                     "The need to balance clarity and exploration, ensuring accessibility for the general public while keeping the experience compelling for institutions and stakeholders."]},
             { type: 'image', value: 'images/City/City_Last.jpg' },
-
-            
           ]
         }
       },
@@ -895,7 +615,8 @@
         title: "ArtBox",
         category: "Product Design",
         description: "A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.",
-        image: isMobile ? "images/Artbox/ArtboxS.jpg" : "images/Artbox/Artbox.jpg",
+        imageDesktop: "images/Artbox/Artbox.jpg",
+        imageMobile: "images/Artbox/ArtboxS.jpg",
         year: "2022",
         tags: ["Brand", "Packaging", "UX Design", "Service Design"],
         details: {
@@ -923,7 +644,8 @@
         title: "Aujus",
         category: "System Design",
         description: "A 5-week semester project to understand and design for complex, interconnected socio-economic problems.",
-        image: isMobile ? "images/Aujus/AujusS.jpg" : "images/Aujus/Aujus.jpg",
+        imageDesktop: "images/Aujus/Aujus.jpg",
+        imageMobile: "images/Aujus/AujusS.jpg",
         year: "2022",
         tags: ["System Design", "Service Design", "Wayfinding", "UX/UI"],
         details: {
@@ -965,7 +687,8 @@
         title: "3D Typography",
         category: "3D Art",
         description: "Crafted using Blender, each letter is a blend of creativity and technical skill. ",
-        image: isMobile ? "images/3D/3D_TitleS.jpg" : "images/3D/3D_Title.jpg",
+        imageDesktop: "images/3D/3D_Title.jpg",
+        imageMobile: "images/3D/3D_TitleS.jpg",
         year: "2023",
         tags: ["3D", "Blender", "Art"],
         details: {
@@ -1020,8 +743,8 @@
             { type: 'paragraph', value: "Some models made from scratch" },
             { type: 'image', value: 'images/Cars/Cars_Img2.jpg' },
             { type: 'heading', value: 'Real-time View' },
-            { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="Honda Civic First Generation" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/9d71ea92a33c4a1e82cc589730822f63/embed?autospin=1&transparent=1&ui_hint=2"> </iframe> </div>` },
-            { type: 'sketchfab', value: `<<div class="sketchfab-embed-wrapper"> <iframe title="SB1 Civic in Naked Style" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/fab52fc398b44564be1b22f8a4dbf23c/embed?autospin=1&transparent=1&ui_theme=dark"> </iframe> </div>` },
+            { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="Honda Civic First Generation" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/9d71ea92a33c4a1e82cc589730822f63/embed?autospin=1&autostart=1"> </iframe> </div>` },
+            { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="SB1 Civic in Naked Style" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share" src="https://sketchfab.com/models/fab52fc398b44564be1b22f8a4dbf23c/embed?autospin=1&autostart=1"> </iframe> </div>` },
             { type: 'heading', value: 'Videos' },
             { type: 'paragraph', value: "The animation showcases 3D cars modeled in Blender, driving through richly detailed environments composed of sourced elements. The project highlights both modeling and animation skills, bringing vehicles to life within dynamic scenes." },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935375739?h=783ccfb540" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
@@ -1086,47 +809,42 @@
         function preloadImages(onProgress) {
             const imageSources = new Set();
             projects.forEach(p => {
-                imageSources.add(p.image);
+                if (p.image) imageSources.add(p.image);
+                if (p.imageDesktop) imageSources.add(p.imageDesktop);
+                if (p.imageMobile) imageSources.add(p.imageMobile);
+                
                 p.details.content.forEach(item => {
-                    if (item.type === 'image') {
-                        imageSources.add(item.value);
-                    }
+                    if (item.type === 'image') imageSources.add(item.value);
+                    if (item.type === 'gallery') item.value.forEach(src => imageSources.add(src));
                 });
             });
-            // Add profile image to preloader
             imageSources.add('images/Profile_image2.jpg');
 
             const sources = Array.from(imageSources);
             const totalImages = sources.length;
             let loadedImages = 0;
 
-            if (totalImages === 0) {
-                return Promise.resolve();
-            }
+            if (totalImages === 0) return Promise.resolve();
 
             const promises = sources.map(src => {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve) => {
                     const img = new Image();
                     img.src = src;
-                    img.onload = () => {
+                    const onFinish = () => {
                         loadedImages++;
                         const progress = (loadedImages / totalImages) * 100;
                         onProgress(progress);
                         resolve();
                     };
-                    img.onerror = () => {
-                        loadedImages++; // Still count it to not stall the loader
-                        const progress = (loadedImages / totalImages) * 100;
-                        onProgress(progress);
-                        reject(`Failed to load ${src}`);
-                    };
+                    img.onload = onFinish;
+                    img.onerror = onFinish; 
                 });
             });
-
-            return Promise.all(promises.map(p => p.catch(e => e))); // Continue even if some images fail
+            return Promise.all(promises);
         }
 
         function initializeApp() {
+            const pageBackdrop = document.getElementById('pageBackdrop');
             const cursorGlow = document.getElementById('cursor-glow');
             if (cursorGlow) {
                 let touchTimer;
@@ -1233,6 +951,7 @@
             const navAbout = document.getElementById('navAbout');
             const secWork = document.getElementById('work');
             const secAbout = document.getElementById('about');
+            const workExperienceScroller = document.getElementById('workExperienceScroller');
 
             function show(page){
               if(page === 'work'){
@@ -1240,7 +959,6 @@
                  secAbout.classList.add('page-hidden');
                   navWork.classList.add('bg-[#A6CDC6]/40');
                   navAbout.classList.remove('bg-[#A6CDC6]/40');
-
                   document.body.classList.add('no-scroll','body-lock');
                   document.documentElement.classList.add('body-lock');
                   document.body.classList.remove('about-visible');
@@ -1249,12 +967,17 @@
                   secWork.classList.add('page-hidden');
                   navAbout.classList.add('bg-[#A6CDC6]/40');
                   navWork.classList.remove('bg-[#A6CDC6]/40');
-
                   document.body.classList.remove('no-scroll','body-lock');
                   document.documentElement.classList.remove('body-lock');
                   document.body.classList.add('about-visible');
+                  
+                  setTimeout(() => {
+                      window.scrollTo({ top: 0, behavior: 'instant' });
+                      if (workExperienceScroller) {
+                          workExperienceScroller.scrollTop = 0;
+                      }
+                  }, 0);
                 }
-                window.scrollTo({ top: 0, behavior: 'instant' });
             }
 
             navWork.addEventListener('click', () => show('work'));
@@ -1270,18 +993,11 @@
                 const card = document.createElement('div');
                 card.className = 'project-card interactive-hint';
                 if (i > 0) card.classList.add('is-next');
-
                 const tagsHTML = p.tags.map(t => `<span class="px-2.5 py-1 rounded-full bg-[#FBF5DD]/30 backdrop-blur-sm border border-[#16404D]/20">${t}</span>`).join('');
                 
-                // NEW: Logic to handle single vs multiple images
                 const imageHTML = p.imageDesktop 
-                  ? `
-                    <img class="absolute inset-0 w-full h-full object-cover card-image-desktop" src="${p.imageDesktop}" alt="${p.title}" />
-                    <img class="absolute inset-0 w-full h-full object-cover card-image-mobile" src="${p.imageMobile}" alt="${p.title}" />
-                  `
-                  : `
-                    <img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />
-                  `;
+                  ? `<img class="absolute inset-0 w-full h-full object-cover card-image-desktop" src="${p.imageDesktop}" alt="${p.title}" /><img class="absolute inset-0 w-full h-full object-cover card-image-mobile" src="${p.imageMobile}" alt="${p.title}" />`
+                  : `<img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />`;
 
                 card.innerHTML = `
                     <div class="relative w-full h-full rounded-2xl overflow-hidden border border-[#16404D]/20 shadow-2xl shadow-black/20 group">
@@ -1372,6 +1088,7 @@
             let scale = 1, isPanning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 }, initialPinchDistance = null;
             let currentLightboxImages = [];
             let currentLightboxIndex = 0;
+            const pointerCache = [];
 
             function populateOverlay(project) {
                 overlayScrollWrapper.innerHTML = '';
@@ -1448,11 +1165,14 @@
             function openModal(index) {
                 const project = projects[index];
                 populateOverlay(project);
+                overlayScrollWrapper.scrollTop = 0;
+                pageBackdrop.classList.add('is-visible');
                 projectOverlay.classList.add('is-visible');
                 document.body.style.overflow = 'hidden';
             }
 
             function closeModal() {
+                pageBackdrop.classList.remove('is-visible');
                 projectOverlay.classList.remove('is-visible');
                 if (!document.body.classList.contains('about-visible')) {
                     document.body.classList.add('no-scroll');
@@ -1509,16 +1229,22 @@
 
             function handleZoom(delta, clientX, clientY) {
                 const rect = lightboxContainer.getBoundingClientRect();
-                const xs = (clientX - rect.left - pointX) / scale;
-                const ys = (clientY - rect.top - pointY) / scale;
+                // Correctly calculate mouse position relative to the image
+                const xs = (clientX - rect.left) / scale;
+                const ys = (clientY - rect.top) / scale;
+
                 const newScale = Math.max(1, Math.min(5, scale * Math.exp(delta)));
-                if (newScale === 1) {
-                    pointX = 0; pointY = 0;
-                } else {
-                    pointX = clientX - rect.left - xs * newScale;
-                    pointY = clientY - rect.top - ys * newScale;
-                }
+                
+                // Correctly calculate the new position to zoom towards the cursor
+                pointX += (xs - pointX / scale) * (scale - newScale);
+                pointY += (ys - pointY / scale) * (scale - newScale);
+                
                 scale = newScale;
+
+                if (scale === 1) {
+                    pointX = 0;
+                    pointY = 0;
+                }
                 updateTransform();
             }
 
@@ -1531,18 +1257,10 @@
                 iframeLightbox.classList.remove('is-visible');
                 lightboxIframe.src = '';
             }
-
-            openProjectBtns.forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const projectIndex = e.currentTarget.dataset.index;
-                    openModal(projectIndex);
-                });
-            });
-
+            
+            openProjectBtns.forEach(btn => btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.index)));
             closeOverlayBtn.addEventListener('click', closeModal);
-            projectOverlay.addEventListener('click', (e) => {
-                if (e.target === projectOverlay) closeModal();
-            });
+            projectOverlay.addEventListener('click', (e) => { if (e.target === projectOverlay) closeModal(); });
 
             overlayScrollWrapper.addEventListener('click', (e) => {
                 const trigger = e.target.closest('.lightbox-trigger');
@@ -1558,13 +1276,8 @@
             });
 
             closeLightboxBtn.addEventListener('click', closeLightbox);
-            imageLightbox.addEventListener('click', (e) => {
-                if (e.target === imageLightbox && scale === 1) closeLightbox();
-            });
-
             nextImageBtn.addEventListener('click', showNextImage);
             prevImageBtn.addEventListener('click', showPrevImage);
-
             zoomInBtn.addEventListener('click', () => handleZoom(0.2, window.innerWidth / 2, window.innerHeight / 2));
             zoomOutBtn.addEventListener('click', () => handleZoom(-0.2, window.innerWidth / 2, window.innerHeight / 2));
             
@@ -1573,31 +1286,37 @@
                 handleZoom(-e.deltaY / 100, e.clientX, e.clientY);
             });
 
-            let activeTouches = [];
-            lightboxContainer.addEventListener('pointerdown', (e) => {
-                if (scale <= 1) return;
-                if (e.pointerType === 'touch') {
-                    activeTouches.push(e);
-                    if (activeTouches.length === 2) {
-                        initialPinchDistance = Math.hypot(activeTouches[0].clientX - activeTouches[1].clientX, activeTouches[0].clientY - activeTouches[1].clientY);
-                    }
-                } else if (e.button === 0) {
+            function removePointer(e) {
+                const index = pointerCache.findIndex(p => p.pointerId === e.pointerId);
+                if (index > -1) pointerCache.splice(index, 1);
+            }
+
+            function stopPanning() {
+                isPanning = false;
+                initialPinchDistance = null;
+                lightboxImage.classList.remove('is-panning');
+            }
+
+            imageLightbox.addEventListener('pointerdown', (e) => {
+                pointerCache.push(e);
+                if (pointerCache.length === 2) {
+                    initialPinchDistance = Math.hypot(pointerCache[0].clientX - pointerCache[1].clientX, pointerCache[0].clientY - pointerCache[1].clientY);
+                } else if (pointerCache.length === 1 && scale > 1) {
                     start = { x: e.clientX - pointX, y: e.clientY - pointY };
                     isPanning = true;
                     lightboxImage.classList.add('is-panning');
                 }
-                if(scale > 1) e.preventDefault();
             });
 
-            lightboxContainer.addEventListener('pointermove', (e) => {
-                if (e.pointerType === 'touch' && activeTouches.length === 2) {
-                    const index = activeTouches.findIndex(p => p.pointerId === e.pointerId);
-                    if (index !== -1) activeTouches[index] = e;
-                    
-                    const newPinchDistance = Math.hypot(activeTouches[0].clientX - activeTouches[1].clientX, activeTouches[0].clientY - activeTouches[1].clientY);
+            imageLightbox.addEventListener('pointermove', (e) => {
+                const index = pointerCache.findIndex(p => p.pointerId === e.pointerId);
+                if (index > -1) pointerCache[index] = e;
+
+                if (pointerCache.length === 2 && initialPinchDistance) {
+                    const newPinchDistance = Math.hypot(pointerCache[0].clientX - pointerCache[1].clientX, pointerCache[0].clientY - pointerCache[1].clientY);
                     const delta = newPinchDistance - initialPinchDistance;
-                    const centerX = (activeTouches[0].clientX + activeTouches[1].clientX) / 2;
-                    const centerY = (activeTouches[0].clientY + activeTouches[1].clientY) / 2;
+                    const centerX = (pointerCache[0].clientX + pointerCache[1].clientX) / 2;
+                    const centerY = (pointerCache[0].clientY + pointerCache[1].clientY) / 2;
                     handleZoom(delta / 100, centerX, centerY);
                     initialPinchDistance = newPinchDistance;
                 } else if (isPanning) {
@@ -1607,25 +1326,12 @@
                 }
             });
 
-            const stopInteraction = (e) => {
-                if (e.pointerType === 'touch') {
-                    const index = activeTouches.findIndex(p => p.pointerId === e.pointerId);
-                    if (index !== -1) activeTouches.splice(index, 1);
-                    if (activeTouches.length < 2) initialPinchDistance = null;
-                } else {
-                    isPanning = false;
-                    lightboxImage.classList.remove('is-panning');
-                }
-            };
-
-            lightboxContainer.addEventListener('pointerup', stopInteraction);
-            lightboxContainer.addEventListener('pointerleave', stopInteraction);
-            lightboxContainer.addEventListener('pointercancel', stopInteraction);
+            imageLightbox.addEventListener('pointerup', (e) => { removePointer(e); stopPanning(); });
+            imageLightbox.addEventListener('pointercancel', (e) => { removePointer(e); stopPanning(); });
+            imageLightbox.addEventListener('pointerleave', (e) => { removePointer(e); stopPanning(); });
             
             closeIframeLightboxBtn.addEventListener('click', closeIframeLightbox);
-            iframeLightbox.addEventListener('click', (e) => {
-                if (e.target === iframeLightbox) closeIframeLightbox();
-            });
+            iframeLightbox.addEventListener('click', (e) => { if (e.target === iframeLightbox) closeIframeLightbox(); });
 
             document.addEventListener('keydown', (e) => {
                 if (iframeLightbox.classList.contains('is-visible')) {
@@ -1656,10 +1362,10 @@
                 handleGesture();
             }, { passive: true });
         }
-
+        
         preloadImages(setProgress)
             .then(() => {
-                setTimeout(() => { // Add a small delay for the 100% to be visible
+                setTimeout(() => {
                     loader.classList.add('loader-hidden');
                     mainContent.classList.remove('opacity-0', 'invisible');
                     
@@ -1672,7 +1378,6 @@
             })
             .catch(error => {
                 console.error("Error preloading images:", error);
-                // Still initialize the app even if images fail
                 loader.classList.add('loader-hidden');
                 mainContent.classList.remove('opacity-0', 'invisible');
                 initializeApp();
