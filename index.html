@@ -259,6 +259,10 @@
       <div class="shape s5" data-speed="-0.5"></div>
     </div>
 
+    <!-- Mobile UI Gradients -->
+    <div class="fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FBF5DD] via-[#FBF5DD]/80 to-transparent z-30 pointer-events-none lg:hidden"></div>
+    <div class="fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#FBF5DD] via-[#FBF5DD]/80 to-transparent z-30 pointer-events-none lg:hidden"></div>
+
     <!-- Persistent UI Elements -->
     <div class="fixed top-7 left-7 z-40">
       <a href="#" class="font-semibold tracking-wide text-2xl">Hari</a>
@@ -933,10 +937,13 @@
 
             projects.forEach((p, i) => {
                 const card = document.createElement('div');
-                // The first card should not have the hint animation initially
-                card.className = i === 0 ? 'project-card interactive-hint' : 'project-card';
-                // All cards except the first are positioned off-screen to the left
-                if (i > 0) card.classList.add('is-next');
+                card.className = 'project-card';
+                if (i === 0) {
+                    card.classList.add('interactive-hint');
+                } else {
+                    // All non-active cards start on the right, ready to be flipped to.
+                    card.classList.add('is-flipped');
+                }
                 
                 const tagsHTML = p.tags.map(t => `<span class="px-2.5 py-1 rounded-full bg-[#FBF5DD]/30 backdrop-blur-sm border border-[#16404D]/20">${t}</span>`).join('');
                 
@@ -981,12 +988,11 @@
             window.addEventListener('resize', setVH);
             window.addEventListener('orientationchange', setVH);
 
-            // ***** FIXED: New flip function for mobile and desktop consistency *****
+            // ***** ROBUST FLIP FUNCTION *****
             function flip(direction) {
                 if (isFlipping) return;
                 isFlipping = true;
 
-                // Stop the hint animation on the current card
                 projectCards[currentIndex].classList.remove('interactive-hint');
 
                 const currentCard = projectCards[currentIndex];
@@ -998,41 +1004,39 @@
                 // 1. Prepare the incoming card by moving it to its starting position *without* a transition.
                 nextCard.style.transition = 'none';
                 if (direction === 'next') {
-                    // Position it on the right, ready to flip in.
+                    // This card is coming from the right, so it starts flipped.
                     nextCard.classList.remove('is-next');
                     nextCard.classList.add('is-flipped');
-                } else {
-                    // Position it on the left, ready to flip in.
+                } else { // 'prev'
+                    // This card is coming from the left, so it starts as "next".
                     nextCard.classList.remove('is-flipped');
                     nextCard.classList.add('is-next');
                 }
 
-                // 2. Use a tiny timeout. This forces the browser to apply the above style changes
-                // before we add the next set of changes, ensuring the transition works.
-                setTimeout(() => {
-                    // 3. Re-enable transitions for a smooth animation.
-                    nextCard.style.transition = 'transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.5s';
-                    
-                    // 4. Trigger the animations.
-                    if (direction === 'next') {
-                        // Flip the current card away to the left.
-                        currentCard.classList.add('is-next');
-                    } else {
-                        // Flip the current card away to the right.
-                        currentCard.classList.add('is-flipped');
-                    }
-                    // Flip the incoming card to the center.
-                    nextCard.classList.remove('is-flipped', 'is-next');
-                    
-                    currentIndex = nextIndex;
+                // 2. Force a browser reflow. This is a robust way to ensure the styles from step 1
+                // are applied before we add the transitions for the animation in step 3.
+                void nextCard.offsetWidth;
 
-                    // 5. Set a timeout to prevent another flip until this one is finished.
-                    setTimeout(() => {
-                        isFlipping = false;
-                        // Add hint animation to the new current card
-                        projectCards[currentIndex].classList.add('interactive-hint');
-                    }, 700);
-                }, 20);
+                // 3. Re-enable transitions and trigger the animation.
+                nextCard.style.transition = 'transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.5s';
+                
+                if (direction === 'next') {
+                    // Flip the current card away to the left.
+                    currentCard.classList.add('is-next');
+                } else { // 'prev'
+                    // Flip the current card away to the right.
+                    currentCard.classList.add('is-flipped');
+                }
+                // Flip the incoming card to the center.
+                nextCard.classList.remove('is-flipped', 'is-next');
+                
+                currentIndex = nextIndex;
+
+                // 4. After the animation duration, allow flipping again and add the hint.
+                setTimeout(() => {
+                    isFlipping = false;
+                    projectCards[currentIndex].classList.add('interactive-hint');
+                }, 700);
             }
 
             document.getElementById('prevBtn').addEventListener('click', () => flip('prev'));
