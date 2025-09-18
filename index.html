@@ -94,11 +94,13 @@
       transform: rotateY(180deg) rotateX(60deg);
       opacity: 0;
       z-index: 1;
+      pointer-events: none;
     }
     .project-card.is-next {
       transform: rotateY(-180deg) rotateX(-60deg);
       opacity: 0;
       z-index: 1;
+      pointer-events: none;
     }
     .card-image-desktop { display: block; }
     .card-image-mobile { display: none; }
@@ -934,7 +936,7 @@
             let projectCards = [];
             let isFlipping = false;
 
-            projects.forEach((p, i) => {
+                        projects.forEach((p, i) => {
                 const card = document.createElement('div');
                 card.className = 'project-card interactive-hint';
                 if (i > 0) card.classList.add('is-next');
@@ -944,28 +946,33 @@
                   ? `<img class="absolute inset-0 w-full h-full object-cover card-image-desktop" src="${p.imageDesktop}" alt="${p.title}" /><img class="absolute inset-0 w-full h-full object-cover card-image-mobile" src="${p.imageMobile}" alt="${p.title}" />`
                   : `<img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />`;
 
+                // REPLACE THE OLD card.innerHTML with THIS NEW ONE:
                 card.innerHTML = `
                     <div class="relative w-full h-full rounded-2xl overflow-hidden border border-[#16404D]/20 shadow-2xl shadow-black/20 group">
                         ${imageHTML}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#FBF5DD] via-[#FBF5DD]/60 to-transparent"></div>
+                        
+                        <!-- These arrows remain for desktop hover -->
                         <div class="arrow-indicator absolute top-0 left-0 h-full w-1/4 flex items-start pt-[25%] justify-start p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-black/20 to-transparent">
                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
                         </div>
                         <div class="arrow-indicator absolute top-0 right-0 h-full w-1/4 flex items-start pt-[25%] justify-end p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-l from-black/20 to-transparent">
                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
                         </div>
+                        
+                        <!-- This container is now only for the button, preventing the layout conflict -->
                         <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                             <button data-index="${i}" class="open-project-btn inline-block text-base font-medium px-6 py-3 rounded-full bg-[#FBF5DD]/80 hover:bg-[#FBF5DD] border border-[#16404D]/20 backdrop-blur-md transition-all transform group-hover:scale-100 scale-90">View Details</button>
                         </div>
-                        <div class="relative h-full flex flex-col justify-end p-6 md:p-8 text-[#16404D]">
-                            <div>
-                                <div class="flex justify-between items-start">
-                                    <h3 class="text-2xl font-semibold pr-4">${p.title} — ${p.category}</h3>
-                                    <span class="text-[#16404D]/70 text-sm whitespace-nowrap">${p.year}</span>
-                                </div>
-                                <p class="text-[#16404D]/80 mt-2 text-base overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${p.description}</p>
-                                <div class="mt-4 flex flex-wrap gap-2 text-xs">${tagsHTML}</div>
+
+                        <!-- This text block is now correctly positioned at the bottom -->
+                        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-[#16404D]">
+                            <div class="flex justify-between items-start">
+                                <h3 class="text-2xl font-semibold pr-4">${p.title} — ${p.category}</h3>
+                                <span class="text-[#16404D]/70 text-sm whitespace-nowrap">${p.year}</span>
                             </div>
+                            <p class="text-[#16404D]/80 mt-2 text-base overflow-hidden" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">${p.description}</p>
+                            <div class="mt-4 flex flex-wrap gap-2 text-xs">${tagsHTML}</div>
                         </div>
                     </div>
                 `;
