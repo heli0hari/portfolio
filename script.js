@@ -8,7 +8,7 @@ const projects = [
         tags: ["Information Design", "UX Design", "Data Visualization", "Public Installation", "Interactive Design"],
         details: {
           content: [
-            { type: 'image', value: 'images/City/City_Title.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Title.jpg', alt: 'Title card showing "City, Beneath the Surface" over a visualization of interconnected bubbles.' }  },
             { type: 'quote', value: "“No work is insignificant. All labor that uplifts humanity has dignity and importance and should be undertaken with painstaking excellence.”", author: "Martin Luther King Jr." },
             { type: 'heading', value: 'Project Overview' },
             { type: 'paragraph', value: "City, Beneath the Surface is a data-driven interactive installation that reframes how we perceive care-based labor in cities. It visualizes the hidden hierarchies of essential workers — bus drivers, waste collectors, maintenance crews, and others — as dynamic bubble networks, transforming public sentiment and contextual data into living, responsive visuals.  \n\nBy situating the installation in everyday public spaces (bus stops, train stations), the project brings recognition to often unseen labor, sparking reflection on the value of those who sustain urban life." },
@@ -16,20 +16,20 @@ const projects = [
             { type: 'list', value: ["Growing up in India, I observed cultural stigma toward manual and public-facing labor, often framed as “low-status” work.",
                                     "In contrast, while studying in Dublin, I noticed greater respect and infrastructural support for these workers, yet still a lack of emotional recognition.",
                                     "This project became both a personal reconciliation and a design intervention, aiming to shift public narratives by making invisible labor visible"]},
-            { type: 'image', value: 'images/City/City_Personal.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Personal.jpg', alt: "Photograph of a street in India with visible waste, illustrating the project's personal motivation." } },
             { type: 'quote', value: "“YOU WILL END UP PICKING TRASH, IF YOU DON'T STUDY WELL”", author: "A Random Teacher from My School" },
             { type: 'heading', value: 'Problem Statement' },
             { type: 'paragraph', value: "Despite being essential, care-based workers remain socially undervalued. Public frustration with systemic failures is often misdirected toward visible figures like drivers or cleaners, reinforcing stigma and invisibility" },
             { type: 'heading', value: 'Research Question' },
             { type: 'paragraph', value: "How might contextual data visualization be used to reframe public narratives surrounding care-based labor?" },
-            { type: 'image', value: 'images/City/City_Ran.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Ran.jpg', alt: "A person interacting with the 'City, Beneath the Surface' installation on a large public screen." } },
             { type: 'heading', value: 'Objectives' },
             { type: 'list', value: ["Expose the hidden tiers of labor that sustain the city.",
                                     "Collect and visualize sentiment data around urban workers.",
                                     "Build a responsive installation that shifts based on public interaction.",
                                     "Challenge stigma by connecting emotions, data, and design."]},
             { type: 'heading', value: 'Design Concept' },
-            { type: 'image', value: 'images/City/City_Diag.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Diag.jpg', alt: "Diagram illustrating the project's design concept: data input leads to interactive visualization and an AR layer." } },
             { type: 'list', value: ["Dynamic Bubbles: Each sector of urban labor (waste, water, transport, construction, electrical, sanitation, emergency, etc.) is represented as a parent bubble. Roles and sub-roles emerge around it, creating a living hierarchy of workers.",
                                     "Network Visualization: The installation shows how different sectors connect and interdepend to keep the city functioning, emphasizing systemic collaboration rather than isolated roles.",
                                     "Public Interaction: Users can tap or click bubbles to reveal details about roles, responsibilities, and worker counts within each sector.",
@@ -37,28 +37,28 @@ const projects = [
                                     "Atmosphere: Idle animations and floating motion give the system a “living” quality, symbolizing the ongoing, often unnoticed work beneath the city."]},
             { type: 'heading', value: 'Theoretical Frameworks' },
             { type: 'list', value: ["Everyday Life and Cultural Theory (Ben Highmore) → Centers ordinary, undervalued labor as culturally significant."]},
-            { type: 'image', value: 'images/City/City_T1.jpg' },
+            { type: 'image', value: { src: 'images/City/City_T1.jpg', alt: "Slide explaining the theoretical framework of 'Everyday Life and Cultural Theory by Ben Highmore'." } },
             { type: 'list', value: ["Maintenance and Care (Shannon Mattern) → Frames maintenance as essential, emotional, and infrastructural labor."]},
-            { type: 'image', value: 'images/City/City_T2.jpg' },
+            { type: 'image', value: { src: 'images/City/City_T2.jpg', alt: "Slide explaining the theoretical framework of 'Maintenance and Care by Shannon Mattern'." } },
             { type: 'list', value: ["Convergence Culture (Henry Jenkins) → Informs how public narratives and digital participation shape collective meaning."]},
-            { type: 'image', value: 'images/City/City_T3.jpg' },
+            { type: 'image', value: { src: 'images/City/City_T3.jpg', alt: "Slide explaining the theoretical framework of 'Convergence Culture by Henry Jenkins'." } },
             { type: 'paragraph', value: "<em>These frameworks guided the design in making invisible work visible, reframing workers not just as functional roles but as vital cultural and social contributors.</em>"},
             { type: 'heading', value: 'Tools & Development' },
             { type: 'list', value: ["Early Prototyping: Initial concepts tested in p5.js to explore visual states and interaction ideas. Some other concepts were also explored, using 3D models and map data of the city."]},
             { type: 'paragraph', value: "Prototype using map data and 3D models in blender" },
-            { type: 'image', value: 'images/City/City_Prot1.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Prot1.jpg', alt: "Early 3D prototype showing a map of a city with data points rendered in Blender." } },
             { type: 'paragraph', value: "Second Prototype using p5.js" },
-            { type: 'image', value: 'images/City/City_Prot2.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Prot2.jpg', alt: "Screenshot of a p5.js prototype with colorful circular data points on a dark background." } },
             { type: 'list', value: ["Final Implementation: Live Interactive Installation"]},
             { type: 'paragraph', value: "Built as a web-based interactive installation with an accompanying mobile AR app." },
             { type: 'list', value: ["Development Workflow: Iteratively coded using ChatGPT, Claude.ai, and Google AI Studio, with final refinements and debugging done manually."]},
-            { type: 'image', value: 'images/City/City_AI.jpg' },
+            { type: 'image', value: { src: 'images/City/City_AI.jpg', alt: "Screenshot of code being generated using an AI tool, illustrating the project's development workflow." } },
             { type: 'list', value: ["Delivery Platforms: Public Installation → large screen or projection in transit hubs. Mobile Application → includes Hierarchy View and AR View linking bubbles to real-world city objects."]},
             { type: 'heading', value: 'User Journey - Storyboard' },
-            { type: 'image', value: 'images/City/City_User.jpg' },
+            { type: 'image', value: { src: 'images/City/City_User.jpg', alt: "A three-panel storyboard showing a user's journey from seeing the installation to interacting with it." } },
             { type: 'heading', value: 'Final Output' },
             { type: 'list', value: ["Mobile AR App UI Prototypes: Extends the installation into everyday life, letting users scan familiar city objects to uncover the workers and systems behind them.",]},
-            { type: 'image', value: 'images/City/City_App.jpg' },
+            { type: 'image', value: { src: 'images/City/City_App.jpg', alt: "UI mockups of the mobile AR app, showing the hierarchy view and the camera-based AR view." } },
             { type: 'list', value: ["Interactive Visualization: A responsive bubble system representing the city’s essential workers.",]},
             { type: 'iframe', value: { src: 'https://city-beneath-surface.netlify.app/', title: 'City, Beneath the Surface - Live Installation' } },
             { type: 'paragraph', value: 'You can also <a href="https://city-beneath-surface.netlify.app/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">open the installation in a new tab</a> to explore it fully.' },
@@ -70,7 +70,7 @@ const projects = [
                                     "How accurate datasets (not just sentiment) can ground storytelling in realism while still keeping the experience poetic and engaging.",
                                     "The potential and limits of AI-assisted coding as a design partner, and the importance of taking creative control in the final refinements.",
                                     "The need to balance clarity and exploration, ensuring accessibility for the general public while keeping the experience compelling for institutions and stakeholders."]},
-            { type: 'image', value: 'images/City/City_Last.jpg' },
+            { type: 'image', value: { src: 'images/City/City_Last.jpg', alt: "Final exhibition shot of the data visualization glowing on a screen in a dark room." } },
           ]
         }
       },
@@ -83,26 +83,26 @@ const projects = [
         tags: ["T-Shirt", "Visual Communication", "Fashion"],
         details: {
           content: [
-            { type: 'image', value: 'images/Theyyam/Theyyam_3.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_3.jpg', alt: "Closeup of the 'Theyyam Threads' t-shirt design, a powerful black and white graphic of a Theyyam face." } },
             { type: 'quote', value: "“He was made man that we might be made God”", author: "St. Athanasius of Alexandria" },
             { type: 'heading', value: 'Project Overview' },
             { type: 'paragraph', value: "'Theyyam Threads' is a unique project encapsulating the essence of Kerala's vibrant Theyyam art form into modern wearable art. Inspired by the rich cultural heritage of Kerala, this project seamlessly blends tradition with contemporary design, resulting in visually stunning and culturally significant t-shirt designs." },
-            { type: 'image', value: 'images/Theyyam/Theyyam_2.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_2.jpg', alt: "A person wearing the Theyyam t-shirt, looking away from the camera in a stylish pose." } },
             { type: 'heading', value: 'Colors' },
-            { type: 'image', value: 'images/Theyyam/Theyyam_col.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_col.jpg', alt: "Color palette for the project, showing primary red, yellow, and black inspired by Theyyam costumes." } },
             { type: 'heading', value: 'Inspirations' },
-            { type: 'image', value: 'images/Theyyam/Theyyam_insp.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_insp.jpg', alt: "A grid of inspiration photos showing the vibrant colors and intense expressions of Theyyam performers." } },
             { type: 'heading', value: 'Development' },
-            { type: 'image', value: 'images/Theyyam/Theyyam_dev1.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_dev1.jpg', alt: "Initial pencil sketches exploring different compositions for the Theyyam face graphic." } },
             { type: 'paragraph', value: "Sketch was made as a joint effort of me and my friend Adithya. We tried to explore several forms based on our references and came up with the idea of just the facial expression of Theyyam. Some sparks were also added later in front to show the intense artform." },
-            { type: 'image', value: 'images/Theyyam/Theyyam_dev2.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_dev2.jpg', alt: "Digital illustration of the Theyyam graphic in progress, showing monochrome vector lines." } },
             { type: 'paragraph', value: "Later we decided to go with a  monochrome approach, showing just the black and white elements." },
-            { type: 'image', value: 'images/Theyyam/Theyyam_dev3.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_dev3.jpg', alt: "Refined digital version of the Theyyam graphic with added details and textures." } },
             { type: 'paragraph', value: "Some extra details were added to make the design more likeable by the youth." },
-            { type: 'image', value: 'images/Theyyam/Theyyam_8.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_8.jpg', alt: "The final Theyyam graphic with added spark and grunge details for a modern feel." } },
             { type: 'heading', value: 'Learnings' },
             { type: 'paragraph', value: "Beyond mere aesthetics, this project delves deeper into the cultural significance and historical roots of Theyyam, aiming to foster a deeper appreciation and understanding of Kerala's cultural heritage. Through thoughtful artwork and design choices, 'Theyyam Threads' serves as a platform for cultural exchange and celebration, bridging the gap between tradition and modernity." },
-            { type: 'image', value: 'images/Theyyam/Theyyam_tshirt.jpg' },
+            { type: 'image', value: { src: 'images/Theyyam/Theyyam_tshirt.jpg', alt: "Mockup of the final design on a black t-shirt." } },
           ]
         }
       },
@@ -116,22 +116,22 @@ const projects = [
         tags: ["Brand", "Packaging", "UX Design", "Service Design"],
         details: {
           content: [
-            { type: 'image', value: 'images/Artbox/Artbox_Title.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Title.jpg', alt: "Title image for the ArtBox project, displaying the logo and tagline on a branded box." } },
             { type: 'heading', value: 'Area of Intervention' },
             { type: 'paragraph', value: "After some deliberation, we narrowed it down to three sectors namely education, health and small businesses. We tried to identify various problems these sectors face to help us weigh in between these." },
-            { type: 'image', value: 'images/Artbox/Artbox_1.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_1.jpg', alt: "Mind map diagram exploring problem areas in education, health, and small business sectors." } },
             { type: 'heading', value: 'Design Model' },
-            { type: 'image', value: 'images/Artbox/Artbox_Model.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Model.jpg', alt: "Diagram showing the ArtBox service design model connecting artisans, the platform, and customers." } },
             { type: 'heading', value: 'Visual Identity' },
-            { type: 'image', value: 'images/Artbox/Artbox_Visual1.jpg' },
-            { type: 'image', value: 'images/Artbox/Artbox_Visual2.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Visual1.jpg', alt: "Visual identity board for ArtBox, showing the logo, color palette, and typography." } },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Visual2.jpg', alt: "Second visual identity board for ArtBox, showing iconography and brand patterns." } },
             { type: 'heading', value: 'User Flow' },
-            { type: 'image', value: 'images/Artbox/Artbox_Userflow.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Userflow.jpg', alt: "A user flow diagram mapping the customer's journey from discovery to receiving their ArtBox kit." } },
             { type: 'heading', value: 'Prototypes' },
             { type: 'paragraph', value: "Website" },
-            { type: 'image', value: 'images/Artbox/Artbox_Website.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Website.jpg', alt: "Screenshots of the ArtBox website user interface, showing the homepage and product pages." } },
             { type: 'paragraph', value: "Product" },
-            { type: 'image', value: 'images/Artbox/Artbox_Product.jpg' },
+            { type: 'image', value: { src: 'images/Artbox/Artbox_Product.jpg', alt: "Photographs of the physical ArtBox product: a beautifully packaged craft kit with tools and materials." } },
           ]
         }
       },
@@ -145,36 +145,36 @@ const projects = [
         tags: ["System Design", "Service Design", "Wayfinding", "UX/UI"],
         details: {
           content: [
-            { type: 'image', value: 'images/Aujus/Aujus_Title.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Title.jpg', alt: "Title card for the Aujus project with its logo and a brief description." } },
             { type: 'heading', value: 'Initial Steps' },
             { type: 'heading', value: 'Understanding Medical Systems' },
             { type: 'paragraph', value: "We started by looking at problem areas within a medical system, starting with an initial study by looking into the normal procedures happening inside a hospital." },
             { type: 'paragraph', value: "We looked at various departments and their functions inside hospitals." },
-            { type: 'image', value: 'images/Aujus/Aujus_1.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_1.jpg', alt: "Diagram mapping the different departments and functions within a hospital system." } },
             { type: 'heading', value: 'Identifying system components' },
             { type: 'paragraph', value: "We started our process by looking studying how, where and why datas are collected inside hospitals and identified the  system components which helps us to evaluate the system." },
             { type: 'paragraph', value: "We identified the components through an entity relationship mapping of the hospital." },
-            { type: 'image', value: 'images/Aujus/Aujus_entity.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_entity.jpg', alt: "An entity-relationship diagram illustrating the data connections within a hospital." } },
             { type: 'paragraph', value: "Entity-relationship mapping" },
-            { type: 'image', value: 'images/Aujus/Aujus_comp.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_comp.jpg', alt: "A list of identified system components, such as patient data, diagnosis, and medical records." } },
             { type: 'paragraph', value: "Identified system components" },
             { type: 'heading', value: 'Connection circles' },
             { type: 'paragraph', value: "In the process of identifying system components we started grouping these identified system components which are patient information, patient diagnosis, and medical research." },
             { type: 'paragraph', value: "Negative and positive connections are shown with red and green coloured arrows, respectively, with the direction of the connections." },
-            { type: 'image', value: 'images/Aujus/Aujus_Pat.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Pat.jpg', alt: "Connection circle diagram showing the relationships within patient information data." } },
             { type: 'paragraph', value: "Patient info" },
-            { type: 'image', value: 'images/Aujus/Aujus_Med.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Med.jpg', alt: "Connection circle diagram showing the relationships within medical research data." } },
             { type: 'paragraph', value: "Medical Research" },
-            { type: 'image', value: 'images/Aujus/Aujus_Diag.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Diag.jpg', alt: "Connection circle diagram showing the relationships within patient diagnosis data." } },
             { type: 'paragraph', value: "Patient diagnosis" },
             { type: 'heading', value: 'System Implementation' },
-            { type: 'image', value: 'images/Aujus/Aujus_Sys1.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Sys1.jpg', alt: "System flow diagram identifying points of data entry." } },
             { type: 'paragraph', value: "Identified areas of data entry and data accessing in the system." },
-            { type: 'image', value: 'images/Aujus/Aujus_Sys2.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Sys2.jpg', alt: "System flow diagram identifying points of data access for patients and medical staff." } },
             { type: 'heading', value: 'AUJUS' },
             { type: 'paragraph', value: "Aujus is a system with centralised medical database where data can be entered and accessed by the patients from anywhere at any point." },
-            { type: 'image', value: 'images/Aujus/Aujus_Card.jpg' },
-            { type: 'image', value: 'images/Aujus/Aujus_Screen.jpg' },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Card.jpg', alt: "Closeup of the Aujus medical information card design." } },
+            { type: 'image', value: { src: 'images/Aujus/Aujus_Screen.jpg', alt: "Mockup of the Aujus user interface on a screen, displaying patient medical data." } },
           ]
         }
       },
@@ -191,31 +191,31 @@ const projects = [
             { type: 'heading', value: 'About' },
             { type: 'paragraph', value: "In this 3D Typography Project, I've brought letters A to G to life in stunning three-dimensional form. Crafted using Blender, each letter is a blend of creativity and technical skill. While my academic commitments paused the project, these letters stand as a testament to my passion for design and innovation. Explore the fusion of artistry and technology in this captivating showcase of 3D typography." },
             { type: 'heading', value: 'Letter a' },
-            { type: 'image', value: 'images/3D/3D_a.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_a.jpg', alt: "A 3D rendering of the letter 'A' as an abstract shape with white fur and a marble texture." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851099588?h=364bda9f34" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Made it into an abstract form.  Added some hair using particle system. And a marble texture was created procedurally using nodes in blender." },
             { type: 'heading', value: 'Letter b' },
-            { type: 'image', value: 'images/3D/3D_b.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_b.jpg', alt: "A diesel-punk themed letter 'B' made of metal with glowing orange lights and flames." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851099981?h=15cfb6a41e" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Went with diesel punk theme for this. Created some flames and light emission animations" },
             { type: 'heading', value: 'Letter c' },
-            { type: 'image', value: 'images/3D/3D_c.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_c.jpg', alt: "A playful 3D letter 'C' designed to look like a piece of Swiss cheese." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851101527?h=83dcc45949" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Made C into cheese. Created some extra elements using geometry nodes and scattered them across." },
             { type: 'heading', value: 'Letter d' },
-            { type: 'image', value: 'images/3D/3D_d.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_d.jpg', alt: "A furry, orange 3D letter 'D' with smaller 'D' shapes attached to its hair." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851102005?h=63d3b474ed" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Created some hair and parented some extra D elements for this one." },
             { type: 'heading', value: 'Letter e' },
-            { type: 'image', value: 'images/3D/3D_e.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_e.jpg', alt: "A 3D letter 'E' made of a reflective, iridescent material that transitions through colors." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851102127?h=5740f8f60e" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Made two elements and a ring at the middle to transition between the both." },
             { type: 'heading', value: 'Letter f' },
-            { type: 'image', value: 'images/3D/3D_f.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_f.jpg', alt: "A 3D letter 'F' composed of many small, transparent bubbles against a blue background." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/851102860?h=f40540a40c" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Created random bubbles and made a simple animation using geometry nodes." },
             { type: 'heading', value: 'Letter g' },
-            { type: 'image', value: 'images/3D/3D_g.jpg' },
+            { type: 'image', value: { src: 'images/3D/3D_g.jpg', alt: "A 3D letter 'G' with a grassy texture and a rope element wrapping around it." } },
             { type: 'video', value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935374270?h=080f5fcf22" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
             { type: 'paragraph', value: "Made a grass form for the circular element and a rope to go around it. Animated the wind on the grass, as well as the rope movement." },
 
@@ -234,9 +234,9 @@ const projects = [
             { type: 'heading', value: 'About' },
             { type: 'paragraph', value: "In this project, I've meticulously crafted and animated a collection of stunning car models using Blender. Through the magic of animation, I have made some of these cars come to life, showcasing their agility, power, and elegance in dynamic motion." },
             { type: 'heading', value: 'Rendered Stills' },
-            { type: 'image', value: 'images/Cars/Cars_Img1.jpg' },
+            { type: 'image', value: { src: 'images/Cars/Cars_Img1.jpg', alt: "A beautifully lit 3D render of a classic Honda Civic in a photorealistic studio setting." } },
             { type: 'paragraph', value: "Some models were created from scratch, focusing on realistic materials and lighting." },
-            { type: 'image', value: 'images/Cars/Cars_Img2.jpg' },
+            { type: 'image', value: { src: 'images/Cars/Cars_Img2.jpg', alt: "A 3D model of a vintage Honda Civic shown in a clay render style to highlight its form." } },
             { type: 'heading', value: 'Interactive 3D Models' },
             { type: 'paragraph', value: 'You can interact with the models below. Click and drag to rotate, scroll to zoom, and right-click to pan.' },
             { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="Honda Civic First Generation" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share" src="https://sketchfab.com/models/9d71ea92a33c4a1e82cc589730822f63/embed?autospin=1&autostart=1"> </iframe> </div>` },
@@ -262,7 +262,7 @@ const projects = [
             { type: 'paragraph', value: "This photo series captures the electric energy and intimacy of a student-led Christmas party. From close-knit conversations under warm lights to moments of pure joy on the dance floor, these images celebrate youth, expression, and the unfiltered warmth of festive gatherings. The shoot focuses on movement, emotion, and the interplay of dynamic lighting in a club environment. I approached this project with a low-light documentary style, aiming to preserve the authenticity of the atmosphere without flash interference. Each shot was composed to retain the ambient hues, stage lights, and crowd interactions that define nightlife storytelling." },
             { type: 'heading', value: 'Lights and connection' },
             { type: 'paragraph', value: "where dance becomes conversation" },
-            { type: 'image', value: 'images/Christ/Christ_1.jpg' },
+            { type: 'image', value: { src: 'images/Christ/Christ_1.jpg', alt: "A candid photo of a DJ at a Christmas party, focused on their hands on the turntables with the crowd blurred." } },
             { type: 'paragraph', value: 'Shortlisted for the Fujifilm Life As You See It Competition 2025. <a href="https://www.fujifilm-houseofphotography.com/life-as-you-see-it-2025/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">CLick here to know more about the Competition.</a>' },
             { type: 'heading', value: 'Gear' },
             { type: 'list', value: ["Fujifilm X-T5 + 30mm f/1.4 Lens"]},
@@ -271,15 +271,15 @@ const projects = [
             { type: 'paragraph', value: " Versatile for wider scenes, DJ booth shots, and dynamic zoom-in portraits." },
             { type: 'heading', value: 'Gallery' },
             { type: 'gallery', value: [
-                'images/Christ/Christ_2.jpg',
-                'images/Christ/Christ_3.jpg',
-                'images/Christ/Christ_4.jpg',
-                'images/Christ/Christ_5.jpg'
+                { src: 'images/Christ/Christ_2.jpg', alt: 'Two people laughing together on the dance floor, bathed in warm ambient light.' },
+                { src: 'images/Christ/Christ_3.jpg', alt: 'A high-energy shot of the crowd dancing, with motion blur capturing the movement.' },
+                { src: 'images/Christ/Christ_4.jpg', alt: 'A singer performing on stage, silhouetted against bright concert lighting.' },
+                { src: 'images/Christ/Christ_5.jpg', alt: 'An intimate moment of two friends talking away from the main dance floor.' }
             ]},
             { type: 'heading', value: 'Post-Processing' },
             { type: 'list', value: ["Color correction for ambient light consistency, using Adobe Lightroom", "Noise reduction selectively applied to maintain texture.", "Cropped for cinematic balance while preserving crowd energy."]},
             { type: 'paragraph', value: "This Christmas party series was more than just an exercise in event photography, it was a study in atmosphere, spontaneity, and human connections. Working in a challenging low-light environment pushed me to embrace the unpredictability of club lighting and focus on capturing raw, honest moments rather than posed perfections. The project reinforced the value of observation, knowing when to step in, when to wait, and how to let the ambient mood shape each frame. As a photographer, it reminded me that even in the most chaotic settings, there's always a story unfolding, if you’re willing to look for it." },
-            { type: 'image', value: 'images/Christ/Christ_6.jpg' },
+            { type: 'image', value: { src: 'images/Christ/Christ_6.jpg', alt: "A wide shot of the entire venue, showing the packed dance floor and festive decorations." } },
           ]
         }
       },
@@ -299,6 +299,7 @@ const projects = [
             loaderCircle.style.strokeDashoffset = offset;
         }
 
+        // --- UPDATED preloadImages FUNCTION ---
         function preloadImages(onProgress) {
             const imageSources = new Set();
             projects.forEach(p => {
@@ -307,8 +308,12 @@ const projects = [
                 if (p.imageMobile) imageSources.add(p.imageMobile);
                 
                 p.details.content.forEach(item => {
-                    if (item.type === 'image') imageSources.add(item.value);
-                    if (item.type === 'gallery') item.value.forEach(src => imageSources.add(src));
+                    if (item.type === 'image') {
+                        imageSources.add(item.value.src); // Read from new object structure
+                    }
+                    if (item.type === 'gallery') {
+                        item.value.forEach(imageData => imageSources.add(imageData.src)); // Read from new object structure
+                    }
                 });
             });
             imageSources.add('images/Profile_image2.jpg');
@@ -389,7 +394,7 @@ const projects = [
                     this.size = Math.random() * 2.5 + 0.5;
                     this.speedX = (Math.random() * 1 - 0.5) * 0.5;
                     this.speedY = (Math.random() * 1 - 0.5) * 0.5;
-                    this.color = 'rgba(22, 64, 77, 0.4)';
+                    this.color = 'rgba(22, 64, 77, 0.1)';
                 }
                 update() {
                     this.x += this.speedX;
@@ -566,9 +571,6 @@ const projects = [
             const closeOverlayBtn = document.getElementById('closeOverlay');
             const openProjectBtns = document.querySelectorAll('.open-project-btn');
             
-            // --- START: All Lightbox related variables and functions ---
-            
-            // Element References
             const imageLightbox = document.getElementById('imageLightbox');
             const lightboxContainer = document.getElementById('lightboxContainer');
             const lightboxImage = document.getElementById('lightboxImage');
@@ -582,12 +584,12 @@ const projects = [
             const lightboxIframe = document.getElementById('lightboxIframe');
             const closeIframeLightboxBtn = document.getElementById('closeIframeLightbox');
             
-            // Lightbox State
             let scale = 1, isPanning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 }, initialPinchDistance = null;
             let currentLightboxImages = [];
             let currentLightboxIndex = 0;
             const pointerCache = [];
 
+            // --- UPDATED populateOverlay FUNCTION ---
             function populateOverlay(project) {
                  overlayScrollWrapper.innerHTML = ''; 
 
@@ -612,21 +614,21 @@ const projects = [
                         case 'paragraph':
                             element = document.createElement('p');
                             element.className = 'text-[#16404D]/80 leading-relaxed my-2';
-                            element.innerHTML = item.value; // Use innerHTML to allow links
+                            element.innerHTML = item.value;
                             break;
                         case 'image':
                             element = document.createElement('img');
                             element.className = 'w-full h-auto rounded-lg my-6 lightbox-trigger';
-                            element.src = item.value;
-                            element.alt = `${project.title} detail image`;
+                            element.src = item.value.src; // Use .src
+                            element.alt = item.value.alt; // Use .alt
                             break;
                         case 'gallery':
                             element = document.createElement('div');
                             element.className = 'image-gallery';
-                            item.value.forEach(src => {
+                            item.value.forEach(imageData => {
                                 const img = document.createElement('img');
-                                img.src = src;
-                                img.alt = `${project.title} gallery image`;
+                                img.src = imageData.src; // Use .src
+                                img.alt = imageData.alt; // Use .alt
                                 img.className = 'lightbox-trigger';
                                 element.appendChild(img);
                             });
@@ -654,7 +656,7 @@ const projects = [
                             break;
                         case 'sketchfab':
                             element = document.createElement('div');
-                            element.innerHTML = item.value; // The value is the full iframe embed
+                            element.innerHTML = item.value;
                             break;
                         case 'list':
                             element = document.createElement('ul');
