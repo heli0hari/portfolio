@@ -299,7 +299,6 @@ const projects = [
             loaderCircle.style.strokeDashoffset = offset;
         }
 
-        // --- UPDATED preloadImages FUNCTION ---
         function preloadImages(onProgress) {
             const imageSources = new Set();
             projects.forEach(p => {
@@ -309,10 +308,10 @@ const projects = [
                 
                 p.details.content.forEach(item => {
                     if (item.type === 'image') {
-                        imageSources.add(item.value.src); // Read from new object structure
+                        imageSources.add(item.value.src);
                     }
                     if (item.type === 'gallery') {
-                        item.value.forEach(imageData => imageSources.add(imageData.src)); // Read from new object structure
+                        item.value.forEach(imageData => imageSources.add(imageData.src));
                     }
                 });
             });
@@ -487,7 +486,7 @@ const projects = [
             let projectCards = [];
             let isFlipping = false;
 
-                        projects.forEach((p, i) => {
+            projects.forEach((p, i) => {
                 const card = document.createElement('div');
                 card.className = 'project-card interactive-hint';
                 if (i > 0) card.classList.add('is-next');
@@ -497,13 +496,11 @@ const projects = [
                   ? `<img class="absolute inset-0 w-full h-full object-cover card-image-desktop" src="${p.imageDesktop}" alt="${p.title}" /><img class="absolute inset-0 w-full h-full object-cover card-image-mobile" src="${p.imageMobile}" alt="${p.title}" />`
                   : `<img class="absolute inset-0 w-full h-full object-cover" src="${p.image}" alt="${p.title}" />`;
 
-                // REPLACE THE OLD card.innerHTML with THIS NEW ONE:
                 card.innerHTML = `
                     <div class="relative w-full h-full rounded-2xl overflow-hidden border border-[#16404D]/20 shadow-2xl shadow-black/20 group">
                         ${imageHTML}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#FBF5DD] via-[#FBF5DD]/60 to-transparent"></div>
                         
-                        <!-- These arrows remain for desktop hover -->
                         <div class="arrow-indicator absolute top-0 left-0 h-full w-1/4 flex items-start pt-[25%] justify-start p-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-black/20 to-transparent">
                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"></path></svg>
                         </div>
@@ -511,12 +508,10 @@ const projects = [
                           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5l7 7-7 7"></path></svg>
                         </div>
                         
-                        <!-- This container is now only for the button, preventing the layout conflict -->
                         <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                             <button data-index="${i}" class="open-project-btn inline-block text-base font-medium px-6 py-3 rounded-full bg-[#FBF5DD]/80 hover:bg-[#FBF5DD] border border-[#16404D]/20 backdrop-blur-md transition-all transform group-hover:scale-100 scale-90">View Details</button>
                         </div>
 
-                        <!-- This text block is now correctly positioned at the bottom -->
                         <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-[#16404D]">
                             <div class="flex justify-between items-start">
                                 <h3 class="text-2xl font-semibold pr-4">${p.title} — ${p.category}</h3>
@@ -589,7 +584,6 @@ const projects = [
             let currentLightboxIndex = 0;
             const pointerCache = [];
 
-            // --- UPDATED populateOverlay FUNCTION ---
             function populateOverlay(project) {
                  overlayScrollWrapper.innerHTML = ''; 
 
@@ -619,16 +613,16 @@ const projects = [
                         case 'image':
                             element = document.createElement('img');
                             element.className = 'w-full h-auto rounded-lg my-6 lightbox-trigger';
-                            element.src = item.value.src; // Use .src
-                            element.alt = item.value.alt; // Use .alt
+                            element.src = item.value.src;
+                            element.alt = item.value.alt;
                             break;
                         case 'gallery':
                             element = document.createElement('div');
                             element.className = 'image-gallery';
                             item.value.forEach(imageData => {
                                 const img = document.createElement('img');
-                                img.src = imageData.src; // Use .src
-                                img.alt = imageData.alt; // Use .alt
+                                img.src = imageData.src;
+                                img.alt = imageData.alt;
                                 img.className = 'lightbox-trigger';
                                 element.appendChild(img);
                             });
@@ -680,16 +674,15 @@ const projects = [
                 overlayScrollWrapper.scrollTop = 0;
                 pageBackdrop.classList.add('is-visible');
                 projectOverlay.classList.add('is-visible');
-                document.body.style.overflow = 'hidden';
+                document.documentElement.classList.add('body-lock');
+                document.body.classList.add('body-lock');
             }
 
             function closeModal() {
                 pageBackdrop.classList.remove('is-visible');
                 projectOverlay.classList.remove('is-visible');
-                if (!document.body.classList.contains('about-visible')) {
-                    document.body.classList.add('no-scroll');
-                }
-                document.body.style.overflow = '';
+                document.documentElement.classList.remove('body-lock');
+                document.body.classList.remove('body-lock');
             }
 
             function updateTransform() {
@@ -739,11 +732,23 @@ const projects = [
                 imageLightbox.classList.remove('is-visible');
             }
 
+            // --- NEW FUNCTION: Normalize wheel/trackpad scroll delta ---
+            function normalizeWheel(event) {
+                let sY = 0;
+                if (event.detail) { sY = event.detail; } 
+                else if (event.wheelDelta) { sY = event.wheelDelta / -120; } 
+                else if (event.deltaY) { sY = event.deltaY / 3; }
+                
+                // Mac trackpads send small, rapid values. This caps the value to prevent extreme jumps.
+                return Math.min(Math.max(-1, sY), 1);
+            }
+
             function handleZoom(delta, clientX, clientY) {
                 const rect = lightboxContainer.getBoundingClientRect();
                 const xs = (clientX - rect.left) / scale;
                 const ys = (clientY - rect.top) / scale;
-                const newScale = Math.max(1, Math.min(5, scale * Math.exp(delta)));
+                // Use a smaller multiplier for a less sensitive zoom
+                const newScale = Math.max(1, Math.min(5, scale * Math.exp(delta * 0.5)));
                 pointX += (xs - pointX / scale) * (scale - newScale);
                 pointY += (ys - pointY / scale) * (scale - newScale);
                 scale = newScale;
@@ -787,10 +792,13 @@ const projects = [
             zoomInBtn.addEventListener('click', () => handleZoom(0.2, window.innerWidth / 2, window.innerHeight / 2));
             zoomOutBtn.addEventListener('click', () => handleZoom(-0.2, window.innerWidth / 2, window.innerHeight / 2));
             
+            // --- MODIFIED: Use the normalized wheel value ---
             imageLightbox.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                handleZoom(-e.deltaY / 100, e.clientX, e.clientY);
-            });
+                const normalizedDelta = normalizeWheel(e);
+                handleZoom(-normalizedDelta, e.clientX, e.clientY);
+            }, { passive: false });
+
 
             function removePointer(e) {
                 const index = pointerCache.findIndex(p => p.pointerId === e.pointerId);

@@ -4,6 +4,7 @@ html, body {
   overflow-x: hidden;
   overscroll-behavior: none;
 }
+/* MODIFIED: More robust scroll locking for Safari */
 html.body-lock, body.body-lock {
   position: fixed;
   inset: 0;
@@ -73,18 +74,18 @@ body.no-scroll {
   transform-style: preserve-3d;
   transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.5s;
   opacity: 1;
-  transform: rotateY(0deg);
+  transform: rotateY(0deg) translateZ(0); /* ADDED: translateZ(0) to promote to new layer for rendering stability */
   z-index: 2;
   will-change: transform, opacity;
 }
 .project-card.is-flipped {
-  transform: rotateY(180deg) rotateX(60deg);
+  transform: rotateY(180deg) rotateX(60deg) translateZ(0); /* ADDED: translateZ(0) */
   opacity: 0;
   z-index: 1;
   pointer-events: none;
 }
 .project-card.is-next {
-  transform: rotateY(-180deg) rotateX(-60deg);
+  transform: rotateY(-180deg) rotateX(-60deg) translateZ(0); /* ADDED: translateZ(0) */
   opacity: 0;
   z-index: 1;
   pointer-events: none;
