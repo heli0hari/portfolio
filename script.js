@@ -1,5 +1,6 @@
 const projects = [
           {
+        id: "dub-transit",
         title: "Dublin Public Transport App",
         category: "User Experience Design",
         description: "A real-time transit application that simplifies navigating Dublin’s transport network through intuitive route discovery, live bus tracking, service alerts, integrated weather insights, and an AI-powered journey assistant.",
@@ -330,6 +331,7 @@ const projects = [
         }
       },
       {
+        id: "city-beneaththesurface",
         title: "City, Beneath the Surface",
         category: "Data Visualization",
         description: "An interactive data visualization and public installation that reveals the invisible labor sustaining cities by transforming public sentiment into dynamic visual form.",
@@ -405,6 +407,7 @@ const projects = [
         }
       },
       {
+        id: "theyyam-threads",
         title: "Theyyam Threads",
         category: "Visual Design",
         description: "A project encapsulating Kerala's Theyyam art form into modern wearable art, blending tradition with contemporary design.",
@@ -437,6 +440,7 @@ const projects = [
         }
       },
       {
+        id: "artbox",
         title: "ArtBox",
         category: "Product Design",
         description: "A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.",
@@ -466,6 +470,7 @@ const projects = [
         }
       },
        {
+        id: "aujus",
         title: "Aujus",
         category: "System Design",
         description: "A 5-week semester project to understand and design for complex, interconnected socio-economic problems.",
@@ -509,6 +514,7 @@ const projects = [
         }
       },
       {
+        id: "3dtype",
         title: "3D Typography",
         category: "3D Art",
         description: "Crafted using Blender, each letter is a blend of creativity and technical skill. ",
@@ -553,6 +559,7 @@ const projects = [
         }
       },
       {
+        id: "revvedup",
         title: "Revved Up - 3D Cars in motion",
         category: "3D",
         description: "Animated 3D cars, including original models created in Blender, showcasing modeling and motion skills. ",
@@ -580,6 +587,7 @@ const projects = [
         }
       },
       {
+        id: "christmas-party",
         title: "Christmas Party - Dublin",
         category: "Photography",
         description: "A low-light photo series capturing the energy, emotion, and joy of a student Christmas party. ",
@@ -1056,7 +1064,8 @@ const projects = [
                 });
             }
 
-            function openModal(index) {
+            // Updated openModal to handle URL updates
+            function openModal(index, updateUrl = true) {
                 const project = projects[index];
                 populateOverlay(project);
                 overlayScrollWrapper.scrollTop = 0;
@@ -1064,15 +1073,27 @@ const projects = [
                 projectOverlay.classList.add('is-visible');
                 document.documentElement.classList.add('body-lock');
                 document.body.classList.add('body-lock');
+
+                // Update the URL to include the project ID
+                if (updateUrl) {
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?project=' + project.id;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
+                }
             }
 
-            function closeModal() {
+            // Updated closeModal to reset URL
+            function closeModal(updateUrl = true) {
                 pageBackdrop.classList.remove('is-visible');
                 projectOverlay.classList.remove('is-visible');
                 document.documentElement.classList.remove('body-lock');
                 document.body.classList.remove('body-lock');
-            }
 
+                // Reset URL to homepage
+                if (updateUrl) {
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
+                }
+            }
             function updateTransform() {
                 lightboxContainer.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
             }
@@ -1157,6 +1178,42 @@ const projects = [
                 lightboxIframe.src = '';
             }
             
+            // --- DEEP LINKING LOGIC START ---
+            
+            // 1. Check if URL has a project ID on load
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('project');
+            
+            if (projectId) {
+                // Find the project with this ID
+                const projectIndex = projects.findIndex(p => p.id === projectId);
+                
+                // If found, open it (false means don't push state, since we are already there)
+                if (projectIndex !== -1) {
+                    // Slight delay to allow animations/DOM to settle
+                    setTimeout(() => {
+                        openModal(projectIndex, false); 
+                    }, 100);
+                }
+            }
+
+            // 2. Handle Browser "Back" and "Forward" buttons
+            window.addEventListener('popstate', (event) => {
+                const params = new URLSearchParams(window.location.search);
+                const pId = params.get('project');
+
+                if (pId) {
+                    const idx = projects.findIndex(p => p.id === pId);
+                    if (idx !== -1) openModal(idx, false);
+                } else {
+                    // If no ID in URL, ensure modal is closed
+                    if (projectOverlay.classList.contains('is-visible')) {
+                        closeModal(false);
+                    }
+                }
+            });
+            // --- DEEP LINKING LOGIC END ---
+
             openProjectBtns.forEach(btn => btn.addEventListener('click', (e) => openModal(e.currentTarget.dataset.index)));
             closeOverlayBtn.addEventListener('click', closeModal);
             projectOverlay.addEventListener('click', (e) => { if (e.target === projectOverlay) closeModal(); });

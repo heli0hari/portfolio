@@ -258,43 +258,49 @@ body.about-visible .vignette { opacity: 1; }
   stroke: #DDA853; 
 }
 
-/* ASCII / Terminal Block Styling - Mobile Optimized */
+/* ASCII / Terminal Block Styling - Mobile Alignment Fix */
 .ascii-terminal {
   background-color: #16404D;
   color: #FBF5DD;
-  font-family: 'Menlo', 'Monaco', 'Courier New', monospace; /* Monospace is CRITICAL */
-  line-height: 1.2;
+  
+  /* FORCE perfect alignment on all devices */
+  font-family: "Courier New", Courier, monospace; 
+  font-variant-ligatures: none;
+  -webkit-text-size-adjust: none; /* Prevents iPhone/Android text inflation */
+  text-size-adjust: none;
+  
+  font-size: 11px; /* Slightly adjusted for clarity */
+  line-height: 1.1; /* Tighter line height connects vertical pipes better */
   padding: 1.5rem;
   border-radius: 0.75rem;
   
-  /* Centering & Layout Logic */
+  /* Layout & Scroll Logic */
   width: fit-content;    
   margin: 2rem auto;     
   
-  /* CRITICAL FIXES FOR BROKEN LAYOUT */
-  white-space: pre !important;  /* Forces text to NEVER wrap to the next line */
-  overflow-x: auto;             /* Adds a horizontal scrollbar if too wide */
-  max-width: 100%;              /* Ensures the box itself fits in the container */
+  /* CRITICAL: Horizontal Scroll Logic */
+  white-space: pre;  /* Strictly preserves spaces */
+  overflow-x: auto;  /* Allows scrolling */
+  max-width: 100%;   /* Fits inside the screen */
   
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(221, 168, 83, 0.2);
 }
 
-/* Mobile Specific Adjustments */
 @media (max-width: 768px) {
   .ascii-terminal {
-    font-size: 9px;      /* Make text smaller on phone so more fits */
-    padding: 1rem;       /* Reduce padding to save space */
-    max-width: 85vw;     /* Force it to stay within the mobile screen width */
-    display: block;      /* Ensure it respects margins */
+    font-size: 10px; 
+    padding: 1rem;
+    max-width: 90vw;
+    /* Force hardware acceleration for smoother scrolling */
+    -webkit-overflow-scrolling: touch; 
   }
 }
 
-/* Custom scrollbar to make scrolling obvious */
+/* Custom scrollbar */
 .ascii-terminal::-webkit-scrollbar { height: 6px; }
 .ascii-terminal::-webkit-scrollbar-thumb { background-color: #DDA853; border-radius: 4px; }
 .ascii-terminal::-webkit-scrollbar-track { background-color: rgba(22, 64, 77, 0.5); }
-
 /* Mobile Mockup / Simulator Styling */
 .mobile-demo-container {
   display: flex;
