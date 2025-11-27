@@ -119,19 +119,19 @@ const projects = [
                  ▼                                   ▼                                    ▼
        ┌─────────────────────┐             ┌──────────────────────┐             ┌──────────────────────────────┐
        │  Crowdsourced Bus   │             │ GTFS-Realtime Feed   │             │  Weather API: Open-Meteo     │
-       │  Position Database  │◀──────┐    │ Vehicle positions     │            │  - Current weather (origin)   │
+       │  Position Database  │◀──────┐     │ Vehicle positions    │             │  - Current weather (origin)   │
        └─────────┬───────────┘       │     │ (official but        │             │  - Forecast (arrival time)   │
                  │                   │     │ sometimes inaccurate)│             └───────────┬──────────────────┘
                  ▼                   │     └──────────┬───────────┘                         │
        ┌──────────────────────┐      │                │                                     │
        │Crowd Data Smoothing  │◀─────┘     ┌──────────▼───────────┐                         │
-       │ & Interpolation      │            │ Data Fusion Engine    │◀───────────────────────┘
+       │ & Interpolation      │            │ Data Fusion Engine   │◀───────────────────────┘
        └─────────┬────────────┘            │ (Crowd + GTFSR Merge) │
                  │                         └───────────┬───────────┘
                  │                                     │
                  ▼                                     ▼
        ┌────────────────────────┐          ┌────────────────────────┐
-       │ Live Bus Position API  │─────────▶│     Map Renderer      │
+       │ Live Bus Position API  │─────────▶│     Map Renderer       │
        │    (Unified Source)    │          │ Route Polyline + Stops │
        └────────────────────────┘          │ Bus Animations (Smooth)│
                                            └───────────┬────────────┘
@@ -276,7 +276,7 @@ const projects = [
             { type: 'paragraph', value: "Here’s the roadmap for turning this into a full production app:" },
             { type: 'ascii', value: `
                         ┌───────────────────────────────────┐
-                        │          DUB.TRANSIT ROADMAP      │
+                        │        DUB.TRANSIT ROADMAP        │
                         └───────────────────────────────────┘
 
                                         │
