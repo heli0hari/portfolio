@@ -223,3 +223,119 @@ body.about-visible .vignette { opacity: 1; }
   .flipbook-wrapper { max-width: 680px; height: 480px; }
   #about .mx-auto.max-w-6xl { padding-left: 7rem; }
 }
+
+/* Custom List Icons */
+.custom-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem; 
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.icon-wrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 2px;
+}
+
+.icon-wrapper svg {
+  width: 100%;
+  height: 100%;
+  stroke: #16404D;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s ease;
+}
+
+.custom-list-item:hover .icon-wrapper svg {
+  stroke: #DDA853; 
+}
+
+/* ASCII / Terminal Block Styling */
+/* ASCII / Terminal Block Styling - Centered */
+.ascii-terminal {
+  background-color: #16404D;
+  color: #FBF5DD;
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.2;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  
+  /* Centering Logic */
+  width: fit-content;    /* Shrink the box to fit the text width */
+  max-width: 100%;       /* Prevent it from being wider than the screen */
+  margin: 2rem auto;     /* Auto margins on left/right center the box */
+  
+  overflow-x: auto;      /* Adds scrollbar if still too wide for mobile */
+  white-space: pre;      /* CRITICAL: Preserves the diagram structure */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(221, 168, 83, 0.2);
+}
+
+/* Custom scrollbar for the terminal block */
+.ascii-terminal::-webkit-scrollbar { height: 8px; }
+.ascii-terminal::-webkit-scrollbar-thumb { background-color: #DDA853; border-radius: 4px; }
+.ascii-terminal::-webkit-scrollbar-track { background-color: rgba(0,0,0,0.3); }
+
+/* Mobile Mockup / Simulator Styling */
+.mobile-demo-container {
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0;
+  perspective: 1000px;
+}
+
+.mobile-bezel {
+  width: 340px;          /* Standard phone width */
+  height: 680px;         /* Standard phone height */
+  background-color: #16404D; /* Deep Teal Bezel */
+  border-radius: 40px;   /* Smooth curves */
+  padding: 12px;         /* Thickness of the bezel */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); /* Deep shadow for depth */
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.mobile-bezel:hover {
+  transform: translateY(-5px); /* Subtle float effect on hover */
+}
+
+/* The actual screen area */
+.mobile-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #FBF5DD;
+  border-radius: 28px;   /* Slightly tighter radius than bezel */
+  overflow: hidden;      /* Clips the iframe corners */
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.mobile-screen iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* "Camera/Speaker" Notch decoration */
+.mobile-bezel::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 6px;
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  z-index: 20;
+  pointer-events: none;
+}

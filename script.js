@@ -1,4 +1,334 @@
 const projects = [
+          {
+        title: "Dublin Public Transport App",
+        category: "User Experience Design",
+        description: "A real-time transit application that simplifies navigating Dublin’s transport network through intuitive route discovery, live bus tracking, service alerts, integrated weather insights, and an AI-powered journey assistant.",
+        image: "images/dubtransit/dubscreen.png",
+        year: "2025",
+        tags: ["UX Design", "Visual Communication", "Mobile App Design", "InteractionDesign", "AI-Driven Interfaces"],
+        details: {
+          content: [
+            { type: 'image', value: { src: 'images/dubtransit/dubtitlescreen.jpg', alt: 'Title card showing "transport network" over a visualization of interconnected bubbles.' }  },
+
+            { type: 'paragraph', value: "DubTransit is a mobile application built to unify Dublin’s fragmented public transport information into one clear, minimal, and elegant experience." },
+            { type: 'paragraph', value: "The app combines:" },
+            { type: 'list', value: [
+                `<span class="icon-wrapper">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                 </span>
+                 <span><strong>Route Search & Stop Lookup</strong><br> Intuitive navigation across the network.</span>`,
+
+                `<span class="icon-wrapper">
+                    <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                 </span>
+                 <span><strong>Live Network Map</strong><br> Real-time visuals with simulated tracking.</span>`,
+
+                `<span class="icon-wrapper">
+                    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                 </span>
+                 <span><strong>Service Alerts</strong><br> Live updates for events, delays, and accidents.</span>`,
+
+                `<span class="icon-wrapper">
+                   <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 12l-6.91 3.74L12 22l-3.09-6.26L2 12l6.91-3.74z"></path></svg>
+                 </span>
+                 <span><strong>AI Journey Planning</strong><br> Smart assistance powered by Gemini.</span>`,
+
+                `<span class="icon-wrapper">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="M20 12h2"></path><path d="m19.07 4.93-1.41 1.41"></path><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"></path><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"></path></svg>
+                 </span>
+                 <span><strong>Weather-Aware Guidance</strong><br> Travel advice based on live forecast.</span>`
+            ]},
+            { type: 'heading', value: 'Problem & Opportunity' },
+            { type: 'subheading', value: "Dublin’s transport experience is often fragmented:" },
+            { type: 'list', value: ["-Outdated interfaces and inconsistent behaviour",
+                                    "-Live location accuracy issues",
+                                    "-Limited route discovery",
+                                    "-No contextual travel info (weather, events, delays)"]},
+            { type: 'subheading', value: 'User Research Findings' },
+            { type: 'list', value: ["-Commuters want quick and simple route lookup (bus numbers, origins/destinations).",
+                                    "-People check real-time bus status frequently.",
+                                    "-Dublin residents rely on Google Maps, but hate its delay unpredictability.",
+                                    "-Users want alerts before problems happen.",
+                                    "-Weather affects travel significantly"]},
+            { type: 'image', value: { src: 'images/dubtransit/dublinstpatrick.jpg', alt: "Traffic control during St Patrick's day" } },
+            { type: 'subheading', value: "Opportunity" },  
+            { type: 'paragraph', value: "Create a single, friendly, modern app that integrates routing, AI guidance, alerts, weather, and live tracking together." },
+            { type: 'heading', value: 'Design Process & UX Approach' },
+            { type: 'subheading', value: "User Requirements" },
+            { type: 'paragraph', value: "Through informal interviews with students, workers, and migrants in Dublin, I identified key priorities:" },
+            { type: 'lined-list', value: ["“Just show me where the bus is.”",
+                                    "“I don’t want to figure out inbound/outbound.”",
+                                    "“I just want a clean app that works.”",
+                                    "“Weather screws up my commute, tell me beforehand.”"]},
+            { type: 'paragraph', value: "These insights shaped the core flows." },
+            { type: 'subheading', value: "Information Architecture & Key Screens" },
+            { type: 'image', value: { src: 'images/dubtransit/dubmockup.jpg', alt: "Mockup screens of the app" } },
+            { type: 'paragraph', value: "1. Routes Directory" },
+            { type: 'paragraph', value: "A minimal search-first interface that lets users quickly find routes by number or name." },
+            { type: 'box-list', value: ["Clear typography",
+                                        "Line-colour coding",
+                                        "Simple forward/backward direction labels (“A → B”, “B → A”)"]},
+            { type: 'paragraph', value: "2. Live Map & Tracking" },
+            { type: 'paragraph', value: "A full-screen map visualizing:" },
+            { type: 'box-list', value: ["Bus stop markers",
+                                        "Route polylines",
+                                        "Live (or simulated) bus positions",
+                                        "Smooth marker animation for realism"]},
+            { type: 'paragraph', value: "3. Service Alerts" },
+            { type: 'paragraph', value: "Supports categories:" },
+            { type: 'box-list', value: ["GENERAL",
+                                        "EVENT",
+                                        "ACCIDENT",
+                                        "WEATHER"]},
+            { type: 'paragraph', value: "4. AI Journey Planner" },
+            { type: 'paragraph', value: "An interface where users type the current location and destination location. The AI responds with:" },
+            { type: 'box-list', value: ["Multi-modal journey",
+                                        "Clear step-by-step navigation",
+                                        "Estimated travel time",
+                                        "Weather at departure and arrival",
+                                        "Notes about delays or events"]},
+            { type: 'paragraph', value: "5. Empty States & Loading Screens" },
+            { type: 'paragraph', value: "Designed intentionally to reduce anxiety and create trust:" },
+            { type: 'box-list', value: ["Encouraging microcopy",
+                                        "Soft colour palette",
+                                        "Clean visuals"]},
+            { type: 'heading', value: 'System Architecture' },
+            { type: 'ascii', value: `
+                                    ┌──────────────────────────┐
+                                    │        Mobile App        │
+                                    │ (DubTransit React Native)│
+                                    └──────────────┬───────────┘
+                                                   │
+                 ┌─────────────────────────────────┼─────────────────────────────────┐
+                 │                                 │                                 │
+  Crowdsource GPS│                                 │Route & Stop Search              │AI Journey Planner
+   Data Upload   │                                 │                                 │
+                 ▼                                 ▼                                 ▼
+       ┌───────────────────┐                 ┌─────────────────┐                 ┌───────────────────┐
+       │User Location (GPS)│                 │   User Query:   │                 │Origin/Destination │
+       │    With Consent   │                 │ "Bus 15", "UCD" │                 │    + Metadata     │
+       └─────────┬─────────┘                 └────────┬────────┘                 └─────────┬─────────┘
+                 │                                    │                                    │
+                 ▼                                    ▼                                    ▼
+       ┌────────────────────┐              ┌──────────────────────┐             ┌────────────────────┐
+       │Crowd Data Formatter│              │Firestore Routes/Stops│             │Gemini AI Processor │
+       │   (Anonymizer)     │              │     (GTFS Static)    │             │Journey Reasoning   │
+       └─────────┬──────────┘              └─────────┬────────────┘             └─────────┬──────────┘
+                 │                                   │                                    │
+                 │                                   │                                    │
+                 ▼                                   ▼                                    ▼
+       ┌─────────────────────┐             ┌──────────────────────┐             ┌──────────────────────────────┐
+       │  Crowdsourced Bus   │             │ GTFS-Realtime Feed   │             │  Weather API: Open-Meteo     │
+       │  Position Database  │◀──────┐    │ Vehicle positions     │            │  - Current weather (origin)   │
+       └─────────┬───────────┘       │     │ (official but        │             │  - Forecast (arrival time)   │
+                 │                   │     │ sometimes inaccurate)│             └───────────┬──────────────────┘
+                 ▼                   │     └──────────┬───────────┘                         │
+       ┌──────────────────────┐      │                │                                     │
+       │Crowd Data Smoothing  │◀─────┘     ┌──────────▼───────────┐                         │
+       │ & Interpolation      │            │ Data Fusion Engine    │◀───────────────────────┘
+       └─────────┬────────────┘            │ (Crowd + GTFSR Merge) │
+                 │                         └───────────┬───────────┘
+                 │                                     │
+                 ▼                                     ▼
+       ┌────────────────────────┐          ┌────────────────────────┐
+       │ Live Bus Position API  │─────────▶│     Map Renderer      │
+       │    (Unified Source)    │          │ Route Polyline + Stops │
+       └────────────────────────┘          │ Bus Animations (Smooth)│
+                                           └───────────┬────────────┘
+                                                       │
+                                                       ▼
+                                          ┌──────────────────────────┐
+                                          │ AI Journey Planner Output│
+                                          │   ETA + Weather + Steps  │
+                                          └──────────────────────────┘`
+            },
+            { type: 'heading', value: 'Visual Design Language' },
+            { type: 'paragraph', value: "I chose a dark, modern UI with a yellow similar to the Dublin bus color (#E3CC00) as the primary accent." },
+            { type: 'image', value: { src: 'images/dubtransit/dubcolor.jpg', alt: "Colorscheme for the app" } },
+            { type: 'subheading', value: "Reasons:" },
+            { type: 'list', value: ["High visibility",
+                                    "Works great on OLED screens",
+                                    "Creates strong brand identity"]},
+            { type: 'heading', value: 'Prototyping & Iteration' },
+            { type: 'paragraph', value: "I iterated through several cycles:" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Redesigned direction labels from Inbound/Outbound → A → B / B → A</span>`,
+                                    `<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Rebuilt the map for readability and smooth marker animation</span>`,
+                                    `<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Optimised the AI planner’s information density (steps, ETA, weather)</span>`,
+                                    `<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Refined empty states and loading behaviours to reduce user stress</span>`,
+                                    `<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Enhanced the weather integration after feedback (“show arrival weather too”)</span>`]},
+            { type: 'subheading', value: 'AI-Assisted Prototyping Process' },
+            { type: 'paragraph', value: "This prototype heavily used AI tools during iteration:" },
+            { type: 'list', value: ["Google AI Studio — initial drafts of features & logic",
+                                    "DeepSeek — refining data structures, simulation logic, and route handling",
+                                    "ChatGPT — final refinements, debugging, API integration, UX adjustments",]},
+            { type: 'image', value: { src: 'images/dubtransit/dubaiuses.jpg', alt: "Usage of Google AI Studio for the development" } },
+            { type: 'paragraph', value: "AI helped speed up prototyping, letting me focus on design and experience rather than spending too much time on development." },
+            { type: 'heading', value: 'Live Prototype' },
+            { type: 'paragraph', value: "To make Dub.Transit accessible directly from the browser, I created a web-based preview of the app. This allows the viewers to interact with the interface without installing the Android app." },
+            { type: 'mobile-demo', value: 'https://dublintransporttracker.netlify.app' },
+            { type: 'box-list', value: ['You can also <a href="https://dublintransporttracker.netlify.app" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">open the app in a new tab</a> to explore it fully.'] },
+            { type: 'paragraph', value: "The current version preserves the overall UX, typography, and component layout so viewers can understand the design system." },
+            { type: 'heading', value: 'Advanced Features' },
+            { type: 'subheading', value: `<span class="icon-wrapper">
+                    <svg viewBox="0 0 24 24"><path d="M12 2v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="M20 12h2"></path><path d="m19.07 4.93-1.41 1.41"></path><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"></path><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"></path></svg>
+                 </span>
+                 <span>Weather Integration</span>`},
+            { type: 'paragraph', value: "Using Open-Meteo, the app fetches: Current temperature, Feels-like, Rain probability, Wind, Weather at arrival time, for journey planning This allows the AI to adjust trip suggestions (e.g., “Expect rain when you arrive at St. Stephen’s Green”)." },
+            { type: 'image', value: { src: 'images/dubtransit/dubweather.jpg', alt: "Screen showing weather details at the current location and destination location" } },
+            { type: 'subheading', value: `<span class="icon-wrapper">
+                   <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 12l-6.91 3.74L12 22l-3.09-6.26L2 12l6.91-3.74z"></path></svg>
+                 </span>
+                 <span>Gemini AI Journey Assistant</span>`},
+            { type: 'paragraph', value: "A central highlight of the project." },
+            { type: 'paragraph', value: "The assistant: Reads user’s start + destination, Checks possible transport modes, Considers weather conditions, Provides a human-readable plan, Gives suggestions (“Leave 10 minutes early, traffic is heavy near Drumcondra”)." },
+            { type: 'paragraph', value: "Gemini acts as the smart layer on top of the transit data." },
+            { type: 'image', value: { src: 'images/dubtransit/dubaiapp.jpg', alt: "Screen showing navigation details and steps" } },
+            { type: 'heading', value: 'Crowdsourced Real-Time Tracking (Future Feature)' },
+            { type: 'paragraph', value: "A key innovation planned for DubTransit is a community-powered real-time bus tracking system, designed to overcome the limitations of existing transport data sources in Dublin." },
+            
+            { type: 'subheading', value: 'Why Crowdsourcing?' },
+            { type: 'paragraph', value: "GTFS-Realtime (GTFS-R) feeds are:" },
+            { type: 'box-list', value: ["often inconsistent or delayed",
+                                    "missing direction accuracy",
+                                    "expensive or restricted for developers",
+                                    "unreliable for smaller-scale apps",
+                                    "out of scope for a prototype project"]},
+            { type: 'paragraph', value: "Although GTFS-Realtime is a standard, its accuracy in Dublin varies, and buses frequently jump, freeze, or move in the wrong direction, which is exactly what I experienced while testing." },    
+            { type: 'paragraph', value: "Crowdsourcing solves this by decentralizing the live tracking system, similar to how Waze collects real-world traffic data from its drivers." },
+            { type: 'subheading', value: 'How the Crowdsourced System Works?' },    
+            { type: 'paragraph', value: "With user consent, the app would:" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Detect when a passenger is inside a bus (based on movement patterns + manual confirmation).</span>`,
+                                    `<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Upload minimal, anonymous data such as:</span>`,]},
+            { type: 'box-list', value: ["GPS location",
+                                        "Route number",
+                                        "Timestamp"]},   
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Combine data from multiple passengers on the same route.</span>`,
+                                    `<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Smooth and interpolate positions on the backend to produce a highly accurate, real-time view.</span>`,]},
+            { type: 'subheading', value: 'Privacy-Preserving Design' },
+            { type: 'lined-list', value: ["No personal identity stored",
+                                        "No background tracking unless explicitly enabled",
+                                        "Data expires and is deleted automatically after a few minutes",
+                                        "Users opt-in on a per-trip basis"]},  
+            { type: 'heading', value: 'Limitations & Technical Challenges' },
+            { type: 'paragraph', value: "Crowdsourcing isn’t magic, it introduces a new set of challenges:" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Requires a critical mass of active users</span>`,]},
+                 { type: 'paragraph', value: "--(early versions may have sparse tracking)" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Data quality varies</span>`,]},
+                 { type: 'paragraph', value: "--(e.g., inaccurate GPS, people on the wrong bus)" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Requires server-side smoothing</span>`,]},
+                 { type: 'paragraph', value: "--(Kalman filtering, interpolation, direction correction)" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>Detecting whether a user is genuinely on a bus</span>`,]},
+                 { type: 'paragraph', value: "--(signal patterns, speed, or manual confirmation)" },
+            { type: 'list', value: [`<span class="icon-wrapper">
+                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
+                                        </span>
+                 <span>User outreach is essential</span>`,]},
+                 { type: 'paragraph', value: "--The quality of tracking depends directly on the number of participants." },
+            { type: 'paragraph', value: "I present these limitations openly as part of the project’s honest, real-world constraints." },
+            { type: 'heading', value: 'Prototype Status & Future Improvements' },
+            { type: 'subheading', value: 'The current version of DubTransit is a functional prototype, with:' },
+            { type: 'box-list', value: ["fully working AI-powered journey planner (Gemini API)",
+                                    "Weather-aware routing using Open-Meteo",
+                                    "Working route search, stop lookup, and route shapes",   
+                                    "Simulated live buses moving along real route geometry",
+                                    "Cross-platform mobile UI built in React Native"
+                                    ]},
+            { type: 'subheading', value: 'What’s next?' },
+            { type: 'paragraph', value: "Here’s the roadmap for turning this into a full production app:" },
+            { type: 'ascii', value: `
+                        ┌───────────────────────────────────┐
+                        │          DUB.TRANSIT ROADMAP      │
+                        └───────────────────────────────────┘
+
+                                        │
+                                        ▼
+                      ┌───────────────────────────────────────┐
+                      │            SHORT-TERM GOALS           │
+                      └───────────────────────────────────────┘
+                                        │
+     ┌──────────────────────────────────┼──────────────────────────────────┐
+     │                                  │                                  │
+     ▼                                  ▼                                  ▼
+┌──────────────┐                ┌────────────────┐                ┌──────────────────┐
+│ Crowdsourced │                │ Push           │                │ Real GTFS-R      │
+│ GPS Backend  │                │ Notifications  │                │ Integration      │
+│ (User Opt-in)│                │ (Delays, ETA)  │                │ (with fallback)  │
+└──────────────┘                └────────────────┘                └──────────────────┘
+     │                                  │                                  │
+     ▼                                  ▼                                  ▼
+┌──────────────┐                ┌────────────────┐                ┌──────────────────┐
+│ Offline      │                │ Improved       │                │ Smarter AI       │
+│ Caching      │                │ Onboarding     │                │ Journey Tuning   │
+└──────────────┘                └────────────────┘                └──────────────────┘
+
+
+                                        │
+                                        ▼
+                      ┌───────────────────────────────────────┐
+                      │            LONG-TERM GOALS            │
+                      └───────────────────────────────────────┘
+                                        │
+     ┌──────────────────────────────────┼──────────────────────────────────┐
+     │                                  │                                  │
+     ▼                                  ▼                                  ▼
+┌─────────────────┐            ┌───────────────────────┐        ┌────────────────────────┐
+│ Real-Time       │            │ Predictive Congestion │        │ ML Delay Prediction    │
+│ Multimodal Plan │            │ Models                │        │ Models (Historical +   │
+│ (Bus+Luas+DART) │            │                       │        │ Crowdsourced Data)     │
+└─────────────────┘            └───────────────────────┘        └────────────────────────┘
+     │                                  │                                  │
+     ▼                                  ▼                                  ▼
+┌──────────────────────────┐  ┌──────────────────────────┐  ┌──────────────────────────┐
+│ WearOS / Apple Watch     │  │ Partnerships With Dublin │  │ Scale Infrastructure     │
+│ Companion Experience     │  │ Transport Agencies       │  │ For City-Wide Adoption   │
+└──────────────────────────┘  └──────────────────────────┘  └──────────────────────────┘`
+            },
+            { type: 'heading', value: 'Final Thoughts' },
+            { type: 'paragraph', value: "Dub.Transit represents more than a transit app, it’s a vision for a more efficient, accessible, and human-centered mobility experience in Dublin. This project brought together UX design, visual storytelling, mobile engineering, geospatial logic, AI integration, and systems thinking into one unified product." },
+            { type: 'paragraph', value: "The process taught me that designing for transit is ultimately designing for people: their routines, their anxieties, their unpredictability, and their need for clarity in moments of stress. By blending thoughtful design with emerging technologies like Gemini AI and future crowdsourced real-time data, Dub.Transit aims to make everyday commuting smoother, smarter, and more equitable." },
+            { type: 'quote', value: "“A developed country is not a place where the poor have cars. It's where the rich use public transportation.”", author: "Gustavo Petro (Former Mayor of Bogotá, Colombia)" },
+           ]
+        }
+      },
       {
         title: "City, Beneath the Surface",
         category: "Data Visualization",
@@ -604,6 +934,14 @@ const projects = [
                             element = document.createElement('h3');
                             element.className = 'text-xl font-semibold mt-8 mb-2';
                             element.textContent = item.value;
+
+                            break;
+                        case 'subheading':
+                            element = document.createElement('h4');
+                            // Slightly smaller than heading (text-lg), less bold (font-medium), distinct color
+                            element.className = 'text-lg font-medium mt-6 mb-2 text-[#16404D] flex items-start gap-3'; 
+                            element.textContent = item.value;
+                            element.innerHTML = item.value;
                             break;
                         case 'paragraph':
                             element = document.createElement('p');
@@ -615,6 +953,41 @@ const projects = [
                             element.className = 'w-full h-auto rounded-lg my-6 lightbox-trigger';
                             element.src = item.value.src;
                             element.alt = item.value.alt;
+                            break;
+                        case 'box-list':
+                            element = document.createElement('ul');
+                            // Added 'justify-center' to align the boxes to the middle
+                            element.className = 'flex flex-wrap gap-3 my-4 justify-center'; 
+                            
+                            item.value.forEach(text => {
+                                const li = document.createElement('li');
+                                li.className = 'px-4 py-2 border border-[#16404D]/20 rounded-lg text-sm text-[#16404D] bg-[#16404D]/5 font-medium leading-relaxed';
+                                li.innerHTML = text;
+                                element.appendChild(li);
+                            });
+                            break;
+                        case 'lined-list':
+                            element = document.createElement('div');
+                            // We use the same border style as the quote: Gold left border, padding left
+                            element.className = 'my-6 border-l-4 border-[#DDA853] pl-6 py-1'; 
+                            
+                            const ul = document.createElement('ul');
+                            // 'space-y-3' adds breathing room between the list items
+                            ul.className = 'space-y-3 text-[#16404D]/90'; 
+                            
+                            item.value.forEach(text => {
+                                const li = document.createElement('li');
+                                li.className = 'leading-relaxed text-base';
+                                li.innerHTML = text;
+                                ul.appendChild(li);
+                            });
+                            
+                            element.appendChild(ul);
+                            break;
+                        case 'ascii':
+                            element = document.createElement('pre'); // <pre> tag preserves whitespace
+                            element.className = 'ascii-terminal';
+                            element.textContent = item.value;
                             break;
                         case 'gallery':
                             element = document.createElement('div');
@@ -648,16 +1021,31 @@ const projects = [
                                 </button>
                             `;
                             break;
+                        case 'mobile-demo':
+                            element = document.createElement('div');
+                            element.className = 'mobile-demo-container';
+                            element.innerHTML = `
+                                <div class="mobile-bezel">
+                                    <div class="mobile-screen">
+                                        <iframe src="${item.value}" title="Live Mobile Prototype" allow="geolocation" loading="lazy"></iframe>
+                                    </div>
+                                </div>
+                                <p class="text-center text-xs text-[#16404D]/50 mt-4 w-full absolute -bottom-8">Interact with the screen to test the app</p>
+                            `;
+                            // We need position relative on container for the caption to work nicely
+                            element.style.position = 'relative'; 
+                            break;
                         case 'sketchfab':
                             element = document.createElement('div');
                             element.innerHTML = item.value;
                             break;
                         case 'list':
                             element = document.createElement('ul');
-                            element.className = 'list-disc pl-5 space-y-2 my-4 text-[#16404D]/80 font-light';
+                            element.className = 'space-y-2 my-4 text-[#16404D]/80 font-light';
                             item.value.forEach(text => {
                                 const li = document.createElement('li');
-                                li.textContent = text;
+                                li.className = 'custom-list-item'; 
+                                li.innerHTML = text; // This allows the SVG to render
                                 element.appendChild(li);
                             });
                             break;
