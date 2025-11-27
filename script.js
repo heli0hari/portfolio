@@ -134,7 +134,7 @@ const projects = [
                 { text: "<strong>AI Journey Planner Output</strong><br>ETA + Weather + Steps", highlight: true }
             ]},
             { type: 'heading', value: 'Visual Design Language' },
-            { type: 'paragraph', value: "I chose a dark, modern UI with a yellow similar to the Dublin bus color (#E3CC00) as the primary accent." },
+            { type: 'paragraph', value: "I chose a dark, modern UI with a yellow similar to the Dublin bus color (#E3CD00) as the primary accent." },
             { type: 'image', value: { src: 'images/dubtransit/dubcolor.jpg', alt: "Colorscheme for the app" } },
             { type: 'subheading', value: "Reasons:" },
             { type: 'list', value: ["High visibility",

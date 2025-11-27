@@ -478,24 +478,37 @@ body.about-visible .vignette { opacity: 1; }
   .roadmap-spine { display: block; } /* Keep spine for vertical flow */
 }
 
-/* System Architecture Flowchart Styling */
+/* System Architecture Flowchart Styling - Horizontal Scroll */
 .arch-wrapper {
   width: 100%;
-  max-width: 800px;
-  margin: 2rem auto;
+  margin: 2rem 0;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   position: relative;
+  
+  /* CRITICAL: Enable Horizontal Scroll */
+  overflow-x: auto;       /* Allows swiping left/right */
+  padding-bottom: 1.5rem; /* Space for the scrollbar to sit comfortably */
+  -webkit-overflow-scrolling: touch; /* Ensures smooth momentum scrolling on iOS */
 }
+
+/* Custom Scrollbar for the Architecture Diagram */
+.arch-wrapper::-webkit-scrollbar { height: 6px; }
+.arch-wrapper::-webkit-scrollbar-thumb { background-color: #DDA853; border-radius: 4px; }
+.arch-wrapper::-webkit-scrollbar-track { background-color: rgba(22, 64, 77, 0.1); }
 
 /* A single level in the hierarchy (Row) */
 .arch-row {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  width: 100%;
-  position: relative;
+  
+  /* CRITICAL: Force the row to be wide enough to hold 3 columns */
+  /* This prevents squishing on mobile and triggers the scrollbar instead */
+  min-width: 700px; 
+  
+  margin: 0 auto; /* Keeps it centered if screen is larger than 700px */
 }
 
 /* Columns for parallel branches */
@@ -503,12 +516,13 @@ body.about-visible .vignette { opacity: 1; }
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 1; /* Each column takes equal width */
+  flex: 1; 
   align-items: center;
   position: relative;
+  min-width: 0; 
 }
 
-/* The Box Styling (Reusing Roadmap style but specific for Arch) */
+/* The Box Styling */
 .arch-box {
   background-color: #FBF5DD;
   border: 1px solid #16404D;
@@ -518,7 +532,7 @@ body.about-visible .vignette { opacity: 1; }
   text-align: center;
   font-size: 0.8rem;
   width: 100%;
-  box-shadow: 3px 3px 0px rgba(22, 64, 77, 0.1);
+  box-shadow: 3px 3px 0px rgba(22, 64, 77, 0.15);
   position: relative;
   z-index: 2;
   display: flex;
@@ -527,14 +541,12 @@ body.about-visible .vignette { opacity: 1; }
   min-height: 70px;
 }
 
-/* Titles inside the boxes */
 .arch-box strong {
   display: block;
   margin-bottom: 4px;
   font-size: 0.9rem;
 }
 
-/* Highlight boxes (for Key components like Gemini or Mobile App) */
 .arch-box.highlight {
   border: 2px solid #DDA853;
   background-color: #fff;
@@ -549,17 +561,4 @@ body.about-visible .vignette { opacity: 1; }
   border-top: 8px solid #16404D;
   margin: 0 auto;
   opacity: 0.6;
-}
-
-/* Responsive: Stack everything vertically on mobile */
-@media (max-width: 768px) {
-  .arch-row {
-    flex-direction: column;
-  }
-  .arch-col {
-    width: 100%;
-    border-left: 2px dashed rgba(22, 64, 77, 0.2); /* Visual guide for mobile branches */
-    padding-left: 1rem;
-    padding-bottom: 1rem;
-  }
 }
