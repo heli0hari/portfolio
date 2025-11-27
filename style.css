@@ -355,3 +355,211 @@ body.about-visible .vignette { opacity: 1; }
   z-index: 20;
   pointer-events: none;
 }
+
+/* Roadmap / Flowchart Styling - With Arrows */
+.roadmap-wrapper {
+  position: relative;
+  padding: 0;
+  width: 100%;
+  max-width: 700px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The vertical spine running through the background */
+.roadmap-spine {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #16404D;
+  transform: translateX(-50%);
+  z-index: 0;
+  opacity: 0.3;
+}
+
+/* Container for one "Phase" (e.g. Short Term) */
+.roadmap-phase {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The Pill Header (Short Term Goals) */
+.roadmap-header-pill {
+  background-color: #16404D;
+  color: #FBF5DD;
+  padding: 0.6rem 2rem;
+  border-radius: 99px;
+  border: 2px solid #DDA853;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  margin-bottom: 0.5rem; /* Space for the arrow below it */
+}
+
+/* The Downward Arrow Icon */
+.roadmap-arrow {
+  width: 0; 
+  height: 0; 
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid #16404D;
+  margin: 0.2rem 0 1rem 0; /* Spacing between header and grid */
+}
+
+/* A horizontal bar that makes it look like the flow "splits" to the boxes */
+.roadmap-split-bar {
+  width: 60%;
+  height: 2px;
+  background-color: #16404D;
+  margin-bottom: 1rem;
+  position: relative;
+  opacity: 0.3;
+}
+/* Small vertical tick connecting split bar to the arrow */
+.roadmap-split-bar::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  height: 10px;
+  width: 2px;
+  background-color: #16404D;
+}
+
+/* The Grid of Boxes */
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 3rem; /* Space before the next phase starts */
+}
+
+/* The Individual Boxes */
+.roadmap-box {
+  background-color: #FBF5DD;
+  border: 1px solid #16404D;
+  padding: 1.25rem 1rem;
+  border-radius: 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #16404D;
+  box-shadow: 4px 4px 0px rgba(22, 64, 77, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  z-index: 2;
+}
+
+/* Hover effect for interactivity */
+.roadmap-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 4px 6px 12px rgba(22, 64, 77, 0.15);
+  border-color: #DDA853;
+}
+
+/* Mobile Tweak: Remove split bar on small screens (vertical stack doesn't need it) */
+@media (max-width: 600px) {
+  .roadmap-split-bar { display: none; }
+  .roadmap-grid { gap: 1rem; }
+  .roadmap-spine { display: block; } /* Keep spine for vertical flow */
+}
+
+/* System Architecture Flowchart Styling */
+.arch-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+/* A single level in the hierarchy (Row) */
+.arch-row {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+  position: relative;
+}
+
+/* Columns for parallel branches */
+.arch-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1; /* Each column takes equal width */
+  align-items: center;
+  position: relative;
+}
+
+/* The Box Styling (Reusing Roadmap style but specific for Arch) */
+.arch-box {
+  background-color: #FBF5DD;
+  border: 1px solid #16404D;
+  color: #16404D;
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 0.8rem;
+  width: 100%;
+  box-shadow: 3px 3px 0px rgba(22, 64, 77, 0.1);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 70px;
+}
+
+/* Titles inside the boxes */
+.arch-box strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+/* Highlight boxes (for Key components like Gemini or Mobile App) */
+.arch-box.highlight {
+  border: 2px solid #DDA853;
+  background-color: #fff;
+}
+
+/* Connectors (Arrows) */
+.arch-arrow-down {
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #16404D;
+  margin: 0 auto;
+  opacity: 0.6;
+}
+
+/* Responsive: Stack everything vertically on mobile */
+@media (max-width: 768px) {
+  .arch-row {
+    flex-direction: column;
+  }
+  .arch-col {
+    width: 100%;
+    border-left: 2px dashed rgba(22, 64, 77, 0.2); /* Visual guide for mobile branches */
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+  }
+}

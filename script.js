@@ -94,55 +94,45 @@ const projects = [
                                         "Soft colour palette",
                                         "Clean visuals"]},
             { type: 'heading', value: 'System Architecture' },
-            { type: 'ascii', value: `
-                                    ┌──────────────────────────┐
-                                    │        Mobile App        │
-                                    │ (DubTransit React Native)│
-                                    └──────────────┬───────────┘
-                                                   │
-                 ┌─────────────────────────────────┼─────────────────────────────────┐
-                 │                                 │                                 │
-  Crowdsource GPS│                                 │Route & Stop Search              │AI Journey Planner
-   Data Upload   │                                 │                                 │
-                 ▼                                 ▼                                 ▼
-       ┌───────────────────┐                 ┌─────────────────┐                 ┌───────────────────┐
-       │User Location (GPS)│                 │   User Query:   │                 │Origin/Destination │
-       │    With Consent   │                 │ "Bus 15", "UCD" │                 │    + Metadata     │
-       └─────────┬─────────┘                 └────────┬────────┘                 └─────────┬─────────┘
-                 │                                    │                                    │
-                 ▼                                    ▼                                    ▼
-       ┌────────────────────┐              ┌──────────────────────┐             ┌────────────────────┐
-       │Crowd Data Formatter│              │Firestore Routes/Stops│             │Gemini AI Processor │
-       │   (Anonymizer)     │              │     (GTFS Static)    │             │Journey Reasoning   │
-       └─────────┬──────────┘              └─────────┬────────────┘             └─────────┬──────────┘
-                 │                                   │                                    │
-                 │                                   │                                    │
-                 ▼                                   ▼                                    ▼
-       ┌─────────────────────┐             ┌──────────────────────┐             ┌──────────────────────────────┐
-       │  Crowdsourced Bus   │             │ GTFS-Realtime Feed   │             │  Weather API: Open-Meteo     │
-       │  Position Database  │◀──────┐     │ Vehicle positions    │             │  - Current weather (origin)   │
-       └─────────┬───────────┘       │     │ (official but        │             │  - Forecast (arrival time)   │
-                 │                   │     │ sometimes inaccurate)│             └───────────┬──────────────────┘
-                 ▼                   │     └──────────┬───────────┘                         │
-       ┌──────────────────────┐      │                │                                     │
-       │Crowd Data Smoothing  │◀─────┘     ┌──────────▼───────────┐                         │
-       │ & Interpolation      │            │ Data Fusion Engine   │◀───────────────────────┘
-       └─────────┬────────────┘            │ (Crowd + GTFSR Merge) │
-                 │                         └───────────┬───────────┘
-                 │                                     │
-                 ▼                                     ▼
-       ┌────────────────────────┐          ┌────────────────────────┐
-       │ Live Bus Position API  │─────────▶│     Map Renderer       │
-       │    (Unified Source)    │          │ Route Polyline + Stops │
-       └────────────────────────┘          │ Bus Animations (Smooth)│
-                                           └───────────┬────────────┘
-                                                       │
-                                                       ▼
-                                          ┌──────────────────────────┐
-                                          │ AI Journey Planner Output│
-                                          │   ETA + Weather + Steps  │
-                                          └──────────────────────────┘`
-            },
+            { type: 'architecture', value: [
+                // Row 1: Top Level
+                { text: "<strong>Mobile App</strong><br>DubTransit (React Native)", highlight: true },
+
+                // Row 2: Parallel Branches (3 Columns)
+                [
+                    // Column 1: GPS / Crowdsourcing Flow
+                    [
+                        "<strong>User Location</strong><br>GPS (With Consent)",
+                        "<strong>Crowd Data Formatter</strong><br>Anonymizer",
+                        "<strong>Crowdsourced DB</strong><br>Bus Position Database",
+                        "<strong>Data Smoothing</strong><br>Interpolation & Kalman Filter"
+                    ],
+                    // Column 2: Route / Data Flow
+                    [
+                        "<strong>User Query</strong><br>'Bus 15', 'UCD'",
+                        "<strong>Firestore Routes</strong><br>GTFS Static Data",
+                        "<strong>GTFS-Realtime Feed</strong><br>Official Vehicle Positions",
+                        "<strong>Data Fusion Engine</strong><br>Merging Crowd + Official Data"
+                    ],
+                    // Column 3: AI / Weather Flow
+                    [
+                        "<strong>Origin / Destination</strong><br>Metadata extraction",
+                        "<strong>Gemini AI Processor</strong><br>Journey Reasoning",
+                        "<strong>Weather API</strong><br>Open-Meteo (Current & Forecast)"
+                    ]
+                ],
+
+                // Row 3: Merging Logic
+                [
+                   // Merging Col 1 & 2
+                   [ "<strong>Live Bus Position API</strong><br>Unified Source" ],
+                   // Merging Logic
+                   [ "<strong>Map Renderer</strong><br>Polyline + Smooth Animation" ] 
+                ],
+
+                // Row 4: Final Output
+                { text: "<strong>AI Journey Planner Output</strong><br>ETA + Weather + Steps", highlight: true }
+            ]},
             { type: 'heading', value: 'Visual Design Language' },
             { type: 'paragraph', value: "I chose a dark, modern UI with a yellow similar to the Dublin bus color (#E3CC00) as the primary accent." },
             { type: 'image', value: { src: 'images/dubtransit/dubcolor.jpg', alt: "Colorscheme for the app" } },
@@ -275,54 +265,30 @@ const projects = [
                                     ]},
             { type: 'subheading', value: 'What’s next?' },
             { type: 'paragraph', value: "Here’s the roadmap for turning this into a full production app:" },
-            { type: 'ascii', value: `
-                        ┌───────────────────────────────────┐
-                        │        DUB.TRANSIT ROADMAP        │
-                        └───────────────────────────────────┘
-
-                                        │
-                                        ▼
-                      ┌───────────────────────────────────────┐
-                      │            SHORT-TERM GOALS           │
-                      └───────────────────────────────────────┘
-                                        │
-     ┌──────────────────────────────────┼──────────────────────────────────┐
-     │                                  │                                  │
-     ▼                                  ▼                                  ▼
-┌──────────────┐                ┌────────────────┐                ┌──────────────────┐
-│ Crowdsourced │                │ Push           │                │ Real GTFS-R      │
-│ GPS Backend  │                │ Notifications  │                │ Integration      │
-│ (User Opt-in)│                │ (Delays, ETA)  │                │ (with fallback)  │
-└──────────────┘                └────────────────┘                └──────────────────┘
-     │                                  │                                  │
-     ▼                                  ▼                                  ▼
-┌──────────────┐                ┌────────────────┐                ┌──────────────────┐
-│ Offline      │                │ Improved       │                │ Smarter AI       │
-│ Caching      │                │ Onboarding     │                │ Journey Tuning   │
-└──────────────┘                └────────────────┘                └──────────────────┘
-
-
-                                        │
-                                        ▼
-                      ┌───────────────────────────────────────┐
-                      │            LONG-TERM GOALS            │
-                      └───────────────────────────────────────┘
-                                        │
-     ┌──────────────────────────────────┼──────────────────────────────────┐
-     │                                  │                                  │
-     ▼                                  ▼                                  ▼
-┌─────────────────┐            ┌───────────────────────┐        ┌────────────────────────┐
-│ Real-Time       │            │ Predictive Congestion │        │ ML Delay Prediction    │
-│ Multimodal Plan │            │ Models                │        │ Models (Historical +   │
-│ (Bus+Luas+DART) │            │                       │        │ Crowdsourced Data)     │
-└─────────────────┘            └───────────────────────┘        └────────────────────────┘
-     │                                  │                                  │
-     ▼                                  ▼                                  ▼
-┌──────────────────────────┐  ┌──────────────────────────┐  ┌──────────────────────────┐
-│ WearOS / Apple Watch     │  │ Partnerships With Dublin │  │ Scale Infrastructure     │
-│ Companion Experience     │  │ Transport Agencies       │  │ For City-Wide Adoption   │
-└──────────────────────────┘  └──────────────────────────┘  └──────────────────────────┘`
-            },
+            { type: 'roadmap', value: [
+                {
+                    title: "Short-Term Goals",
+                    items: [
+                        "<strong>Crowdsourced GPS</strong><br>Backend Setup (User Opt-in)",
+                        "<strong>Push Notifications</strong><br>Delays & ETA Alerts",
+                        "<strong>Real GTFS-R</strong><br>Integration with Fallback",
+                        "<strong>Offline Caching</strong><br>For poor network areas",
+                        "<strong>Improved Onboarding</strong><br>User education flows",
+                        "<strong>Smarter AI</strong><br>Journey Tuning & Context"
+                    ]
+                },
+                {
+                    title: "Long-Term Goals",
+                    items: [
+                        "<strong>Real-Time Multimodal</strong><br>Bus + Luas + DART Unified",
+                        "<strong>Predictive Congestion</strong><br>Historical Traffic Models",
+                        "<strong>ML Delay Prediction</strong><br>Using Crowdsourced Data",
+                        "<strong>WearOS / Apple Watch</strong><br>Companion Experience",
+                        "<strong>Agency Partnerships</strong><br>Official Data Access",
+                        "<strong>Scale Infrastructure</strong><br>For City-Wide Adoption"
+                    ]
+                }
+            ]},
             { type: 'heading', value: 'Final Thoughts' },
             { type: 'paragraph', value: "Dub.Transit represents more than a transit app, it’s a vision for a more efficient, accessible, and human-centered mobility experience in Dublin. This project brought together UX design, visual storytelling, mobile engineering, geospatial logic, AI integration, and systems thinking into one unified product." },
             { type: 'paragraph', value: "The process taught me that designing for transit is ultimately designing for people: their routines, their anxieties, their unpredictability, and their need for clarity in moments of stress. By blending thoughtful design with emerging technologies like Gemini AI and future crowdsourced real-time data, Dub.Transit aims to make everyday commuting smoother, smarter, and more equitable." },
@@ -997,6 +963,62 @@ const projects = [
                             element.className = 'ascii-terminal';
                             element.textContent = item.value;
                             break;
+
+                        case 'roadmap':
+                            element = document.createElement('div');
+                            element.className = 'roadmap-wrapper';
+                            
+                            // 1. The Background Spine
+                            const spine = document.createElement('div');
+                            spine.className = 'roadmap-spine';
+                            element.appendChild(spine);
+
+                            item.value.forEach((phase, index) => {
+                                const phaseContainer = document.createElement('div');
+                                phaseContainer.className = 'roadmap-phase';
+
+                                // 2. Phase Header (e.g. Short Term)
+                                const header = document.createElement('div');
+                                header.className = 'roadmap-header-pill';
+                                header.textContent = phase.title;
+                                phaseContainer.appendChild(header);
+
+                                // 3. The Arrow pointing down from Header
+                                const arrow = document.createElement('div');
+                                arrow.className = 'roadmap-arrow';
+                                phaseContainer.appendChild(arrow);
+
+                                // 4. The "Split Bar" (Visual connector for desktop)
+                                const splitBar = document.createElement('div');
+                                splitBar.className = 'roadmap-split-bar';
+                                phaseContainer.appendChild(splitBar);
+
+                                // 5. The Grid of Boxes
+                                const grid = document.createElement('div');
+                                grid.className = 'roadmap-grid';
+                                
+                                phase.items.forEach(boxText => {
+                                    const box = document.createElement('div');
+                                    box.className = 'roadmap-box';
+                                    box.innerHTML = boxText;
+                                    grid.appendChild(box);
+                                });
+                                phaseContainer.appendChild(grid);
+
+                                // 6. If this is NOT the last phase, add another arrow at the bottom
+                                // pointing to the next section
+                                if (index < item.value.length - 1) {
+                                    const nextArrow = document.createElement('div');
+                                    nextArrow.className = 'roadmap-arrow';
+                                    // Add some margin to push it down
+                                    nextArrow.style.marginTop = '-1rem'; 
+                                    nextArrow.style.marginBottom = '1rem'; 
+                                    phaseContainer.appendChild(nextArrow);
+                                }
+
+                                element.appendChild(phaseContainer);
+                            });
+                            break;
                         case 'gallery':
                             element = document.createElement('div');
                             element.className = 'image-gallery';
@@ -1046,6 +1068,61 @@ const projects = [
                         case 'sketchfab':
                             element = document.createElement('div');
                             element.innerHTML = item.value;
+                            break;
+
+                        case 'architecture':
+                            element = document.createElement('div');
+                            element.className = 'arch-wrapper';
+                            
+                            item.value.forEach((row, index) => {
+                                const rowDiv = document.createElement('div');
+                                rowDiv.className = 'arch-row';
+
+                                // If the row is an Array, it means we have columns (Parallel Branches)
+                                if (Array.isArray(row)) {
+                                    row.forEach(colData => {
+                                        const colDiv = document.createElement('div');
+                                        colDiv.className = 'arch-col';
+                                        
+                                        // A column can have multiple boxes inside it
+                                        colData.forEach((boxHtml, i) => {
+                                            const box = document.createElement('div');
+                                            box.className = 'arch-box';
+                                            box.innerHTML = boxHtml;
+                                            colDiv.appendChild(box);
+
+                                            // Add small arrow between boxes in the same column
+                                            if (i < colData.length - 1) {
+                                                const arrow = document.createElement('div');
+                                                arrow.className = 'arch-arrow-down';
+                                                colDiv.appendChild(arrow);
+                                            }
+                                        });
+                                        rowDiv.appendChild(colDiv);
+                                    });
+                                } 
+                                // If the row is a String/Object, it's a Full Width Box (Top/Bottom)
+                                else {
+                                    const box = document.createElement('div');
+                                    // Check if it's a special highlighted box
+                                    const isHighlight = typeof row === 'object' && row.highlight;
+                                    const content = typeof row === 'object' ? row.text : row;
+                                    
+                                    box.className = isHighlight ? 'arch-box highlight' : 'arch-box';
+                                    box.style.maxWidth = "400px"; // Limit width for full-width items
+                                    box.innerHTML = content;
+                                    rowDiv.appendChild(box);
+                                }
+
+                                element.appendChild(rowDiv);
+
+                                // Add arrow connecting this row to the next row (unless it's the last one)
+                                if (index < item.value.length - 1) {
+                                    const mainArrow = document.createElement('div');
+                                    mainArrow.className = 'arch-arrow-down';
+                                    element.appendChild(mainArrow);
+                                }
+                            });
                             break;
                         case 'list':
                             element = document.createElement('ul');
