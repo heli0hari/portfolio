@@ -1,237 +1,397 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Harigovind | Designer & Photographer</title>
-  <meta name="description" content="Official website of Harigovind – Visual Communication Designer, Photographer, and Creative based in Dublin, Ireland.">
-  
-  <!-- External Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
 
-  <!-- Tailwind CSS from CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts: Space Grotesk -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Harigovind | Visual & Experience Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
 </head>
-<body class="no-scroll">
 
-  <!-- Loader -->
-  <div id="loader" class="loader-overlay">
-    <div class="loader-wrapper">
-      <svg viewBox="0 0 36 36">
-        <circle class="loader-circle-bg" cx="18" cy="18" r="15.9155"></circle>
-        <circle id="loader-circle" class="loader-circle-fg" stroke-dasharray="100, 100" stroke-dashoffset="100" cx="18" cy="18" r="15.9155"></circle>
-      </svg>
-    </div>
-  </div>
+<body class="bg-[#111] text-[#FBF5DD]">
 
-  <!-- Main content wrapper -->
-  <div id="main-content" class="opacity-0 invisible transition-opacity duration-500">
-    <div id="cursor-glow"></div>
-    <canvas id="particle-canvas"></canvas>
-    <div class="shapes-container">
-      <div class="shape s1" data-speed="-0.3"></div>
-      <div class="shape s2" data-speed="0.5"></div>
-      <div class="shape s3" data-speed="-0.2"></div>
-      <div class="shape s4" data-speed="0.4"></div>
-      <div class="shape s5" data-speed="-0.5"></div>
-    </div>
-    <!-- Mobile UI Gradients -->
-        <div class="fixed top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FBF5DD] via-[#FBF5DD]/80 to-transparent z-30 pointer-events-none lg:hidden"></div>
-        <div class="fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#FBF5DD] via-[#FBF5DD]/80 to-transparent z-30 pointer-events-none lg:hidden"></div>
-
-    <!-- Persistent UI Elements -->
-    <div class="fixed top-7 left-7 z-40">
-      <a href="#" class="font-semibold tracking-wide text-2xl">Hari</a>
-      <p class="text-base text-[#16404D]/70">Visual/Experience Designer</p>
-    </div>
-    <nav class="fixed z-40 gap-2 flex bottom-6 left-4 flex-row lg:top-1/2 lg:-translate-y-1/2 lg:left-6 lg:bottom-auto lg:flex-col">
-      <button id="navWork" class="px-4 py-2 rounded-full bg-[#A6CDC6]/40 hover:bg-[#A6CDC6]/60 text-base font-medium">Work</button>
-      <button id="navAbout" class="px-4 py-2 rounded-full hover:bg-[#A6CDC6]/40 text-base font-medium">About</button>
-    </nav>
-    <div class="social-icons fixed bottom-8 md:bottom-6 right-6 z-40 flex flex-row lg:flex-col items-center gap-4 text-[#16404D]/80">
-        <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener noreferrer" class="hover:text-[#16404D]" aria-label="LinkedIn">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-        </a>
-        <a href="https://instagram.com/haxrxri" target="_blank" rel="noopener noreferrer" class="hover:text-[#16404D]" aria-label="Instagram">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664 4.771 4.919 4.919 1.266-.058 1.644.07 4.85.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
-        </a>
-        <a href="mailto:harigovind.ie@gmail.com" target="_blank" rel="noopener noreferrer" class="hover:text-[#16404D]" aria-label="Email">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
-        </a>
+    <!-- AMBIENT PARTICLE BACKGROUND -->
+    <div id="ambient-background"
+        class="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-60 transition-opacity duration-1000">
+        <!-- Particles will be generated here by script.js -->
     </div>
 
-    <!-- Page Content Area -->
-    <div class="relative">
-        <main id="work" class="page-section h-screen flex items-center justify-center">
-          <section class="w-full max-w-7xl mx-auto h-full px-4 pt-24 pb-32 md:py-0 flex items-center">
-            <div class="flipbook-wrapper relative w-full h-full md:h-[520px] max-w-4xl group mx-auto">
-                <button id="prevBtn" class="absolute top-0 left-0 w-1/4 h-full z-30"></button>
-                <div id="flipbook" class="flipbook-container"></div>
-                <button id="nextBtn" class="absolute top-0 right-0 w-1/4 h-full z-30"></button>
+    <div id="intro-overlay"
+        class="fixed inset-0 z-[100] bg-[#0d0d0d] flex flex-col items-center justify-center transition-transform duration-1000 ease-in-out">
+
+        <!-- LOADER (GOES HERE) -->
+        <div id="loader" class="mb-12 flex flex-col items-center gap-4">
+            <div class="w-48 h-[2px] bg-[#FBF5DD]/20 overflow-hidden">
+                <div id="loader-bar" class="h-full w-0 bg-[#DDA853] transition-all duration-300"></div>
             </div>
-          </section>
-        </main>
+            <span id="loader-text" class="text-xs tracking-widest text-[#FBF5DD]/60 uppercase">
+                Loading assets 0%
+            </span>
+        </div>
 
-        <section id="about" class="page-section page-hidden absolute top-0 left-0 w-full min-h-screen flex items-center pt-28 pb-20">
-          <div class="mx-auto max-w-6xl px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div class="md:col-start-1 space-y-8 order-1 md:order-1">
-                <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 p-0 fade-in flex items-center justify-center aspect-square overflow-hidden">
-                  <img src="images/Profile_image2.jpg" alt="Headshot of Harigovind, the designer, smiling." class="w-full h-full object-cover">
+        <h1 class="font-serif text-5xl md:text-8xl mb-8 opacity-0 animate-fade-in-up">Harigovind.</h1>
+        <p class="font-sans text-[#A6CDC6] text-lg mb-12 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s">
+            Visual & Experience Designer</p>
+        <button id="skip-intro"
+            class="px-8 py-3 border border-[#FBF5DD]/30 hover:bg-[#FBF5DD] hover:text-[#16404D] transition-all font-sans text-sm tracking-widest uppercase opacity-0 animate-fade-in-up"
+            style="animation-delay: 0.4s">
+            Enter Site
+        </button>
+    </div>
+
+    <aside
+        class="fixed left-0 top-0 w-full h-[60px] md:w-[60px] md:h-full md:bottom-0 z-50 border-b md:border-b-0 md:border-r border-[#FBF5DD]/10 bg-[#111] flex flex-row md:flex-col items-center justify-between px-4 md:px-0 md:py-8 transition-all">
+
+        <button id="menu-toggle"
+            class="menu-btn group flex flex-col gap-1.5 p-2 focus:outline-none cursor-pointer hover:scale-110 transition-transform">
+            <span class="line"></span>
+            <span class="line"></span>
+        </button>
+
+
+
+        <div class="sidebar-name flex items-center gap-4 text-xs tracking-[0.2em] text-[#FBF5DD]/70">
+            <span class="hover:text-[#A6CDC6] transition-colors cursor-pointer">HARIGOVIND.IE</span>
+        </div>
+
+        <div class="flex flex-row md:flex-col items-center gap-6">
+
+            <a href="https://instagram.com/haxrxri" target="_blank"
+                class="text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:scale-110 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+
+            <a href="https://linkedin.com/in/harigovind-s" target="_blank"
+                class="text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:scale-110 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                    <rect x="2" y="9" width="4" height="12"></rect>
+                    <circle cx="4" cy="4" r="2"></circle>
+                </svg>
+            </a>
+
+            <a href="mailto:harigovind.ie@gmail.com?subject=We%20would%20like%20to%20Hire%20you&body=YOUR%20WORKS%20ARE%20AMAZINGGGG!!!"
+                class="text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:scale-110 duration-300">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+            </a>
+
+        </div>
+    </aside>
+
+    <div id="about-menu"
+        class="fixed inset-0 z-[200] bg-[#0d0d0d] text-[#FBF5DD] translate-x-[-100%] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] custom-scrollbar">
+
+        <button id="menu-close"
+            class="fixed top-8 right-8 z-[210] text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:rotate-90 duration-300 mix-blend-difference">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <div class="h-full overflow-y-auto">
+            <div class="container max-w-6xl mx-auto px-6 py-24 md:py-32">
+
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+
+                    <div class="lg:col-span-4 flex flex-col md:flex-row lg:flex-col gap-8 md:gap-12 lg:gap-8">
+
+                        <div class="w-full md:w-5/12 lg:w-full shrink-0">
+                            <div
+                                class="relative w-full aspect-[3/4] overflow-hidden rounded-sm grayscale hover:grayscale-0 transition-all duration-700">
+                                <img src="images/Profile_image2.jpg" class="object-cover w-full h-full"
+                                    alt="Harigovind">
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-7/12 lg:w-full flex-grow space-y-8">
+                            <div class="space-y-4 font-sans text-sm">
+                                <div>
+                                    <span class="block text-[#DDA853] text-xs uppercase tracking-widest mb-1">Based
+                                        In</span>
+                                    <span class="block text-[#FBF5DD]/80">Dublin, Ireland</span>
+                                </div>
+                                <div>
+                                    <span
+                                        class="block text-[#DDA853] text-xs uppercase tracking-widest mb-1">Contact</span>
+                                    <a href="mailto:harigovind.ie@gmail.com"
+                                        class="block text-[#FBF5DD]/80 hover:text-[#A6CDC6] transition-colors">harigovind.ie@gmail.com</a>
+                                    <a href="tel:+3530894783193"
+                                        class="block text-[#FBF5DD]/80 hover:text-[#A6CDC6] transition-colors">+353 089
+                                        478 3193</a>
+                                </div>
+                                <div class="pt-2">
+                                    <a href="images/Resume/Resume_Harigovind.pdf" download
+                                        class="inline-flex items-center gap-2 border-b border-[#DDA853] pb-1 text-[#DDA853] hover:text-[#FBF5DD] hover:border-[#FBF5DD] transition-all uppercase tracking-widest text-xs font-bold">
+                                        Download Resume
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="w-full h-px bg-[#FBF5DD]/10"></div>
+
+                            <div>
+                                <h3 class="font-serif text-xl text-[#A6CDC6] mb-4">Education</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <h4 class="font-bold text-[#FBF5DD] text-sm">MA Creative Arts - Visual
+                                            Communications</h4>
+                                        <p class="text-[#DDA853] text-xs italic">TU Dublin, 2025</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-[#FBF5DD] text-sm">B.Des Communication Design</h4>
+                                        <p class="text-[#DDA853] text-xs italic">IIT Bombay, 2023</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="w-full h-px bg-[#FBF5DD]/10"></div>
+
+                            <div>
+                                <h3 class="font-serif text-xl text-[#A6CDC6] mb-4">Skills</h3>
+                                <div class="flex flex-wrap gap-x-2 gap-y-2 text-[#FBF5DD]/70 text-sm leading-relaxed">
+                                    <span>UX/UI Design</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Interaction Design</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Visual Storytelling</span> <span class="text-[#DDA853]">•</span>
+                                    <span>3D Modeling (Blender)</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Motion Graphics</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Unity</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Adobe Creative Suite</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Prototyping</span> <span class="text-[#DDA853]">•</span>
+                                    <span>Photography</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="lg:col-span-8">
+
+                        <h2 class="font-serif text-5xl md:text-6xl lg:text-7xl mb-8 leading-tight">About Me</h2>
+                        <p class="text-xl lg:text-2xl text-[#FBF5DD]/80 leading-relaxed font-sans font-light mb-16">
+                            Visual & Experience Designer with a background in 3D and immersive media, focused on
+                            creating intuitive, user-centered digital experiences. Passionate about visual storytelling,
+                            both in design and through photography and videography.
+                        </p>
+
+                        <div class="w-full h-px bg-[#FBF5DD]/10 mb-16"></div>
+
+                        <div class="mb-16">
+                            <h3 class="font-serif text-3xl md:text-4xl text-[#A6CDC6] mb-10">Experience</h3>
+
+                            <div class="space-y-12 border-l border-[#FBF5DD]/10 pl-8 md:pl-12">
+
+                                <div class="relative">
+                                    <span
+                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#DDA853] rounded-full border-4 border-[#0d0d0d]"></span>
+                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
+                                        <h4 class="text-xl font-bold text-[#FBF5DD]">UX Analyst & Content Curator</h4>
+                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">Jan '25
+                                            — March '25</span>
+                                    </div>
+                                    <p class="text-[#DDA853] font-serif italic mb-4">Grido</p>
+                                    <ul
+                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
+                                        <li>Designed and launched a card-based content platform using Grido’s AI-powered
+                                            architecture.</li>
+                                        <li>Curated and structured historical automotive content into accessible,
+                                            thematic card formats.</li>
+                                        <li>Conducted UX analysis as the first external user, identifying usability
+                                            issues.</li>
+                                        <li>Collaborated with product teams to refine UX and support product-market fit.
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="relative">
+                                    <span
+                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
+                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
+                                        <h4 class="text-xl font-bold text-[#FBF5DD]">Creative Director (Freelance)</h4>
+                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">Dec '23
+                                            — Feb '24</span>
+                                    </div>
+                                    <p class="text-[#DDA853] font-serif italic mb-4">Wesualize Studios</p>
+                                    <ul
+                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
+                                        <li>Led creative direction, overseeing concept development of VFX ad campaigns.
+                                        </li>
+                                        <li>Developed storyboards integrating 3D elements and animation into
+                                            live-action.</li>
+                                        <li>Directed cross-functional teams of cinematographers and VFX artists.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="relative">
+                                    <span
+                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
+                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
+                                        <h4 class="text-xl font-bold text-[#FBF5DD]">Design Intern</h4>
+                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">June
+                                            '22 — Aug '22</span>
+                                    </div>
+                                    <p class="text-[#DDA853] font-serif italic mb-4">Tata Consultancy Services (TCS)</p>
+                                    <ul
+                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
+                                        <li>Ideated user flows and transitions across diverse virtual environments.</li>
+                                        <li>Conducted research on user-environment interaction within the metaverse.
+                                        </li>
+                                        <li>Created 3D environment and asset concepts using reference sketches.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="relative">
+                                    <span
+                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
+                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
+                                        <h4 class="text-xl font-bold text-[#FBF5DD]">Visual Designer</h4>
+                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">Dec '20
+                                            — Jan '22</span>
+                                    </div>
+                                    <p class="text-[#DDA853] font-serif italic mb-4">YoZu</p>
+                                    <ul
+                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
+                                        <li>Designed 3D models and developed a production pipeline for Unity
+                                            integration.</li>
+                                        <li>Managed a team of 5 junior artists, ensuring timely and high-quality output.
+                                        </li>
+                                        <li>Created interactive, educational 3D visuals for a voice-based AI assistant.
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="relative">
+                                    <span
+                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
+                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
+                                        <h4 class="text-xl font-bold text-[#FBF5DD]">3D Artist</h4>
+                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">May '22
+                                            — June '22</span>
+                                    </div>
+                                    <p class="text-[#DDA853] font-serif italic mb-4">Numeronix</p>
+                                    <ul
+                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
+                                        <li>Designed and optimized low-poly 3D models for Android devices.</li>
+                                        <li>Refined and finalized assets created by other artists to meet game-ready
+                                            standards.</li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 p-6 fade-in">
-                  <h3 class="text-xl font-semibold mb-3">Education</h3>
-                  <div class="space-y-4">
-                    <div>
-                      <h4 class="font-semibold text-base text-[#16404D]">Bachelor of Design (B.Des), Communication Design</h4>
-                      <p class="text-sm text-[#DDA853] mb-1">IIT Bombay, Mumbai, India — 2023</p>
-                      <p class="text-sm text-[#16404D]/80 font-light">Focused on UX, visual design, and storytelling across digital and immersive media.</p>
-                    </div>
-                    <div>
-                      <h4 class="font-semibold text-base text-[#16404D]">Master of Arts (MA), Creative Arts – Visual Communication</h4>
-                      <p class="text-sm text-[#DDA853] mb-1">TU Dublin, Dublin, Ireland — 2025</p>
-                      <p class="text-sm text-[#16404D]/80 font-light">Specialized in visual storytelling, design strategy, and communication across digital media.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="md:col-span-2 space-y-8 order-2 md:order-2">
-                  <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 p-6 fade-in">
-                    <div class="flex flex-wrap justify-between items-center mb-2 gap-4">
-                      <h2 class="text-2xl font-semibold">Hey, I’m Hari</h2>
-                      <a href="images/Resume/Resume_Harigovind.pdf" download class="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#16404D]/20 bg-[#16404D]/10 hover:bg-[#16404D]/20 text-sm whitespace-nowrap transition-colors">
-                        <span>Resume</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                      </a>
-                    </div>
-                    <p class="text-[#16404D]/80 leading-relaxed">Visual & Experience Designer with a background in 3D and immersive media, focused on creating intuitive, user-centered digital experiences. Passionate about visual storytelling, both in design and through photography and videography.</p>
-                    <div class="mt-6 grid grid-cols-2 gap-4 text-sm">
-                      <div><div class="text-[#16404D]/60">Based</div><div>Dublin, IE</div></div>
-                      <div><div class="text-[#16404D]/60">Role</div><div>Product Designer</div></div>
-                      <div><div class="text-[#16404D]/60">Experience</div><div>2+ years</div></div>
-                      <div><div class="text-[#16404D]/60">Contact</div><a class="underline break-long-words" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a><br><a class="underline break-long-words" href="tel:+3530894783193">+353 0894783193</a></div>
-                    </div>
-                  </div>
-                  <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 p-6 fade-in">
-                    <h3 class="text-xl font-semibold mb-3">Skills & Tools</h3>
-                    <div class="flex flex-wrap gap-2 text-xs">
-                      <span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">UX Design</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Interaction Design</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Visual Communication</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Wireframing & Prototyping</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">3D Modeling & Asset Design</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Motion Graphics & Animation</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Game Asset Optimization</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Unity Integration</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Design Systems</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Information Architecture</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Typography & Layout Design</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Adobe Creative Suite</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Davinci Resolve</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Storyboarding</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Photography & Videography</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">AR/VR Content Design</span><span class="px-3 py-1.5 rounded-full border border-[#16404D]/10 bg-[#16404D]/10 text-[#16404D]">Blender</span>
-                    </div>
-                  </div>
-                  <div class="glow-card rounded-2xl bg-[#A6CDC6]/20 border border-[#16404D]/10 fade-in p-6">
-                    <h3 class="text-xl font-semibold mb-4">Work Experience</h3>
-                    <div id="workExperienceScroller" class="max-h-[24rem] md:max-h-80 overflow-y-auto space-y-6 custom-scrollbar pr-2">
-                      <!-- All experience items here -->
-                      <div>
-                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#16404D]">UX analysis and Content curation</h4><p class="text-xs text-[#16404D]/60">[Jan ‘25 - March ‘25]</p></div>
-                        <p class="text-sm text-[#DDA853] mb-2">Grido</p>
-                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#16404D]/80 font-light">
-                          <li>Designed and launched a card-based content platform using Grido’s AI-powered architecture, simplifying complex data into browsable visual grids.</li>
-                          <li>Curated and structured historical automotive content into accessible, thematic card formats with visual consistency.</li>
-                          <li>Conducted UX analysis as the first external user, identifying usability issues and contributing to early-stage product enhancements.</li>
-                          <li>Reported bugs and workflow gaps, influencing feature updates during beta development.</li>
-                          <li>Collaborated with Grido’s product and design teams to refine UX and support product-market fit.</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#16404D]">Creative Director (Freelance)</h4><p class="text-xs text-[#16404D]/60">[Dec ‘23 - Feb ‘24]</p></div>
-                        <p class="text-sm text-[#DDA853] mb-2">Wesualize Studios</p>
-                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#16404D]/80 font-light">
-                          <li>Led creative direction, overseeing concept development and execution of high-impact VFX advertising campaigns.</li>
-                          <li>Developed storyboards integrating 3D elements and animation into live-action footage to enhance visual storytelling.</li>
-                          <li>Directed cross-functional teams of cinematographers and VFX artists, ensuring cohesive execution of creative vision.</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#16404D]">Design Intern</h4><p class="text-xs text-[#16404D]/60">[June ‘22 - Aug ‘22]</p></div>
-                        <p class="text-sm text-[#DDA853] mb-2">TCS</p>
-                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#16404D]/80 font-light">
-                          <li>Ideated user flows and transitions across diverse virtual environments.</li>
-                          <li>Conducted research on user-environment interaction within the metaverse.</li>
-                          <li>Created 3D environment and asset concepts using reference sketches and research insights.</li>
-                          <li>Delivered a final presentation highlighting design contributions using a vibrant, user-centric visual style.</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#16404D]">Visual Designer</h4><p class="text-xs text-[#16404D]/60">[Dec ‘20 - Jan ‘22]</p></div>
-                        <p class="text-sm text-[#DDA853] mb-2">YoZu</p>
-                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#16404D]/80 font-light">
-                          <li>Designed 3D models and developed a production pipeline in collaboration with the technical team, including model integration into Unity.</li>
-                          <li>Defined a framework for quality assessment, delivery timelines, and asset management for 3D content.</li>
-                          <li>Managed a team of 5 junior artists, ensuring timely and high-quality output.</li>
-                          <li>Supported YoZu’s mission as a voice-based AI assistant for students (grades 6–10) by creating interactive, educational 3D visuals.</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <div class="flex justify-between items-baseline"><h4 class="font-semibold text-base text-[#16404D]">3D Artist</h4><p class="text-xs text-[#16404D]/60">[May ‘22 - June ‘22]</p></div>
-                        <p class="text-sm text-[#DDA853] mb-2">Numeronix</p>
-                        <ul class="list-disc pl-5 space-y-1 text-sm text-[#16404D]/80 font-light">
-                          <li>Designed and optimized low-poly 3D models for characters and in-game assets, ensuring performance efficiency on Android devices.</li>
-                          <li>Refined and finalized assets created by other artists to meet game-ready standards.</li>
-                          <li>Maintained ongoing communication with the client, incorporating feedback to enhance visual quality and project outcomes.</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-              </div>
             </div>
-          </div>
+        </div>
+    </div>
+
+    <main id="horizontal-scroll"
+        class="relative z-10 flex flex-col md:flex-row h-auto md:h-screen w-full pt-[60px] md:pt-0 md:pl-[60px] overflow-x-hidden md:overflow-y-hidden">
+
+        <section
+            class="h-screen w-full md:w-[80vw] md:min-w-[80vw] flex-shrink-0 flex items-center justify-center p-6 md:p-20 border-b md:border-b-0 md:border-r border-[#FBF5DD]/10 relative">
+            <div class="max-w-4xl z-10 text-center md:text-left">
+                <h2 class="font-serif text-5xl md:text-9xl leading-none mb-6">Designing <br> <span
+                        class="text-[#A6CDC6] italic">Systems That Care</span></h2>
+                <p class="font-sans text-lg md:text-2xl text-[#FBF5DD]/60 max-w-xl leading-relaxed mx-auto md:mx-0">
+                    Exploring the intersection of User Experience, Visual Systems, and Everyday Life
+                </p>
+
+                <div
+                    class="mt-12 flex items-center justify-center md:justify-start gap-6 opacity-80 hover:opacity-100 transition-opacity duration-300">
+                    <div
+                        class="w-[26px] h-[42px] border-2 border-[#DDA853]/60 rounded-full relative flex justify-center box-border">
+                        <div class="mouse-wheel w-[2px] h-[6px] bg-[#DDA853] rounded-full absolute top-2"></div>
+                    </div>
+                    <div class="text-[#DDA853]/60 arrow-nudge">
+                        <svg class="w-8 h-8 md:rotate-0 rotate-90" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none overflow-hidden">
+                <h1 class="text-[10rem] md:text-[20rem] font-serif leading-none mix-blend-overlay translate-y-[20%]">Hg
+                </h1>
+            </div>
         </section>
-    </div>
-  </div>
 
-  <div id="pageBackdrop" class="page-backdrop"></div>
+        <div id="projects-track" class="flex flex-col md:flex-row h-auto md:h-full w-full">
+        </div>
 
-  <!-- Overlay HTML -->
-  <div id="projectOverlay" class="project-overlay">
-    <div class="project-overlay-content">
-        <div id="overlayScrollWrapper"></div>
-    </div>
-    <div id="closeOverlay" class="close-button" aria-label="Close project details">
-        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </div>
-  </div>
+    </main>
 
-  <!-- Lightbox for images -->
-  <div id="imageLightbox" class="lightbox-overlay">
-    <div id="lightboxContainer">
-        <img id="lightboxImage" src="" alt="Expanded project image" class="lightbox-image">
+    <div id="pageBackdrop" class="page-backdrop"></div>
+    <div id="projectOverlay" class="project-overlay">
+        <div class="project-overlay-content bg-[#FBF5DD]">
+            <div id="overlayScrollWrapper"></div>
+        </div>
+        <div id="closeOverlay" class="close-button text-[#16404D]" aria-label="Close">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </div>
     </div>
-    <button id="prevImageBtn" class="lightbox-nav prev hidden" aria-label="Previous image">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-    </button>
-    <button id="nextImageBtn" class="lightbox-nav next hidden" aria-label="Next image">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-    </button>
-    <div id="lightboxControls" class="lightbox-controls">
-        <button id="zoomOutBtn" aria-label="Zoom out">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7"></path></svg>
+
+    <!-- Image Lightbox Gallery -->
+    <div id="imageLightbox" class="image-lightbox">
+        <button id="closeLightbox" class="lightbox-close" aria-label="Close gallery">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
         </button>
-        <button id="zoomInBtn" aria-label="Zoom in">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m-3-3h6"></path></svg>
+
+        <button id="prevImage" class="lightbox-nav lightbox-prev" aria-label="Previous image">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
         </button>
-    </div>
-    <div id="closeLightbox" class="close-button" aria-label="Close image view">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </div>
-  </div>
 
-  <!-- Lightbox for Iframe -->
-  <div id="iframeLightbox" class="iframe-lightbox">
-    <div class="iframe-lightbox-content">
-        <iframe id="lightboxIframe" src="" title="Fullscreen Project View" allowfullscreen></iframe>
-    </div>
-    <div id="closeIframeLightbox" class="close-button" aria-label="Close iframe view">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-    </div>
-  </div>
+        <button id="nextImage" class="lightbox-nav lightbox-next" aria-label="Next image">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
 
-  <!-- External JavaScript -->
-  <script src="script.js"></script>
+        <div class="lightbox-content">
+            <div class="lightbox-image-wrapper">
+                <img id="lightboxImage" src="" alt="" class="lightbox-image">
+            </div>
+            <div class="lightbox-counter">
+                <span id="lightboxCounter"></span>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>

@@ -1,246 +1,483 @@
-/* Base Layout Fix */
-html, body {
+/* GLOBAL RESET */
+html,
+body {
   height: 100%;
-  overflow-x: hidden;
-  overscroll-behavior: none;
-}
-/* MODIFIED: More robust scroll locking for Safari */
-html.body-lock, body.body-lock {
-  position: fixed;
-  inset: 0;
   width: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* allow vertical scroll */
+  background-color: #0d0d0d;
+  color: #FBF5DD;
+  font-family: 'Space Grotesk', sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  /* iOS safe area support */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Font & Color Palette Integration */
-body {
-  font-family: 'Space Grotesk', sans-serif;
+
+/* --- 1. GLOBAL SCROLLBAR THEME (APPLIES EVERYWHERE) --- */
+/* This fixes the white scrollbar on the right side */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  /* For horizontal scrollbars */
+}
+
+::-webkit-scrollbar-track {
+  background: #0d0d0d;
+  /* Dark background matching body */
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(221, 168, 83, 0.3);
+  /* Gold accent with transparency */
+  border-radius: 4px;
+  border: 2px solid transparent;
+  /* Creates padding effect */
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #DDA853;
+  /* Solid Gold on hover */
+  border: 0;
+}
+
+/* Firefox Support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(221, 168, 83, 0.5) #0d0d0d;
+}
+
+/* TYPOGRAPHY */
+.font-serif {
+  font-family: 'Playfair Display', serif;
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* SIDEBAR UTILITIES */
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* --- HORIZONTAL SCROLL & EXPANSION (DESKTOP DEFAULT) --- */
+
+.project-panel {
+  flex-shrink: 0;
+  min-width: 85vw;
+  height: calc(var(--vh, 1vh) * 100);
+
+  border-right: 1px solid rgba(251, 245, 221, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  transition: min-width 0.6s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.5s ease;
+}
+
+@media (min-width: 768px) {
+  .project-panel {
+    min-width: 50vw;
+  }
+}
+
+/* --- THE LOCKED STATE (BASE - applies to all) --- */
+.project-panel.is-expanded {
   background-color: #FBF5DD;
   color: #16404D;
+  z-index: 20;
 }
 
-/* Scroll Lock for Work Page */
-body.no-scroll {
+/* Desktop only - position fixed from sidebar to right edge */
+@media (min-width: 769px) {
+  .project-panel.is-expanded {
+    position: fixed !important;
+    left: 60px !important;
+    top: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    height: calc(var(--vh, 1vh) * 100) !important;
+    min-width: unset !important;
+  }
+}
+
+/* 1. LEFT SIDE (Preview Card) */
+.panel-preview {
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  padding: 4rem 2.5rem;
+  margin-left: 0;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  transition: all 0.6s ease;
+}
+
+
+@media (min-width: 768px) {
+  .panel-preview {
+    padding: 4rem;
+  }
+}
+
+/* DESKTOP: Hide preview panel completely when expanded */
+@media (min-width: 769px) {
+  .project-panel.is-expanded .panel-preview {
+    display: none;
+  }
+}
+
+.panel-image-wrapper {
+  width: 100%;
+  height: 50%;
   overflow: hidden;
-  height: 100vh;
+  border-radius: 4px;
+  transition: height 0.5s ease;
 }
 
-/* Minor extras */
-.fade-in { animation: fadeIn 0.6s ease both; }
-@keyframes fadeIn { from {opacity:0; transform: translateY(6px)} to {opacity:1; transform:none} }
-.glow-card { box-shadow: 0 0 0 1px rgba(22, 64, 77, 0.08), 0 12px 30px rgba(0,0,0,0.1), inset 0 0 40px rgba(255,255,255,0.3); }
-
-/* Page Sections */
-.page-section {
-  transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+.panel-preview {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
 }
-.page-hidden {
+
+.panel-preview {
+  margin-left: 3.5rem;
+}
+
+
+/* Hide 'VIEW PROJECT' when expanded */
+.project-panel.is-expanded .panel-preview .view-btn {
+  display: none !important;
+}
+
+/* Keep the preview image intact (no cropping) in both normal and expanded states */
+.panel-image-wrapper {
+  width: 100%;
+  height: auto !important;
+  max-height: 45vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: max-height 0.45s ease;
+}
+
+
+.panel-image-wrapper img,
+.panel-image-wrapper picture,
+.panel-image-wrapper svg {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 2. RIGHT SIDE (Details Content) */
+.panel-details {
+  width: 0;
   opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-#work {
-  position: fixed;
-  inset: 0;
-  height: 100dvh;
   height: calc(var(--vh, 1vh) * 100);
+
   overflow: hidden;
-  z-index: 0;
-}
-#about {
-  position: relative;
-  z-index: 1;
+  background-color: #FBF5DD;
+  transition: opacity 0.4s ease 0.4s;
+  white-space: normal;
 }
 
-/* Flipbook styles */
-.flipbook-wrapper {
-  transform-style: preserve-3d;
-  touch-action: pan-x;
+/* EXPANDED STATE - Desktop scrolls on panel like mobile */
+@media (min-width: 769px) {
+  .project-panel.is-expanded .panel-details {
+    flex-grow: 1;
+    width: 100%;
+    opacity: 1;
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }
-.flipbook-container {
-  perspective: 2500px;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d; 
+
+
+/* --- SCROLLBAR STYLING FOR LIGHT PANELS (#FBF5DD Background) --- */
+/* This overrides the global dark scrollbar for the light-colored expanded panels */
+.panel-details::-webkit-scrollbar {
+  width: 8px;
+  display: block;
 }
-.project-card {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1), opacity 0.5s;
+
+.panel-details::-webkit-scrollbar-track {
+  background: rgba(22, 64, 77, 0.05);
+  /* Very light teal track */
+}
+
+.panel-details::-webkit-scrollbar-thumb {
+  background-color: rgba(22, 64, 77, 0.3);
+  /* Dark teal thumb */
+  border-radius: 4px;
+}
+
+.panel-details::-webkit-scrollbar-thumb:hover {
+  background-color: #16404D;
+  /* Solid dark teal on hover */
+}
+
+/* 3. CLOSE BUTTON (Position Fixed) */
+.close-btn {
+  position: fixed;
+  top: 3.5rem;
+  right: 3.5rem;
+  z-index: 60;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.95);
+
+  background: transparent;
+  border: 1px solid rgba(22, 64, 77, 0.25);
+  border-radius: 50%;
+  padding: 0.4rem;
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.2s ease,
+    border-color 0.3s ease;
+}
+
+.project-panel.is-expanded .close-btn {
+  opacity: 0.6;
+  pointer-events: auto;
+}
+
+/* ---------- FORCE CLOSE RESET (FIXES MOBILE STUCK BUTTON) ---------- */
+.project-panel.is-closing .close-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+
+.close-btn:hover {
   opacity: 1;
-  transform: rotateY(0deg) translateZ(0); /* ADDED: translateZ(0) to promote to new layer for rendering stability */
-  z-index: 2;
-  will-change: transform, opacity;
-}
-.project-card.is-flipped {
-  transform: rotateY(180deg) rotateX(60deg) translateZ(0); /* ADDED: translateZ(0) */
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-.project-card.is-next {
-  transform: rotateY(-180deg) rotateX(-60deg) translateZ(0); /* ADDED: translateZ(0) */
-  opacity: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-.card-image-desktop { display: block; }
-.card-image-mobile { display: none; }
-@media (max-width: 768px) {
-  .card-image-desktop { display: none; }
-  .card-image-mobile { display: block; }
+  transform: scale(1);
+  border-color: #DDA853;
 }
 
-/* Image Gallery Styles */
+.close-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.75;
+}
+
+/* ---------- Image Gallery ---------- */
 .image-gallery {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin: 1.5rem 0;
 }
+
 .image-gallery img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 0.5rem;
+  border-radius: .5rem;
   border: 1px solid rgba(22, 64, 77, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
+
 .image-gallery img:hover {
   transform: scale(1.03);
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Interactive Hint Animation */
-@keyframes subtle-flip {
-  0%, 100% { transform: rotateY(0deg) rotateX(0deg); }
-  50% { transform: rotateY(20deg) rotateX(10deg); }
+/* Constrain all images in panel-details to prevent overflow */
+.panel-details img {
+  max-width: 100%;
+  height: auto;
 }
-.project-card.interactive-hint {
-  animation: subtle-flip 3s ease-in-out infinite;
-  animation-delay: 0.25s;
-}
-.flipbook-wrapper:hover .project-card.interactive-hint {
-  animation: none;
+
+.panel-details .details-inner>* {
+  max-width: 100%;
 }
 
 
-
-/* Background & UI Elements */
-.shapes-container, #particle-canvas, .vignette, #cursor-glow, .page-backdrop { position: fixed; }
-.shapes-container, #particle-canvas { top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-.shapes-container { z-index: -1; }
-#particle-canvas { z-index: -2; }
-.shape { position: absolute; border-radius: 50%; background-color: rgba(166, 205, 198, 0.2); transition: transform 0.1s linear; animation: float 20s infinite linear alternate; }
-.shape.s1 { width: 80px; height: 80px; top: 15%; left: 10%; animation-duration: 25s; }
-.shape.s2 { width: 40px; height: 40px; top: 70%; left: 20%; animation-duration: 30s; border-radius: 30%; }
-.shape.s3 { width: 120px; height: 120px; top: 50%; left: 80%; animation-duration: 18s; background-color: rgba(221, 168, 83, 0.2); }
-.shape.s4 { width: 60px; height: 60px; top: 85%; left: 60%; animation-duration: 22s; border-radius: 40%; }
-.shape.s5 { width: 50px; height: 50px; top: 20%; left: 75%; animation-duration: 28s; }
-@keyframes float { from { transform: translate(0px, 0px) rotate(0deg); } to { transform: translate(40px, -60px) rotate(180deg); } }
-.vignette { left: 0; width: 100%; z-index: 30; pointer-events: none; opacity: 0; transition: opacity 0.5s ease-in-out; }
-.vignette-top { top: 0; height: 8rem; background: linear-gradient(to bottom, #FBF5DD, transparent); }
-.vignette-bottom { bottom: 0; height: 8rem; background: linear-gradient(to top, #FBF5DD, transparent); }
-body.about-visible .vignette { opacity: 1; }
-#cursor-glow { width: 400px; height: 400px; background: radial-gradient(circle, rgba(166, 205, 198, 0.25) 0%, transparent 50%); border-radius: 50%; pointer-events: none; z-index: 50; transform: translate(-50%, -50%); opacity: 0; transition: opacity 0.4s ease; will-change: transform, opacity; }
-@media (hover: hover) and (pointer: fine) { body:hover #cursor-glow { opacity: 1; } }
-#cursor-glow.is-active { opacity: 1; transition: opacity 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.page-backdrop { inset: 0; background-color: rgba(22, 64, 77, 0.3); backdrop-filter: blur(4px); z-index: 99; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; }
-.page-backdrop.is-visible { opacity: 1; visibility: visible; }
-
-/* Loader Styles */
-.loader-overlay { position: fixed; inset: 0; background-color: #FBF5DD; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease, visibility 0.5s ease; }
-.loader-hidden { opacity: 0; visibility: hidden; }
-.loader-wrapper { position: relative; width: 80px; height: 80px; }
-.loader-circle-bg, .loader-circle-fg { fill: none; stroke-width: 4; }
-.loader-circle-bg { stroke: rgba(22, 64, 77, 0.1); }
-.loader-circle-fg { stroke: #A6CDC6; stroke-linecap: round; transform-origin: 50% 50%; transform: rotate(-90deg); transition: stroke-dashoffset 0.2s ease; }
-
-/* Scrollbar Styles */
-::-webkit-scrollbar { width: 14px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background-color: #A6CDC6; border-radius: 10px; border: 4px solid #FBF5DD; }
-::-webkit-scrollbar-thumb:hover { background-color: #DDA853; }
-* { scrollbar-width: thin; scrollbar-color: #A6CDC6 #FBF5DD; }
-
-/* Project Overlay */
-.project-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.4s ease, visibility 0.4s ease; }
-.project-overlay.is-visible { opacity: 1; visibility: visible; }
-.project-overlay-content { position: relative; background-color: #FBF5DD; border: 1px solid rgba(22, 64, 77, 0.15); border-radius: 16px; width: 90%; max-width: 800px; max-height: 85vh; transform: scale(0.95); transition: transform 0.4s ease; overflow: hidden; padding: 2.5rem; display: flex; flex-direction: column; }
-.project-overlay.is-visible .project-overlay-content { transform: scale(1); }
-#overlayScrollWrapper { overflow-y: auto; flex-grow: 1; padding-right: 1.5rem; margin-right: -1.5rem; }
-
-/* Lightbox (Image & Iframe) Styles */
-.close-button { position: fixed; top: 2rem; right: 2rem; cursor: pointer; color: rgba(22, 64, 77, 0.7); transition: color 0.2s ease, transform 0.2s ease; z-index: 310; }
-.close-button:hover { color: #16404D; transform: scale(1.1); }
-
-.lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(251, 245, 221, 0.85); backdrop-filter: blur(5px); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; overflow: hidden; touch-action: none; }
-.iframe-lightbox { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(251, 245, 221, 0.9); backdrop-filter: blur(5px); z-index: 300; padding: 2.5rem; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-.lightbox-overlay.is-visible, .iframe-lightbox.is-visible { opacity: 1; visibility: visible; }
-
-#lightboxContainer { transition: transform 0.2s ease-out; }
-.lightbox-image { max-width: 90vw; max-height: 90vh; cursor: grab; user-select: none; -webkit-user-drag: none; }
-.lightbox-image.is-panning { cursor: grabbing; }
-.lightbox-trigger { cursor: zoom-in; }
-
-.lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(22, 64, 77, 0.4); color: white; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease, background-color 0.2s ease; z-index: 210; }
-.lightbox-nav:hover { opacity: 1; background-color: rgba(22, 64, 77, 0.7); }
-.lightbox-nav.prev { left: 1.5rem; }
-.lightbox-nav.next { right: 1.5rem; }
-.lightbox-nav.hidden { display: none; }
-
-.lightbox-controls { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 210; display: flex; gap: 1rem; background-color: rgba(22, 64, 77, 0.7); padding: 0.5rem 1rem; border-radius: 9999px; }
-.lightbox-controls button { color: white; opacity: 0.8; transition: opacity 0.2s ease; }
-.lightbox-controls button:hover { opacity: 1; }
-
-.iframe-lightbox-content { width: 100%; height: 100%; border: 1px solid rgba(22, 64, 77, 0.15); border-radius: 0.5rem; overflow: hidden; }
-.iframe-lightbox-content iframe { width: 100%; height: 100%; border: 0; }
-
-.video-container, .iframe-wrapper, .sketchfab-embed-wrapper { position: relative; overflow: hidden; width: 100%; border-radius: 0.5rem; margin: 1.5rem 0; }
-.video-container { padding-top: 56.25%; background: #000; }
-.iframe-wrapper, .sketchfab-embed-wrapper { padding-top: 75%; border: 1px solid rgba(22, 64, 77, 0.15); }
-@media (max-width: 768px) { .iframe-wrapper, .sketchfab-embed-wrapper { padding-top: 177.77%; } }
-.video-container iframe, .iframe-wrapper iframe, .sketchfab-embed-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-
-.iframe-fullscreen-trigger { position: absolute; top: 1rem; right: 1rem; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; background-color: rgba(22, 64, 77, 0.7); color: white; border-radius: 50%; cursor: pointer; opacity: 0; transform: scale(0.9); transition: opacity 0.3s ease, transform 0.3s ease; z-index: 10; }
-.iframe-wrapper:hover .iframe-fullscreen-trigger { opacity: 1; transform: scale(1); }
-@media (hover: none) and (pointer: coarse) { .iframe-fullscreen-trigger { opacity: 1; transform: scale(1); background-color: rgba(22, 64, 77, 0.5); } }
-
-/* Responsive & Tablet Styles */
-@media (max-width: 768px) {
-  .fixed.top-6.left-6 { transform: scale(0.9); transform-origin: top left; }
-  .social-icons { flex-direction: row; right: 1.5rem; transform: scale(0.9); transform-origin: bottom right; }
-  nav.fixed.top-1\/2 { top: auto; bottom: 1.5rem; left: 1.5rem; flex-direction: row; transform: none; }
-}
-@media (min-width: 769px) and (max-width: 1024px) {
-  #work section { padding: 0 1rem; }
-  .flipbook-wrapper { max-width: 680px; height: 480px; }
-  #about .mx-auto.max-w-6xl { padding-left: 7rem; }
+/* ---------- Background & UI Elements ---------- */
+.shapes-container,
+#particle-canvas,
+.vignette,
+#cursor-glow,
+.page-backdrop {
+  position: fixed;
+  pointer-events: none;
 }
 
-/* Custom List Icons */
+.shapes-container,
+#particle-canvas {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.shapes-container {
+  z-index: -1;
+}
+
+#particle-canvas {
+  z-index: -2;
+}
+
+.vignette {
+  left: 0;
+  width: 100%;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .5s ease-in-out;
+}
+
+/* ---------- Page Backdrop ---------- */
+.page-backdrop {
+  inset: 0;
+  background-color: rgba(22, 64, 77, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s, visibility .4s;
+}
+
+.page-backdrop.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---------- Project Overlay / Lightbox ---------- */
+.project-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .4s, visibility .4s;
+}
+
+.project-overlay.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.project-overlay-content {
+  position: relative;
+  background: #FBF5DD;
+  border: 1px solid rgba(22, 64, 77, 0.15);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  transform: scale(.95);
+  transition: transform .4s;
+  overflow: hidden;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-overlay.is-visible .project-overlay-content {
+  transform: scale(1);
+}
+
+#overlayScrollWrapper {
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-right: 1.5rem;
+  margin-right: -1.5rem;
+}
+
+/* Lightbox & iframe */
+.lightbox-overlay,
+.iframe-lightbox {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .3s, visibility .3s;
+}
+
+.lightbox-overlay.is-visible,
+.iframe-lightbox.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 90vh;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.lightbox-image.is-panning {
+  cursor: grabbing;
+}
+
+/* ---------- Custom List Icons ---------- */
 .custom-list-item {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem; 
-  margin-bottom: 0.5rem;
-  line-height: 1.6;
+  flex-direction: row;
+  align-items: center !important;
+  gap: .75rem;
+  margin-bottom: .5rem;
+  line-height: 1.4;
 }
 
 .icon-wrapper {
   flex-shrink: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 24px;
   height: 24px;
-  margin-top: 2px;
+  margin-top: 0 !important;
 }
 
 .icon-wrapper svg {
@@ -251,57 +488,68 @@ body.about-visible .vignette { opacity: 1; }
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke 0.3s ease;
+  transition: stroke .3s ease;
 }
 
 .custom-list-item:hover .icon-wrapper svg {
-  stroke: #DDA853; 
+  stroke: #DDA853;
 }
 
-/* ASCII / Terminal Block Styling - Mobile Alignment Fix */
+.custom-list-item>span:nth-child(2) {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* ---------- ASCII / Terminal Block ---------- */
 .ascii-terminal {
-  background-color: #16404D;
+  background: #16404D;
   color: #FBF5DD;
-  
-  /* FORCE perfect alignment on all devices */
-  font-family: "Courier New", Courier, monospace; 
+  font-family: "Courier New", Courier, monospace;
   font-variant-ligatures: none;
-  -webkit-text-size-adjust: none; /* Prevents iPhone/Android text inflation */
+  -webkit-text-size-adjust: none;
   text-size-adjust: none;
-  
-  font-size: 11px; /* Slightly adjusted for clarity */
-  line-height: 1.1; /* Tighter line height connects vertical pipes better */
+  font-size: 11px;
+  line-height: 1.1;
   padding: 1.5rem;
-  border-radius: 0.75rem;
-  
-  /* Layout & Scroll Logic */
-  width: fit-content;    
-  margin: 2rem auto;     
-  
-  /* CRITICAL: Horizontal Scroll Logic */
-  white-space: pre;  /* Strictly preserves spaces */
-  overflow-x: auto;  /* Allows scrolling */
-  max-width: 100%;   /* Fits inside the screen */
-  
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(221, 168, 83, 0.2);
+  border-radius: .75rem;
+  width: fit-content;
+  margin: 2rem auto;
+  white-space: pre;
+  overflow-x: auto;
+  max-width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, .2);
+  border: 1px solid rgba(221, 168, 83, .2);
 }
 
-@media (max-width: 768px) {
+@media (max-width:768px) {
   .ascii-terminal {
-    font-size: 10px; 
+    font-size: 10px;
     padding: 1rem;
     max-width: 90vw;
-    /* Force hardware acceleration for smoother scrolling */
-    -webkit-overflow-scrolling: touch; 
+    -webkit-overflow-scrolling: touch;
   }
 }
 
-/* Custom scrollbar */
-.ascii-terminal::-webkit-scrollbar { height: 6px; }
-.ascii-terminal::-webkit-scrollbar-thumb { background-color: #DDA853; border-radius: 4px; }
-.ascii-terminal::-webkit-scrollbar-track { background-color: rgba(22, 64, 77, 0.5); }
-/* Mobile Mockup / Simulator Styling */
+/* Fix Terminal Scrollbar to match global theme */
+.ascii-terminal::-webkit-scrollbar {
+  height: 8px;
+}
+
+.ascii-terminal::-webkit-scrollbar-track {
+  background: #16404D;
+  border-radius: 0 0 8px 8px;
+}
+
+.ascii-terminal::-webkit-scrollbar-thumb {
+  background: rgba(221, 168, 83, 0.4);
+  border-radius: 4px;
+}
+
+.ascii-terminal::-webkit-scrollbar-thumb:hover {
+  background: #DDA853;
+}
+
+/* ---------- Mobile Mockup / Simulator ---------- */
 .mobile-demo-container {
   display: flex;
   justify-content: center;
@@ -310,53 +558,31 @@ body.about-visible .vignette { opacity: 1; }
 }
 
 .mobile-bezel {
-  width: 340px;          /* Standard phone width */
-  height: 680px;         /* Standard phone height */
-  background-color: #16404D; /* Deep Teal Bezel */
-  border-radius: 40px;   /* Smooth curves */
-  padding: 12px;         /* Thickness of the bezel */
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); /* Deep shadow for depth */
+  width: 340px;
+  height: 680px;
+  background: #16404D;
+  border-radius: 40px;
+  padding: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .4);
   position: relative;
-  transition: transform 0.3s ease;
+  transition: transform .3s ease;
 }
 
 .mobile-bezel:hover {
-  transform: translateY(-5px); /* Subtle float effect on hover */
+  transform: translateY(-5px);
 }
 
-/* The actual screen area */
 .mobile-screen {
   width: 100%;
   height: 100%;
-  background-color: #FBF5DD;
-  border-radius: 28px;   /* Slightly tighter radius than bezel */
-  overflow: hidden;      /* Clips the iframe corners */
+  background: #FBF5DD;
+  border-radius: 28px;
+  overflow: hidden;
   position: relative;
-  border: 1px solid rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, .1);
 }
 
-.mobile-screen iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* "Camera/Speaker" Notch decoration */
-.mobile-bezel::before {
-  content: '';
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 6px;
-  background-color: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  z-index: 20;
-  pointer-events: none;
-}
-
-/* Roadmap / Flowchart Styling - With Arrows */
+/* ---------- Roadmap / Flowchart ---------- */
 .roadmap-wrapper {
   position: relative;
   padding: 0;
@@ -368,20 +594,18 @@ body.about-visible .vignette { opacity: 1; }
   align-items: center;
 }
 
-/* The vertical spine running through the background */
 .roadmap-spine {
   position: absolute;
   left: 50%;
   top: 0;
   bottom: 0;
   width: 2px;
-  background-color: #16404D;
+  background: #16404D;
   transform: translateX(-50%);
   z-index: 0;
-  opacity: 0.3;
+  opacity: .3;
 }
 
-/* Container for one "Phase" (e.g. Short Term) */
 .roadmap-phase {
   position: relative;
   z-index: 1;
@@ -391,41 +615,38 @@ body.about-visible .vignette { opacity: 1; }
   align-items: center;
 }
 
-/* The Pill Header (Short Term Goals) */
 .roadmap-header-pill {
-  background-color: #16404D;
+  background: #16404D;
   color: #FBF5DD;
-  padding: 0.6rem 2rem;
+  padding: .6rem 2rem;
   border-radius: 99px;
   border: 2px solid #DDA853;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  margin-bottom: 0.5rem; /* Space for the arrow below it */
+  font-size: .9rem;
+  letter-spacing: .05em;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .15);
+  margin-bottom: .5rem;
 }
 
-/* The Downward Arrow Icon */
 .roadmap-arrow {
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 10px solid #16404D;
-  margin: 0.2rem 0 1rem 0; /* Spacing between header and grid */
+  margin: .2rem 0 1rem 0;
 }
 
-/* A horizontal bar that makes it look like the flow "splits" to the boxes */
 .roadmap-split-bar {
   width: 60%;
   height: 2px;
-  background-color: #16404D;
+  background: #16404D;
   margin-bottom: 1rem;
   position: relative;
-  opacity: 0.3;
+  opacity: .3;
 }
-/* Small vertical tick connecting split bar to the arrow */
+
 .roadmap-split-bar::before {
   content: '';
   position: absolute;
@@ -433,52 +654,10 @@ body.about-visible .vignette { opacity: 1; }
   top: -10px;
   height: 10px;
   width: 2px;
-  background-color: #16404D;
+  background: #16404D;
 }
 
-/* The Grid of Boxes */
-.roadmap-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1.5rem;
-  width: 100%;
-  margin-bottom: 3rem; /* Space before the next phase starts */
-}
-
-/* The Individual Boxes */
-.roadmap-box {
-  background-color: #FBF5DD;
-  border: 1px solid #16404D;
-  padding: 1.25rem 1rem;
-  border-radius: 12px;
-  text-align: center;
-  font-size: 0.85rem;
-  color: #16404D;
-  box-shadow: 4px 4px 0px rgba(22, 64, 77, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  position: relative;
-  z-index: 2;
-}
-
-/* Hover effect for interactivity */
-.roadmap-box:hover {
-  transform: translateY(-3px);
-  box-shadow: 4px 6px 12px rgba(22, 64, 77, 0.15);
-  border-color: #DDA853;
-}
-
-/* Mobile Tweak: Remove split bar on small screens (vertical stack doesn't need it) */
-@media (max-width: 600px) {
-  .roadmap-split-bar { display: none; }
-  .roadmap-grid { gap: 1rem; }
-  .roadmap-spine { display: block; } /* Keep spine for vertical flow */
-}
-
-/* System Architecture Flowchart Styling - Horizontal Scroll */
+/* ---------- Architecture flow ---------- */
 .arch-wrapper {
   width: 100%;
   margin: 2rem 0;
@@ -486,79 +665,740 @@ body.about-visible .vignette { opacity: 1; }
   flex-direction: column;
   gap: 1.5rem;
   position: relative;
-  
-  /* CRITICAL: Enable Horizontal Scroll */
-  overflow-x: auto;       /* Allows swiping left/right */
-  padding-bottom: 1.5rem; /* Space for the scrollbar to sit comfortably */
-  -webkit-overflow-scrolling: touch; /* Ensures smooth momentum scrolling on iOS */
+  overflow-x: auto;
+  padding-bottom: 1.5rem;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Custom Scrollbar for the Architecture Diagram */
-.arch-wrapper::-webkit-scrollbar { height: 6px; }
-.arch-wrapper::-webkit-scrollbar-thumb { background-color: #DDA853; border-radius: 4px; }
-.arch-wrapper::-webkit-scrollbar-track { background-color: rgba(22, 64, 77, 0.1); }
+/* Use global scrollbar style for arch wrapper but enforce width */
+.arch-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
 
-/* A single level in the hierarchy (Row) */
+.arch-wrapper::-webkit-scrollbar-thumb {
+  background: #DDA853;
+  border-radius: 4px;
+}
+
 .arch-row {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-  
-  /* CRITICAL: Force the row to be wide enough to hold 3 columns */
-  /* This prevents squishing on mobile and triggers the scrollbar instead */
-  min-width: 700px; 
-  
-  margin: 0 auto; /* Keeps it centered if screen is larger than 700px */
+  min-width: 700px;
+  margin: 0 auto;
 }
 
-/* Columns for parallel branches */
 .arch-col {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 1; 
+  flex: 1;
   align-items: center;
+  min-width: 0;
   position: relative;
-  min-width: 0; 
 }
 
-/* The Box Styling */
 .arch-box {
-  background-color: #FBF5DD;
+  background: #FBF5DD;
   border: 1px solid #16404D;
   color: #16404D;
-  padding: 1rem;
-  border-radius: 10px;
+  padding: 1.25rem 1rem;
+  border-radius: 12px;
   text-align: center;
-  font-size: 0.8rem;
-  width: 100%;
-  box-shadow: 3px 3px 0px rgba(22, 64, 77, 0.15);
-  position: relative;
-  z-index: 2;
+  font-size: .85rem;
+  box-shadow: 4px 4px 0 rgba(22, 64, 77, .1);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  transition: transform .2s ease, box-shadow .2s ease;
   min-height: 70px;
-}
-
-.arch-box strong {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 0.9rem;
 }
 
 .arch-box.highlight {
   border: 2px solid #DDA853;
-  background-color: #fff;
+  background: #fff;
 }
 
-/* Connectors (Arrows) */
 .arch-arrow-down {
-  width: 0; 
-  height: 0; 
+  width: 0;
+  height: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-top: 8px solid #16404D;
   margin: 0 auto;
-  opacity: 0.6;
+  opacity: .6;
+}
+
+
+/* MENU OPEN STATE */
+#about-menu.is-visible {
+  transform: translateX(0%);
+}
+
+body.menu-open #horizontal-scroll {
+  filter: blur(5px);
+  transition: filter 0.5s ease;
+}
+
+/* --- MOUSE SCROLL ANIMATION --- */
+@keyframes scrollWheelDrop {
+  0% {
+    top: 6px;
+    opacity: 1;
+    height: 6px;
+  }
+
+  20% {
+    height: 10px;
+  }
+
+  100% {
+    top: 24px;
+    opacity: 0;
+    height: 6px;
+  }
+}
+
+.mouse-wheel {
+  animation: scrollWheelDrop 2s cubic-bezier(0.15, 0.41, 0.69, 0.94) infinite;
+}
+
+@keyframes nudgeRight {
+
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateX(6px);
+    opacity: 1;
+  }
+}
+
+.arrow-nudge {
+  animation: nudgeRight 2s ease-in-out infinite;
+}
+
+/* --- CUSTOM SCROLLBAR FOR WORK EXPERIENCE / ABOUT MENU --- */
+/* This matches the dark theme of the About Menu */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(251, 245, 221, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(221, 168, 83, 0.3);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #DDA853;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #DDA853 rgba(251, 245, 221, 0.05);
+}
+
+/* ---------- Project Selector (Lottie-inspired) ---------- */
+.project-selector {
+  position: fixed;
+  left: 50%;
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 85;
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.project-selector-track {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 0.75rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 245, 221, 0.12);
+  background: rgba(13, 13, 13, 0.62);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.project-selector-indicator {
+  position: absolute;
+  left: 0.43rem;
+  top: 0.4rem;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #f7dfaf 0%, #DDA853 55%, #9d712c 100%);
+  box-shadow: 0 8px 24px rgba(221, 168, 83, 0.4);
+  pointer-events: none;
+  transition: transform 0.52s cubic-bezier(0.2, 1, 0.32, 1), opacity 0.22s ease;
+}
+
+.project-selector-indicator.is-hidden {
+  opacity: 0;
+}
+
+.project-selector-btn {
+  position: relative;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 999px;
+  border: 1px solid rgba(251, 245, 221, 0.28);
+  background: rgba(251, 245, 221, 0.08);
+  color: rgba(251, 245, 221, 0.72);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.24s ease, border-color 0.24s ease, transform 0.24s ease, background-color 0.24s ease;
+}
+
+.project-selector-btn:hover {
+  transform: scale(1.08);
+  border-color: rgba(251, 245, 221, 0.62);
+}
+
+.project-selector-btn:focus-visible {
+  outline: 2px solid #DDA853;
+  outline-offset: 3px;
+}
+
+.project-selector-btn.is-active {
+  color: #111;
+  border-color: transparent;
+  background: transparent;
+  transform: scale(1.06);
+}
+
+.selector-label {
+  position: absolute;
+  bottom: calc(100% + 0.6rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(0.35rem);
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(251, 245, 221, 0.16);
+  background: rgba(13, 13, 13, 0.9);
+  color: rgba(251, 245, 221, 0.85);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.project-selector-btn:hover .selector-label,
+.project-selector-btn:focus-visible .selector-label {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+body.menu-open .project-selector,
+body.project-open .project-selector {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(1rem);
+}
+
+@media (max-width: 767px) {
+  .project-selector {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .project-selector,
+  .project-selector-btn,
+  .project-selector-indicator,
+  .selector-label {
+    transition: none !important;
+  }
+}
+
+/* --- SIDEBAR NAME FIX (DESKTOP DEFAULT) --- */
+.sidebar-name {
+  transform: rotate(-90deg);
+  white-space: nowrap;
+  margin: auto 0;
+}
+
+
+/* ========================================================= */
+/* ============= MOBILE RESPONSIVENESS OVERRIDES =========== */
+/* ========================================================= */
+/* These styles ONLY apply to screens smaller than 769px.    */
+
+@media (max-width: 767px) {
+
+  /* 1. Global: Allow Vertical Scrolling on Mobile */
+  html,
+  body {
+    overflow-y: auto !important;
+    overflow-x: hidden;
+    height: auto;
+  }
+
+  /* 2. Sidebar: Fix text orientation to HORIZONTAL for mobile */
+  .writing-vertical {
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
+  }
+
+  .sidebar-name {
+    transform: none !important;
+    /* Resets rotation */
+    writing-mode: horizontal-tb !important;
+    white-space: nowrap;
+    margin: 0 !important;
+  }
+
+  aside {
+    flex-direction: row !important;
+    padding: 0 1.5rem !important;
+  }
+
+  aside>div:last-child {
+    flex-direction: row !important;
+    gap: 1.5rem !important;
+  }
+
+  /* 3. Main Container: Stack content vertically */
+  main#horizontal-scroll {
+    height: auto !important;
+    height: calc(var(--vh, 1vh) * 100);
+
+    padding-left: 0 !important;
+    padding-top: 60px !important;
+    flex-direction: column !important;
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 4. Intro Section: Size correctly for mobile */
+  section:first-of-type {
+    height: calc(100vh - 60px) !important;
+    min-height: calc(100vh - 60px) !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    padding: 2rem !important;
+    text-align: center;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(251, 245, 221, 0.1);
+  }
+
+  section:first-of-type h2 {
+    font-size: 3rem !important;
+    line-height: 1.2;
+  }
+
+  section:first-of-type p {
+    font-size: 1.1rem !important;
+    margin: 0 auto;
+  }
+
+  /* 5. Projects Track: Stack Panels Vertically */
+  #projects-track {
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* 6. Project Panel: Full Width Cards */
+  .project-panel {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    min-height: 80vh;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(251, 245, 221, 0.1);
+    flex-direction: column !important;
+    display: block;
+  }
+
+  /* 7. Preview Section Mobile */
+  .panel-preview {
+    padding: 3rem 1.5rem !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 80vh;
+    cursor: pointer;
+  }
+
+  .panel-preview span.stroke-text {
+    font-size: 4rem;
+    bottom: 2rem;
+    left: 1rem;
+  }
+
+  .panel-image-wrapper {
+    height: auto !important;
+    max-height: 300px !important;
+    margin-bottom: 2rem;
+  }
+
+  .panel-preview .preview-content {
+    max-width: 100% !important;
+    margin: 0 auto;
+  }
+
+  /* 8. Details Panel: Hidden by default on mobile */
+  .panel-details {
+    width: 100% !important;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.5s ease;
+    padding: 0 !important;
+  }
+
+  /* 9. EXPANDED STATE (Mobile Specifics) - SCROLL LOCK FIX */
+  .project-panel.is-expanded {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: calc(var(--vh, 1vh) * 100) !important;
+    overflow-y: auto !important;
+    z-index: 999;
+    background-color: #FBF5DD !important;
+    display: block;
+    margin: 0 !important;
+  }
+
+
+  .project-panel.is-expanded .panel-preview {
+    min-height: auto;
+    border-bottom: 1px solid rgba(22, 64, 77, 0.1);
+    padding-top: 5rem !important;
+  }
+
+  /* Recolor elements for Light Mode on expanded mobile */
+  .project-panel.is-expanded .panel-preview h3 {
+    color: #16404D !important;
+    font-size: 1.75rem;
+  }
+
+  .project-panel.is-expanded .panel-preview .text-xs {
+    color: #DDA853 !important;
+  }
+
+  .project-panel.is-expanded .panel-preview p {
+    color: #222 !important;
+  }
+
+  .project-panel.is-expanded .view-btn {
+    display: none !important;
+  }
+
+  .project-panel.is-expanded .panel-details {
+    height: auto !important;
+    opacity: 1 !important;
+    padding: 2rem 1.25rem !important;
+    overflow: visible;
+    background-color: #FBF5DD;
+    color: #16404D;
+  }
+
+  /* 10. Close Button: Fixed Position on Mobile */
+  .close-btn {
+    position: fixed !important;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: #16404D !important;
+    color: #FBF5DD !important;
+    opacity: 0;
+    border: 1px solid rgba(251, 245, 221, 0.3) !important;
+    z-index: 1000 !important;
+    /* Ensure it sits above the fixed panel */
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+  }
+
+  .project-panel.is-expanded .close-btn {
+    opacity: 1 !important;
+  }
+
+  /* 12. About Menu Mobile Fixes */
+  #about-menu {
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+  }
+
+  #about-menu .container {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  #menu-close {
+    top: 1.5rem !important;
+    right: 1.5rem !important;
+  }
+
+  /* Hide Mouse Wheel Animation on Mobile */
+  .mouse-wheel {
+    display: none;
+  }
+
+  .arrow-nudge svg {
+    transform: rotate(90deg);
+  }
+
+  /* 11. SCROLL LOCK OVERRIDE (Must be last to win) */
+  /* This overrides the HTML/BODY scroll settings when JS adds the class */
+  body.overflow-hidden,
+  body.overflow-hidden,
+  html.overflow-hidden {
+    overflow: hidden !important;
+    height: auto !important;
+  }
+
+}
+
+/* --- NO LONGER NEEDED: TOUCH TABLET HORIZONTAL SWIPE FIX (iPad) --- */
+
+/* ---------- INTRO LOADER ---------- */
+#loader {
+  transition: opacity 0.6s ease;
+}
+
+#loader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* MENU ICON TRANSITION */
+.menu-btn .line {
+  width: 24px;
+  height: 2px;
+  background: #FBF5DD;
+  transition: transform 0.35s ease,
+    background-color 0.3s ease;
+}
+
+.menu-btn:hover .line {
+  background: #A6CDC6;
+}
+
+/* OPEN STATE → morph to X */
+.menu-btn.is-open .line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.menu-btn.is-open .line:nth-child(2) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+
+
+/* ========================================================= */
+/* ================ IMAGE LIGHTBOX GALLERY ================= */
+/* ========================================================= */
+
+.image-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-lightbox.is-visible {
+  display: flex;
+  opacity: 1;
+}
+
+.lightbox-close {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10001;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  padding: 0.75rem;
+  cursor: pointer;
+  color: #FBF5DD;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+  border-color: #DDA853;
+}
+
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10001;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  padding: 1rem;
+  cursor: pointer;
+  color: #FBF5DD;
+  transition: all 0.3s ease;
+  pointer-events: auto;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #DDA853;
+}
+
+.lightbox-prev {
+  left: 2rem;
+}
+
+.lightbox-next {
+  right: 2rem;
+}
+
+.lightbox-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem 2rem;
+}
+
+.lightbox-image-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.lightbox-image {
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  cursor: zoom-in;
+  transition: transform 0.3s ease;
+  user-select: none;
+}
+
+.lightbox-image.zoomed {
+  cursor: zoom-out;
+  cursor: grab;
+}
+
+.lightbox-image.zoomed:active {
+  cursor: grabbing;
+}
+
+.lightbox-counter {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 2rem;
+  padding: 0.75rem 1.5rem;
+  color: #FBF5DD;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .lightbox-close {
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem;
+  }
+
+  .lightbox-nav {
+    padding: 0.75rem;
+  }
+
+  .lightbox-prev {
+    left: 1rem;
+  }
+
+  .lightbox-next {
+    right: 1rem;
+  }
+
+  .lightbox-counter {
+    bottom: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .lightbox-image {
+    max-width: 95%;
+    max-height: 85%;
+  }
+}
+
+/* Make project detail images clickable */
+.panel-details img {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.panel-details img:hover {
+  opacity: 0.9;
+}
+
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* ---------- Ambient Background Particles ---------- */
+.ambient-particle {
+  will-change: transform;
+  /* Make transitions smooth when JS scroll parallax kicks in */
+  transition: transform 0.1s linear, opacity 1s ease-in-out;
+}
+
+@keyframes particle-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  50% {
+    transform: translate(calc(var(--travel-x) * 0.5), calc(var(--travel-y) * 0.5));
+  }
+
+  100% {
+    transform: translate(var(--travel-x), var(--travel-y));
+  }
 }
