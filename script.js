@@ -740,6 +740,8 @@ document.addEventListener('DOMContentLoaded', () => {
         skipBtn.addEventListener('click', () => {
             introOverlay.style.transform = 'translateY(-100%)';
             isIntroActive = false;
+            document.body.classList.remove('is-loading');
+            document.documentElement.classList.remove('is-loading');
         });
     }
 
@@ -846,6 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isLocked = true;
         if (selectorApi) selectorApi.setActive(index, true);
 
+        document.documentElement.classList.add('project-open');
         document.body.classList.add('project-open');
 
         const ambientBg = document.getElementById('ambient-background');
@@ -881,6 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
         suppressPreviewClicksUntil = Date.now() + 450;
 
         // ✅ REMOVE PROJECT-OPEN STATE FIRST (prevents tap-through)
+        document.documentElement.classList.remove('project-open');
         document.body.classList.remove('project-open');
 
         const ambientBg = document.getElementById('ambient-background');

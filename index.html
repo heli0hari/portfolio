@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="is-loading">
 
 <head>
     <meta charset="utf-8">
@@ -7,7 +7,7 @@
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
 
     <title>Harigovind | Visual & Experience Designer</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
         rel="stylesheet">
 </head>
 
-<body class="bg-[#111] text-[#FBF5DD]">
+<body class="bg-[#111] text-[#FBF5DD] is-loading">
 
     <!-- AMBIENT PARTICLE BACKGROUND -->
     <div id="ambient-background"
@@ -353,7 +353,9 @@
         <div class="project-overlay-content bg-[#FBF5DD]">
             <div id="overlayScrollWrapper"></div>
         </div>
-        <div id="closeOverlay" class="close-button text-[#16404D]" aria-label="Close">
+        <div id="closeOverlay"
+            class="close-button absolute top-[80px] md:top-6 right-6 z-[250] text-[#16404D] hover:scale-110 transition-transform cursor-pointer"
+            aria-label="Close">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -362,7 +364,9 @@
 
     <!-- Image Lightbox Gallery -->
     <div id="imageLightbox" class="image-lightbox">
-        <button id="closeLightbox" class="lightbox-close" aria-label="Close gallery">
+        <button id="closeLightbox"
+            class="lightbox-close fixed top-[80px] md:top-6 right-6 z-[250] text-[#16404D] hover:scale-110 transition-transform cursor-pointer"
+            aria-label="Close gallery">
             <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
@@ -391,7 +395,7 @@
     </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
 </body>
 
 </html>
