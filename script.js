@@ -757,6 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closePressEvent = window.PointerEvent ? 'pointerdown' : 'touchstart';
     let selectorApi = null;
     let savedScrollPosition = 0;
+    let savedMobileScrollPosition = 0;
 
     // --- 3. RENDER LOOP ---
     projects.forEach((p, index) => {
@@ -848,6 +849,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isLocked = true;
         if (selectorApi) selectorApi.setActive(index, true);
 
+        // Capture scroll BEFORE classes that reset it
+        if (window.innerWidth < 768) {
+            savedMobileScrollPosition = window.scrollY;
+        }
+
         document.documentElement.classList.add('project-open');
         document.body.classList.add('project-open');
 
@@ -914,6 +920,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.innerWidth >= 768) {
             targetScroll = savedScrollPosition;
             scrollContainer.scrollTo({ left: savedScrollPosition, behavior: 'auto' });
+        } else {
+            window.scrollTo(0, savedMobileScrollPosition);
         }
 
         if (selectorApi) selectorApi.sync();
