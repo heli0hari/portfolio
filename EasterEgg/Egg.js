@@ -301,3 +301,4 @@ overlay.addEventListener('mousedown', (e) => {
 // Initial draw logic
 initGame();
 draw();
+
