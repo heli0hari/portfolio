@@ -847,6 +847,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         activeIndex = index;
         isLocked = true;
+
+        // Update URL for deep linking
+        if (projects[index] && projects[index].id) {
+            const url = new URL(window.location);
+            url.searchParams.set('project', projects[index].id);
+            window.history.pushState({ projectId: projects[index].id }, '', url);
+        }
+
         if (selectorApi) selectorApi.setActive(index, true);
 
         // Capture scroll BEFORE classes that reset it
@@ -889,6 +897,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeIndex === -1) return;
         suppressPreviewClicksUntil = Date.now() + 450;
 
+        // Clear URL deep link parameter without reloading
+        const url = new URL(window.location);
+        url.searchParams.delete('project');
+        window.history.pushState({}, '', url);
+
         // ✅ REMOVE PROJECT-OPEN STATE FIRST (prevents tap-through)
         document.documentElement.classList.remove('project-open');
         document.body.classList.remove('project-open');
@@ -927,8 +940,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (selectorApi) selectorApi.sync();
     }
 
+    // --- HANDLE DEEP LINK ON LOAD ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const deepLinkProject = urlParams.get('project');
+    if (deepLinkProject) {
+        const targetIndex = projects.findIndex(p => p.id === deepLinkProject);
+        if (targetIndex !== -1) {
+            // Slight delay ensures the DOM layout is ready before animating/expanding
+            setTimeout(() => expandProject(targetIndex), 100);
+        }
+    }
 
-
+    // Also handle browser back/forward buttons (popstate)
+    window.addEventListener('popstate', (e) => {
+        const currentParams = new URLSearchParams(window.location.search);
+        const projectId = currentParams.get('project');
+        if (projectId) {
+            const idx = projects.findIndex(p => p.id === projectId);
+            if (idx !== -1 && idx !== activeIndex) {
+                expandProject(idx);
+            }
+        } else if (activeIndex !== -1) {
+            collapseProject();
+        }
+    });
 
     // --- NEW: HAMBURGER MENU LOGIC ---
     const menuToggle = document.getElementById('menu-toggle');
