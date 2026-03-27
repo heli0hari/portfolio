@@ -74,6 +74,677 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const projects = [
     {
+        id: "hiro-assistant",
+        title: "Hiro — Task Starting Assistant",
+        category: "UX/UI Case Study",
+        description: "A behavioural productivity assistant designed to help people overcome procrastination by reducing the friction between intention and starting work.",
+        image: "images/Hiro/Title.jpg",
+        year: "2026",
+        tags: ["UX Design", "Product Strategy", "Behavioral Design", "Interaction Design", "User Research"],
+
+        details: {
+            content: [
+
+                { type: 'image', value: { src: 'images/Hiro/Title.jpg', alt: 'Hiro productivity assistant title' } },
+
+                { type: 'paragraph', value: "Hiro is a productivity assistant designed to help people overcome the starting barrier of work. Instead of focusing on scheduling or task management, the system focuses on the moment users struggle most: the transition between intention and action." },
+
+                { type: 'paragraph', value: "By reducing cognitive friction, adapting to fluctuating energy levels, and encouraging small initial actions, Hiro helps users start earlier and maintain momentum throughout a task." },
+
+                { type: 'heading', value: 'Understanding Procrastination' },
+
+                { type: 'paragraph', value: "Procrastination means postponing something that would benefit you if done today. This may include studying for exams, completing assignments, making phone calls, or finishing professional tasks." },
+
+                { type: 'image', value: { src: 'images/Hiro/Proc.jpg', alt: 'Procrastination' } },
+
+
+                { type: 'paragraph', value: "Research shows procrastination is not laziness but a coping mechanism used to temporarily escape unpleasant emotions such as anxiety, boredom, frustration, or self-doubt." },
+
+
+                { type: 'heading', value: 'Neurological Explanation' },
+
+                { type: 'paragraph', value: "At a neurological level, procrastination is a battle between two primary regions of the brain: the limbic system and the prefrontal cortex. The limbic system, often referred to as the emotional brain, prioritises immediate satisfaction and pleasure, seeking short-term fulfilment. The prefrontal cortex, in contrast, is responsible for more complex cognitive functions, including long-term planning, impulse control, and decision-making." },
+
+
+                {
+                    type: "comparison",
+                    value: {
+                        title: "Brain Conflict During Procrastination",
+                        left: {
+                            title: "Limbic System",
+                            items: [
+                                "Emotional brain",
+                                "Seeks immediate pleasure",
+                                "Social media",
+                                "Entertainment",
+                                "Low-effort activities"
+                            ]
+                        },
+                        right: {
+                            title: "Prefrontal Cortex",
+                            items: [
+                                "Logical planning",
+                                "Decision making",
+                                "Studying",
+                                "Writing assignments",
+                                "Complex tasks"
+                            ]
+                        }
+                    }
+                },
+
+                { type: 'paragraph', value: "When tasks feel unpleasant or difficult, the limbic system prioritises immediate comfort over the logical reasoning of the prefrontal cortex, resulting in procrastination." },
+
+
+                { type: 'subheading', value: 'Additional Causes of Procrastination' },
+
+
+                {
+                    type: 'lined-list',
+                    value: [
+                        "Many people believe motivation must come before action, when in reality action often creates motivation.",
+                        "Fear of failure is a major cause of task avoidance.",
+                        "Perfectionists delay tasks because they believe everything must be done perfectly.",
+                        "Self-criticism and unrealistic expectations reinforce avoidance behaviour.",
+                        "Frequent 'should' statements create guilt and resentment, leading to further procrastination."
+                    ]
+                },
+
+
+                { type: 'heading', value: 'Existing Productivity Approaches' },
+
+                { type: 'paragraph', value: "One traditional approach to overcoming procrastination is SMART goal setting." },
+
+                {
+                    type: 'table',
+                    value: [
+                        ["SMART Component", "Explanation"],
+                        ["Specific", "Define clear and precise study goals"],
+                        ["Measurable", "Track progress using checklists or measurable outputs"],
+                        ["Achievable", "Break the goal into smaller concrete achievable steps"],
+                        ["Realistic", "Ensure goals are achievable"],
+                        ["Time Based", "Work backwards from deadlines"]
+                    ]
+                },
+
+                { type: 'image', value: { src: 'images/Hiro/smart.jpg', alt: 'SMART' } },
+
+
+                { type: 'paragraph', value: "Other behavioural techniques include establishing a routine, preparing tasks for the next study session, and rewarding yourself after completing goals." },
+
+
+                { type: 'heading', value: 'User Research' },
+
+
+                { type: 'paragraph', value: "To understand real behaviour patterns, I conducted a Google survey targeting students, young adults, and early professionals." },
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Primary users: students, young professionals, early career workers",
+                        "Digital-native behaviour with heavy smartphone usage",
+                        "People juggle study, work, and personal responsibilities",
+                        "Motivation fluctuates rather than ability"
+                    ]
+                },
+
+                { type: 'subheading', value: 'Behavioural Insights' },
+
+
+                {
+                    type: 'table',
+                    value: [
+                        ["Observation", "Insight"],
+                        ["~78% delay tasks sometimes", "Procrastination is common behaviour"],
+                        ["Task complexity", "Users avoid unclear starting points"],
+                        ["Low energy", "Energy strongly influences task engagement"],
+                        ["Distant deadlines", "Urgency appears late"],
+                        ["Unclear instructions", "Users struggle with task initiation"]
+                    ]
+                },
+
+
+                { type: 'paragraph', value: "The research indicates that people are not lazy; they are context-sensitive starters." },
+
+
+                { type: 'subheading', value: 'What Users Do Instead' },
+
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Social media",
+                        "Other productive tasks",
+                        "Small chores"
+                    ]
+                },
+
+                { type: 'paragraph', value: "Users rarely remain inactive. Instead they switch to easier tasks that provide immediate psychological rewards." },
+
+
+                { type: 'subheading', value: 'Emotional State After Procrastinating' },
+
+
+                {
+                    type: 'table',
+                    value: [
+                        ["Emotion", "Frequency"],
+                        ["Slight concern", "High"],
+                        ["Stress", "Moderate"],
+                        ["Guilt", "Common"]
+                    ]
+                },
+
+
+                { type: 'paragraph', value: "Users already experience psychological cost after procrastinating. Therefore guilt-based design approaches are ineffective." },
+
+
+                { type: 'heading', value: 'Core UX Problem Statement' },
+
+
+                { type: 'paragraph', value: "Young adults delay tasks not because of lack of motivation, but because of low energy, unclear starting points, and distant deadlines. This leads to task switching toward easier activities and increased stress." },
+
+
+                { type: 'heading', value: 'User Personas' },
+
+
+                { type: 'subheading', value: 'Rick Austin — The Overloaded Student (20)' },
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Heavy smartphone user",
+                        "Constant social media exposure",
+                        "Delays tasks when they feel complex",
+                        "Switches to social media when unsure how to begin"
+                    ]
+                },
+
+                {
+                    type: 'lined-list',
+                    value: [
+                        "<strong>Behavioural Insight:</strong> Rick avoids the unclear beginning of large tasks.",
+                        "<strong>Quote:</strong> 'I'll start after one reel… maybe after this one.'",
+                        "<strong>Design Need:</strong> Automatic task breakdown and quick first action."
+                    ]
+                },
+
+
+                { type: 'subheading', value: 'Riya Jerald — Independent Planner (38)' },
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Freelancer and parent",
+                        "Prefers structured planning",
+                        "Delays work when urgency feels low"
+                    ]
+                },
+
+                {
+                    type: 'lined-list',
+                    value: [
+                        "<strong>Behavioural Insight:</strong> Deadline distance reduces urgency.",
+                        "<strong>Quote:</strong> 'There's time. I'll block it tomorrow.'",
+                        "<strong>Design Need:</strong> Visual deadline compression and progress visibility."
+                    ]
+                },
+
+
+                { type: 'subheading', value: 'Rahul Dev — Balancing Professional (29)' },
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Uses productivity apps inconsistently",
+                        "Struggles with mental fatigue after work"
+                    ]
+                },
+
+                {
+                    type: 'lined-list',
+                    value: [
+                        "<strong>Behavioural Insight:</strong> Rahul engages in productive procrastination.",
+                        "<strong>Quote:</strong> 'Let me clear emails first.'",
+                        "<strong>Design Need:</strong> Energy-based task suggestions."
+                    ]
+                },
+
+
+                { type: 'heading', value: 'User Journey Map — The Delay Loop' },
+
+                {
+                    type: 'table',
+                    value: [
+                        [
+                            "User Actions",
+                            "Journey Stage",
+                            "Thoughts",
+                            "Emotions",
+                            "Pain Points",
+                            "Opportunities (Design Intervention)"
+                        ],
+
+                        [
+                            "Receives assignment brief",
+                            "Awareness",
+                            "I have plenty of time.",
+                            "😌 Calm",
+                            "Deadline feels distant",
+                            "Show visual timeline compression"
+                        ],
+
+                        [
+                            "Opens laptop, thinks about starting",
+                            "Intention",
+                            "Where do I even begin?",
+                            "😐 Uncertain",
+                            "Task feels large & unclear",
+                            "Auto-generate first step"
+                        ],
+
+                        [
+                            "Reads brief briefly, closes tab",
+                            "Friction",
+                            "I'll do it later when I feel ready.",
+                            "😕 Mild avoidance",
+                            "Cognitive overload",
+                            "Simplify task into micro-actions"
+                        ],
+
+                        [
+                            "Scrolls social media",
+                            "Delay Loop",
+                            "Just a short break.",
+                            "🙂 Comfortable → 😬 Guilty",
+                            "Easy dopamine replaces effort",
+                            "Provide low-effort start mode"
+                        ],
+
+                        [
+                            "Remembers assignment occasionally",
+                            "Emotional Build-up",
+                            "I should start soon…",
+                            "😟 Concern rising",
+                            "No structured re-entry point",
+                            "Gentle re-engagement prompts"
+                        ],
+
+                        [
+                            "Deadline gets close",
+                            "Pressure Point",
+                            "Now I HAVE to do it.",
+                            "😰 Stress",
+                            "Panic-driven productivity",
+                            "Earlier urgency visualization"
+                        ],
+
+                        [
+                            "Starts working intensely",
+                            "Action",
+                            "This wasn’t that hard actually.",
+                            "😤 Focused",
+                            "Starting barrier disappears late",
+                            "Encourage early momentum"
+                        ],
+
+                        [
+                            "Submits assignment",
+                            "Reflection",
+                            "Why didn’t I start earlier?",
+                            "😓 Relief + regret",
+                            "Pattern repeats next task",
+                            "Reflection & learning feedback"
+                        ]
+                    ]
+                },
+
+
+                { type: 'paragraph', value: "Critical observation: the highest friction point occurs between intention and starting." },
+
+
+                { type: 'heading', value: 'Experience Breakdown — Cognitive States' },
+
+                {
+                    type: 'table',
+                    value: [
+                        ["Phase", "Mental Mode"],
+
+                        ["Awareness", "Low urgency"],
+
+                        ["Friction", "High uncertainty"],
+
+                        ["Delay", "Instant reward seeking"],
+
+                        ["Pressure", "Anxiety-driven action"],
+
+                        ["Action", "Flow state achieved"]
+                    ]
+                },
+
+
+                {
+                    type: 'heading',
+                    value: 'Theoretical Framework — Temporal Motivation Theory'
+                },
+
+                {
+                    type: 'paragraph',
+                    value: "Temporal Motivation Theory (TMT) explains procrastination as a decision-making process in which people choose the activity with the highest perceived motivational value at a given moment. Tasks with immediate rewards are often prioritised over tasks with delayed benefits, even if the long-term outcome is more important."
+                },
+
+                {
+                    type: 'paragraph',
+                    value: "The theory describes motivation using the following formula:"
+                },
+
+                {
+                    type: 'architecture',
+                    value: [
+
+
+                        [
+                            [
+                                "<strong>Motivation = (Expectancy × Value) / (Sensitivity to Delay × Time Delay)</strong>"
+                            ]
+                        ]
+                    ]
+                },
+
+                {
+                    type: 'paragraph',
+                    value: "Each variable represents a psychological factor that influences whether a person starts or delays a task."
+                },
+
+                {
+                    type: 'concept-grid',
+                    value: [
+                        {
+                            title: "Expectancy",
+                            description: "Confidence in successfully completing the task"
+                        },
+                        {
+                            title: "Value",
+                            description: "How rewarding or enjoyable the task feels"
+                        },
+                        {
+                            title: "Sensitivity to Delay",
+                            description: "Preference for immediate rewards over delayed benefits"
+                        },
+                        {
+                            title: "Time Delay",
+                            description: "The time until the reward or outcome is received"
+                        }
+                    ]
+                },
+
+                {
+                    type: 'subheading',
+                    value: 'Design Implications'
+                },
+
+                {
+                    type: 'lined-list',
+                    value: [
+                        "<strong>Expectancy:</strong> Increase confidence by breaking large tasks into smaller steps.",
+                        "<strong>Value:</strong> Increase perceived reward through micro-progress and feedback.",
+                        "<strong>Sensitivity to Delay:</strong> Reduce impulsive switching by providing quick start actions.",
+                        "<strong>Time Delay:</strong> Reduce perceived delay through timeline compression and intermediate checkpoints."
+                    ]
+                },
+
+                { type: 'paragraph', value: "Motivation increases when expectancy and value increase while delay decreases." },
+
+
+
+
+                { type: 'heading', value: 'Product Concept - Hiro' },
+                { type: 'paragraph', value: "Hiro is a productivity assistant designed to help people overcome the starting barrier of work. Instead of focusing on scheduling or task management, Hiro focuses on the moment when users struggle most; the transition between intention and action." },
+                { type: 'paragraph', value: "The system helps users begin tasks by automatically breaking them into manageable steps, suggesting actions based on the user’s current energy level, and enabling optional co-working sessions that provide light social accountability." },
+                { type: 'subheading', value: 'Why the name Hiro?' },
+                { type: 'paragraph', value: "The name Hiro comes from a conceptual blend of:" },
+                {
+                    type: 'lined-list',
+                    value: [
+                        "<strong>Hermes</strong> the messenger and guide who helps movement and transition.",
+                        "<strong>Kairos</strong> the greek diety representing the concept of the right time"
+                    ]
+                },
+                { type: 'paragraph', value: "Together, the name reflects the purpose of the system: Helping users recognise and act in the right moment to begin work." },
+                { type: 'paragraph', value: "The name also phonetically resembles “Hero,” reinforcing the idea that users take small steps toward overcoming procrastination." },
+                { type: 'subheading', value: 'Behavioral Model — The Procrastination Loop' },
+
+                { type: 'paragraph', value: "User behaviour often follows a predictable procrastination loop driven by uncertainty, low urgency, and immediate distractions." },
+
+                {
+                    type: 'snake-flow',
+                    value: [
+                        "Task Assigned",
+                        "Task feels large or unclear",
+                        "Uncertainty about where to start",
+                        "Avoidance",
+                        "Switch to easy reward (social media)",
+                        "Guilt or mild stress",
+                        "Deadline pressure",
+                        "Panic productivity",
+                        "Task completed",
+                        "Cycle repeats"
+                    ]
+                },
+
+                { type: 'paragraph', value: "This cycle shows that the real problem is not completing tasks but starting them." },
+
+                { type: 'subheading', value: 'Hiro Intervention Model' },
+
+                { type: 'paragraph', value: "Hiro interrupts the procrastination loop before avoidance begins by reducing cognitive friction and helping users take the first action." },
+
+                {
+                    type: 'snake-flow',
+                    value: [
+                        "User enters task",
+                        "Smart task breakdown",
+                        "Energy level selection",
+                        "System suggests appropriate task",
+                        "First-step generator",
+                        "Start Mode activated",
+                        "Momentum builds",
+                        "Sustained progress"
+                    ]
+                },
+
+
+
+                { type: 'subheading', value: 'Information Architecture' },
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Home — Today’s suggested task",
+                        "Tasks — Active tasks and task breakdown",
+                        "Energy Mode — Current energy level selection",
+                        "Focus Session — Active focus timer",
+                        "Profile & Settings"
+                    ]
+                },
+
+                { type: 'heading', value: 'Visual Development' },
+
+                { type: 'paragraph', value: 'The design system for Hiro is called <strong>The Digital Sanctuary</strong> — engineered to counteract the high-cortisol environment of task management. Most productivity tools feel like digital clipboards: rigid, cold, and demanding. Hiro aims to feel like a quiet, sun-drenched library where the architecture is organic and the atmosphere is breathable.' },
+
+                { type: 'image', value: { src: 'images/Hiro/layout.png', alt: 'Hiro visual layout and design system overview' } },
+
+                { type: 'subheading', value: 'Colour: Tonal Architecture' },
+
+                { type: 'paragraph', value: 'The palette is a dialogue between Sage (primary), Muted Blue (secondary), and Warm Cream (background). Colour is never used to alert — it is used to embrace.' },
+
+                {
+                    type: 'box-list',
+                    value: [
+                        '<strong>Background</strong> — #fafaf5 (Warm Cream)',
+                        '<strong>Primary</strong> — #4a6550 (Sage)',
+                        '<strong>Secondary</strong> — Muted Blue',
+                        '<strong>Surface tiers</strong> replace borders entirely',
+                        '<strong>No 1px lines</strong> — boundaries are background shifts only'
+                    ]
+                },
+
+                { type: 'subheading', value: 'Typography' },
+
+                {
+                    type: 'table',
+                    value: [
+                        ['Role', 'Typeface', 'Use'],
+                        ['Display & Headlines', 'Plus Jakarta Sans', '3.5rem — Welcome states, vast open space'],
+                        ['Body & Titles', 'Be Vietnam Pro', '0.875rem — Warm, humanist, never crowded'],
+                    ]
+                },
+
+                { type: 'paragraph', value: 'Large headlines use tight tracking (−0.02em) to feel premium. Body copy stays at body-md to ensure the interface never feels dense.' },
+
+
+
+                { type: 'subheading', value: 'Screen Flow' },
+
+                {
+                    type: 'snake-flow',
+                    value: [
+                        "Home Screen",
+                        "Add Task",
+                        "Enter Task + Deadline",
+                        "System generates task breakdown",
+                        "User selects energy level",
+                        "Task recommendation appears",
+                        "User activates Start Mode",
+                        "Focus session begins",
+                        "Task progress updated"
+                    ]
+                },
+
+                { type: 'paragraph', value: "Instead of overwhelming users with large tasks, Hiro always presents a single, achievable starting action." },
+
+                { type: 'subheading', value: 'System 1 - Intelligent Task Breakdown' },
+
+
+                {
+                    type: 'box-list',
+                    value: [
+                        "Breaks large tasks into smaller actions",
+                        "Schedules work before deadline",
+                        "Creates buffer time"
+                    ]
+                },
+
+                {
+                    type: 'portrait-pair', value: [
+                        { src: 'images/Hiro/Task1.png', alt: 'Task upload screen 1' },
+                        { src: 'images/Hiro/Task2.png', alt: 'Task upload screen 2' },
+                        { src: 'images/Hiro/Task3.png', alt: 'Task upload screen 3' }
+                    ]
+                },
+
+                { type: 'paragraph', value: 'Users begin by uploading a task to Hiro — simply entering the task name and deadline. Rather than presenting the full scope of the work, the system immediately breaks it down into smaller, manageable steps using the <strong>Gemini API</strong>.' },
+
+                { type: 'paragraph', value: 'Gemini analyses the task and generates a structured breakdown — splitting the work into milestones scheduled across the available time before the deadline, with built-in buffer time to reduce last-minute pressure.' },
+
+
+                {
+                    type: 'portrait-pair', value: [
+                        { src: 'images/Hiro/Breakdown1.png', alt: 'Task breakdown screen 1' },
+                        { src: 'images/Hiro/Breakdown2.png', alt: 'Task breakdown screen 2' }
+                    ]
+                },
+
+
+                { type: 'subheading', value: 'System 2 - Energy Based Task Assignment' },
+
+                { type: 'paragraph', value: 'Once the task is broken down, Hiro doesn\'t hand the user a flat to-do list. Instead, it surfaces different suggested steps depending on the user\'s current <strong>energy level</strong> — so someone running low can still make meaningful progress without feeling overwhelmed.' },
+                {
+                    type: 'table',
+                    value: [
+                        ["Energy Level", "Example Tasks"],
+                        ["Low", "Read article, collect sources"],
+                        ["Medium", "Write outline, summarise research"],
+                        ["High", "Write main section, deep work"]
+                    ]
+                },
+
+
+                {
+                    type: 'portrait-pair', value: [
+                        { src: 'images/Hiro/Energy1.png', alt: 'Energy level 1' },
+                        { src: 'images/Hiro/Energy2.png', alt: 'Energy level 2' },
+                        { src: 'images/Hiro/Energy3.png', alt: 'Energy level 3' }
+                    ]
+                },
+
+                { type: 'subheading', value: 'Snooze mode - Intentional Pause' },
+
+
+                { type: 'paragraph', value: "Snooze Mode allows users to temporarily pause tasks, reminders, and notifications when they need time to rest or step away. Instead of forcing continuous productivity, Hiro recognises that recovery is essential for sustained focus." },
+                { type: 'paragraph', value: "Users can choose predefined durations or create custom schedules, ensuring that breaks are intentional rather than avoidant. All progress is preserved, and tasks are gently reintroduced once the snooze period ends." },
+                { type: 'paragraph', value: "This feature prevents burnout while maintaining a clear path back to action, supporting a healthier and more sustainable productivity cycle." },
+
+                {
+                    type: 'portrait-pair', value: [
+                        { src: 'images/Hiro/Snooze1.png', alt: 'Snooze screen 1' },
+                        { src: 'images/Hiro/Snooze2.png', alt: 'Snooze screen 2' },
+                    ]
+                },
+
+                { type: 'heading', value: 'Core Product Capabilities' },
+
+
+                {
+                    type: 'table',
+                    value: [
+                        ["Problem", "Feature"],
+                        ["Task feels too big", "Smart Task Breakdown"],
+                        ["Energy fluctuates", "Energy-Aware Suggestions"],
+                        ["Starting feels difficult", "Start Mode"]
+                    ]
+                },
+
+
+                { type: 'heading', value: 'Example Scenario' },
+
+
+                { type: 'paragraph', value: "A student enters the task 'Write essay — due in 7 days'. Hiro automatically creates milestones and suggests today's first action: Find three research sources (10 minutes)." },
+
+
+                { type: 'heading', value: 'Break Reminder' },
+
+                {
+                    type: 'portrait-pair', value: [
+                        { src: 'images/Hiro/Break.png', alt: 'Break Reminder screen 1' },
+                        { src: 'images/Hiro/Break2.png', alt: 'Break Reminder screen 2' }
+                    ]
+                },
+
+                { type: 'paragraph', value: 'Most productivity apps remind users to start a task very often. But users already feel pressure to start. Adding more start-reminders increases anxiety rather than motivation.' },
+
+                {
+                    type: 'snake-flow',
+                    value: [
+                        'User starts working',
+                        'System protects focus',
+                        'Suggests breaks at the right moment',
+                        'User returns refreshed',
+                        'Sustained momentum'
+                    ]
+                },
+
+                { type: 'paragraph', value: 'This avoids notification fatigue. Instead of pushing users to begin, Hiro steps back once work has started — shielding focus and nudging breaks only when beneficial. The system shifts from being a starter to being a guardian of sustained effort.' },
+
+                { type: 'heading', value: 'Conclusion' },
+
+
+
+                { type: 'paragraph', value: "Hiro demonstrates that solving procrastination requires empathetic behavioural design rather than strict scheduling. By focusing on task initiation and reducing cognitive friction, the system helps users move from uncertainty to action and maintain momentum." }
+
+            ]
+        }
+    },
+    {
         id: "dub-transit",
         title: "Dublin Public Transport App",
         category: "User Experience Design",
@@ -1254,12 +1925,43 @@ document.addEventListener('DOMContentLoaded', () => {
                         element.innerHTML = item.value;
                         break;
 
-                    case 'image':
-                        element = document.createElement('img');
-                        element.className = 'w-full h-auto rounded-sm shadow-md my-8 lightbox-trigger cursor-zoom-in';
-                        element.src = item.value.src;
-                        element.alt = item.value.alt;
+                    case 'image': {
+                        if (item.isPortrait) {
+                            element = document.createElement('div');
+                            element.className = 'flex justify-center my-8';
+                            const portraitImg = document.createElement('img');
+                            portraitImg.className = 'h-auto rounded-sm shadow-md lightbox-trigger cursor-zoom-in';
+                            portraitImg.style.maxWidth = 'min(360px, 80%)';
+                            portraitImg.style.maxHeight = '70vh';
+                            portraitImg.style.objectFit = 'contain';
+                            portraitImg.src = item.value.src;
+                            portraitImg.alt = item.value.alt || '';
+                            element.appendChild(portraitImg);
+                        } else {
+                            element = document.createElement('img');
+                            element.className = 'w-full h-auto rounded-sm shadow-md my-8 lightbox-trigger cursor-zoom-in';
+                            element.src = item.value.src;
+                            element.alt = item.value.alt || '';
+                        }
                         break;
+                    }
+
+                    case 'portrait-pair': {
+                        element = document.createElement('div');
+                        element.className = 'flex justify-center items-end gap-4 my-8 flex-wrap';
+                        const maxW = item.value.length >= 3 ? 'min(200px, 30%)' : 'min(280px, 45%)';
+                        item.value.forEach(imgData => {
+                            const img = document.createElement('img');
+                            img.className = 'h-auto rounded-sm shadow-md lightbox-trigger cursor-zoom-in';
+                            img.style.maxWidth = maxW;
+                            img.style.maxHeight = '70vh';
+                            img.style.objectFit = 'contain';
+                            img.src = imgData.src;
+                            img.alt = imgData.alt || '';
+                            element.appendChild(img);
+                        });
+                        break;
+                    }
 
                     case 'box-list':
                         element = document.createElement('ul');
@@ -1293,6 +1995,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         element = document.createElement('pre');
                         element.className = 'ascii-terminal';
                         element.textContent = item.value;
+                        break;
+
+                    case 'table':
+                        element = document.createElement('div');
+                        element.className = 'my-8 overflow-x-auto'; // Standard spacing wrapper
+                        element.innerHTML = `
+                            <div class="table-wrapper">
+                                <table class="case-table min-w-full text-left border-collapse border border-[#16404D]/20">
+                                    <tbody>
+                                        ${item.value.map((row, i) => `
+                                            <tr class="${i === 0 ? 'bg-[#16404D]/10' : 'border-t border-[#16404D]/10'}">
+                                                ${row.map(cell => `
+                                                    ${i === 0
+                                ? `<th class="p-3 font-serif font-bold text-[#16404D] border-b border-[#16404D]/20">${cell}</th>`
+                                : `<td class="p-3 font-sans text-sm text-[#16404D]/80 align-top">${cell}</td>`
+                            }
+                                                `).join("")}
+                                            </tr>
+                                        `).join("")}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
                         break;
 
                     case 'roadmap':
@@ -1504,6 +2229,165 @@ document.addEventListener('DOMContentLoaded', () => {
                             li.innerHTML = text;
                             element.appendChild(li);
                         });
+                        break;
+
+                    case 'concept-grid':
+                        element = document.createElement('div');
+                        element.className = 'my-8 concept-grid-wrapper';
+                        element.innerHTML = `
+                            <div class="concept-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${item.value.map(card => `
+                                    <div class="concept-card bg-[#FBF5DD] border border-[#16404D]/20 p-5 rounded-lg shadow-[4px_4px_0px_rgba(22,64,77,0.1)]">
+                                        <h4 class="font-serif font-bold text-[#16404D] text-lg mb-2">${card.title}</h4>
+                                        <p class="font-sans text-[#16404D]/80 text-sm leading-relaxed">${card.description}</p>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        `;
+                        break;
+
+                    case 'flow':
+                        element = document.createElement('div');
+                        element.className = 'my-10 flow-container-wrapper flex justify-center';
+                        element.innerHTML = `
+                            <div class="flow-container flex flex-col items-center max-w-lg w-full">
+                                ${item.value.map((step, i) => `
+                                    <div class="flow-step flex items-center gap-4 bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-lg shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-full">
+                                        <div class="flow-number flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full">${i + 1}</div>
+                                        <p class="font-sans text-[#16404D]/90 font-medium">${step}</p>
+                                    </div>
+                                    ${i < item.value.length - 1 ? '<div class="flow-arrow text-[#16404D]/40 my-2 text-xl font-bold">↓</div>' : ''}
+                                `).join("")}
+                            </div>
+                        `;
+                        break;
+
+                    case 'comparison':
+                        element = document.createElement('div');
+                        element.className = 'my-12 comparison-wrapper';
+                        element.innerHTML = `
+                            <div class="bg-[#FBF5DD] border border-[#16404D]/20 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] p-6 md:p-8">
+                                <h3 class="comparison-title font-serif font-bold text-[#16404D] text-2xl text-center mb-8 pb-4 border-b border-[#16404D]/10 text-balance">${item.value.title}</h3>
+                                
+                                <div class="comparison-grid flex flex-col md:flex-row gap-8 relative items-stretch">
+                                    
+                                    <!-- Left Side -->
+                                    <div class="comparison-side flex-1 pr-0 md:pr-4">
+                                        <h4 class="font-sans font-bold text-[#16404D] text-lg mb-4 text-center md:text-left">${item.value.left.title}</h4>
+                                        <ul class="space-y-3">
+                                            ${item.value.left.items.map(i => `
+                                                <li class="flex items-start text-[#16404D]/80 font-sans text-sm md:text-base">
+                                                    <span class="mr-2 text-[#DDA853] mt-1">•</span>
+                                                    <span>${i}</span>
+                                                </li>
+                                            `).join("")}
+                                        </ul>
+                                    </div>
+
+                                    <!-- VS Divider (Absolute on desktop, relative on mobile) -->
+                                    <div class="comparison-vs flex md:absolute md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 justify-center items-center my-4 md:my-0 z-10 bg-white/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-widest text-[#16404D]/60 border border-[#16404D]/10">VS</div>
+
+                                    <!-- Vertical Divider Line (Desktop only) -->
+                                    <div class="hidden md:block w-px bg-[#16404D]/10 absolute left-1/2 top-4 bottom-4"></div>
+
+                                    <!-- Right Side -->
+                                    <div class="comparison-side flex-1 pl-0 md:pl-4">
+                                        <h4 class="font-sans font-bold text-[#16404D] text-lg mb-4 text-center md:text-left">${item.value.right.title}</h4>
+                                        <ul class="space-y-3">
+                                            ${item.value.right.items.map(i => `
+                                                <li class="flex items-start text-[#16404D]/80 font-sans text-sm md:text-base">
+                                                    <span class="mr-2 text-[#4A7C59] mt-1">•</span>
+                                                    <span>${i}</span>
+                                                </li>
+                                            `).join("")}
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                        `;
+                        break;
+
+                    case 'horizontal-flow':
+                        element = document.createElement('div');
+                        element.className = 'my-12 overflow-x-auto pb-4';
+                        element.innerHTML = `
+                            <div class="horizontal-flow flex items-center gap-4 min-w-max px-4">
+                                ${item.value.map((step, i) => `
+                                    <div class="hflow-step flex flex-col items-center bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-48 text-center shrinkage-0">
+                                        <div class="hflow-number w-10 h-10 flex items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full mb-3 text-lg">${i + 1}</div>
+                                        <p class="font-sans text-[#16404D]/90 font-medium text-sm leading-snug">${step}</p>
+                                    </div>
+                                    ${i < item.value.length - 1 ? '<div class="hflow-arrow text-[#16404D]/40 text-2xl font-bold px-2">→</div>' : ''}
+                                `).join("")}
+                            </div>
+                        `;
+                        break;
+
+                    case 'snake-flow':
+                        element = document.createElement('div');
+                        element.className = 'my-12 w-full flex justify-center pb-4 overflow-x-hidden';
+
+                        const snakeSteps = item.value;
+                        let sRows = [];
+                        let sChunk = 4; // number per row
+
+                        for (let i = 0; i < snakeSteps.length; i += sChunk) {
+                            sRows.push(snakeSteps.slice(i, i + sChunk));
+                        }
+
+                        element.innerHTML = `
+                            <!-- Desktop Snaking Flow -->
+                            <div class="hidden md:flex flex-col items-stretch w-max mx-auto max-w-full">
+                                ${sRows.map((row, rowIndex) => {
+                            const reverse = rowIndex % 2 !== 0;
+
+                            // Make a copy so we don't mutate the original
+                            let displayRow = [...row];
+                            if (reverse) displayRow = displayRow.reverse();
+
+                            return `
+                                    <div class="snake-row flex items-center ${reverse ? 'justify-end' : 'justify-start'} w-full">
+                                        ${displayRow.map((step, i) => {
+                                // Calculate the true original index
+                                const stepNum = reverse ? (rowIndex * sChunk) + (row.length - i) : (rowIndex * sChunk) + i + 1;
+                                return `
+                                            <div class="snake-step flex flex-col items-center bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-48 text-center shrink-0">
+                                                <span class="snake-number w-10 h-10 flex shrink-0 items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full mb-3 text-lg">${stepNum}</span>
+                                                <p class="font-sans text-[#16404D]/90 font-medium text-sm leading-snug">${step}</p>
+                                            </div>
+                                            
+                                            ${i < displayRow.length - 1 ? `
+                                                <div class="snake-arrow text-[#16404D]/40 text-2xl font-bold w-12 text-center shrink-0">
+                                                    ${reverse ? "←" : "→"}
+                                                </div>
+                                            ` : ""}
+                                            `;
+                            }).join("")}
+                                    </div>
+                                    
+                                    ${rowIndex < sRows.length - 1 ? `
+                                        <div class="snake-down-arrow w-full flex ${!reverse ? 'justify-end' : 'justify-start'} py-2">
+                                            <div class="w-48 text-center text-[#16404D]/40 text-2xl font-bold shrink-0">
+                                                ↓
+                                            </div>
+                                        </div>
+                                    ` : ""}
+                                    `;
+                        }).join("")}
+                            </div>
+
+                            <!-- Mobile Linear Flow (Fallback) -->
+                            <div class="flex flex-col md:hidden items-center w-full max-w-sm mx-auto px-4">
+                                ${snakeSteps.map((step, i) => `
+                                    <div class="snake-step flex flex-col items-center bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-full text-center shrink-0">
+                                        <div class="snake-number w-10 h-10 flex items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full mb-3 text-lg">${i + 1}</div>
+                                        <p class="font-sans text-[#16404D]/90 font-medium">${step}</p>
+                                    </div>
+                                    ${i < snakeSteps.length - 1 ? '<div class="snake-arrow text-[#16404D]/40 my-2 text-xl font-bold">↓</div>' : ''}
+                                `).join("")}
+                            </div>
+                        `;
                         break;
                 }
 
