@@ -248,7 +248,7 @@
 
       // click opens the full video in the Forge lightbox
       cell.addEventListener('click', function () {
-        if (L.video) openForgeLightbox(L.video, 'Letter ' + L.char);
+        if (L.video) openForgeLightbox({ type: 'video', video: L.video, alt: 'Letter ' + L.char });
       });
 
       // small char label overlay so the grid still reads as an alphabet
@@ -282,8 +282,8 @@
     allCellVideos().forEach(function (v) { v.pause(); });
 
     forgeIndex = typeof index === 'number' ? index : 0;
-    var mediaType = item.type;
-    var src = mediaType === 'image' ? item.image : item.video;
+    var mediaType = (typeof item === 'string') ? 'video' : item.type;
+    var src = (typeof item === 'string') ? item : (mediaType === 'image' ? item.image : item.video);
 
     if (mediaType === 'image') {
       if (flbImg) {
@@ -687,8 +687,6 @@
   var modal = document.getElementById('projectModal');
   var modalPanel      = modal && modal.querySelector('.project-modal__panel');
   var modalScroll      = modal && modal.querySelector('.project-modal__scroll');
-  var modalPlate       = document.getElementById('projectModalPlate');
-  var modalPlateLabel  = document.getElementById('projectModalPlateLabel');
   var modalMeta        = document.getElementById('projectModalMeta');
   var modalTitle       = document.getElementById('projectModalTitle');
   var modalDesc        = document.getElementById('projectModalDesc');
@@ -1055,22 +1053,6 @@
     // Update Top Navigation
     var modalTopCat = document.getElementById('projectModalTopCat');
     if (modalTopCat) modalTopCat.textContent = data.category;
-
-    // Handle Hero Image
-    modalPlate.style.setProperty('--phue', data.hue);
-    var existingHero = modalPlate.querySelector('img');
-    if (existingHero) existingHero.remove();
-    if (data.image) {
-      var hero = document.createElement('img');
-      hero.src = data.image;
-      hero.alt = data.title;
-      hero.className = 'project-modal__hero';
-      modalPlate.appendChild(hero);
-      modalPlateLabel.style.display = 'none';
-    } else {
-      modalPlateLabel.style.display = '';
-      modalPlateLabel.textContent = data.title;
-    }
 
     // Flatten tags into the Meta Row (Year · Category · Tags...)
     modalMeta.innerHTML = '';

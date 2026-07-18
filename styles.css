@@ -1220,25 +1220,6 @@ html:has(body.modal-open) { overflow: hidden; }
   color: var(--meta);
   padding-bottom: 56px;
 }
-.project-modal__plate {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  border-radius: 24px;
-  border: 1px solid var(--hair);
-  margin-bottom: 64px;
-  background: linear-gradient(0deg,
-      color-mix(in oklch, oklch(0.5 0.05 var(--phue, 210)) 22%, var(--plate)),
-      color-mix(in oklch, oklch(0.5 0.05 var(--phue, 210)) 22%, var(--plate)));
-}
-.project-modal__hero {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
 
 /* Footer Next Project */
 .project-modal__footer {
@@ -1772,16 +1753,6 @@ html:has(body.modal-open) { overflow: hidden; }
   .cs-pair { grid-template-columns: 1fr; }
   .cs-road__item { grid-template-columns: 1fr; gap: 10px; }
   .cs-card { padding: 20px; }
-}
-
-/* project hero image inside the modal */
-.project-modal__hero {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 /* =========================================================
