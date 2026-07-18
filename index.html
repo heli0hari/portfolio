@@ -1,422 +1,379 @@
-<!doctype html>
-<html lang="en" class="is-loading">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Harigovind Sajimon — Designer, Dublin</title>
+  <meta name="description" content="Product, visual, interactive and 3D design. Research to real-time 3D — Harigovind Sajimon, Dublin.">
 
-    <title>Harigovind | Visual & Experience Designer</title>
-    <link rel="stylesheet" href="style.css?v=4">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <script>
+    /* Stop the browser restoring the previous scroll position on reload. */
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  </script>
 </head>
+<body data-mode="look">
+<script>
+  /* Set the mode immediately, before the page renders, so a shared #read link
+     never flashes the Look view first. */
+  (function () {
+    var h = (location.hash || '').replace('#', '').toLowerCase();
+    if (h === 'read') document.body.setAttribute('data-mode', 'read');
+  })();
+</script>
 
-<body class="bg-[#111] text-[#FBF5DD] is-loading">
+  <!-- content wrapper receives the mid-transition blur -->
+  <div class="stage" id="stage">
 
-    <!-- AMBIENT PARTICLE BACKGROUND -->
-    <div id="ambient-background"
-        class="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-60 transition-opacity duration-1000">
-        <!-- Particles will be generated here by script.js -->
+    <!-- ============ HERO ============ -->
+    <section class="hero" aria-label="Intro">
+      <header class="hero__bar">
+        <div class="hero__mark">Harigovind Sajimon</div>
+        <div class="hero__meta">Designer — Dublin</div>
+      </header>
+
+      <div class="hero__body">
+        <div class="hero__thesis-wrap">
+
+          <h1 class="thesis__srtitle" data-hero-mode="read">I am a dreamer and an analyzer. A designer blending bold imagination with rigorous research to build better products.</h1>
+          <h1 class="thesis__srtitle" data-hero-mode="look">Exploring the intersection of wild imagination and technical precision through 3D and motion.</h1>
+
+          <div class="thesis__poster" data-hero-mode="read" aria-hidden="true">
+            <span class="thesis__side">UX &middot; RESEARCH &middot; SYSTEMS</span>
+
+            <div class="thesis__main">
+              <p class="thesis__cap thesis__cap--top">research, strategy and digital experiences by a <span class="thesis__arrow">&rarr;</span></p>
+
+              <div class="thesis__words">
+                <span class="thesis__word">Analyst.</span>
+                <span class="thesis__word">Observer &amp;</span>
+                <span class="thesis__word">Designer.</span>
+              </div>
+
+              <p class="thesis__cap thesis__cap--bottom"><span class="thesis__arrow">&rarr;</span> turning insights into impact</p>
+            </div>
+
+            
+          </div>
+
+          <div class="thesis__poster" data-hero-mode="look" aria-hidden="true">
+            <span class="thesis__side">3D &middot; MOTION &middot; FILM</span>
+
+            <div class="thesis__main">
+              <p class="thesis__cap thesis__cap--top">creative concepts and visual explorations by a <span class="thesis__arrow">&rarr;</span></p>
+
+              <div class="thesis__words">
+                <span class="thesis__word">Dreamer.</span>
+                <span class="thesis__word">Explorer &amp;</span>
+                <span class="thesis__word">Storyteller.</span>
+              </div>
+
+              <p class="thesis__cap thesis__cap--bottom"><span class="thesis__arrow">&rarr;</span> executing wild ideas, precisely</p>
+            </div>
+
+            
+          </div>
+
+        </div>
+
+        <!-- Replace your current .switch div with this -->
+        <div class="switch" role="tablist" aria-label="Choose a way through the work">
+          <div class="switch__track">
+            <div class="switch__slider" aria-hidden="true"></div>
+            <button class="switch__btn" role="tab" data-mode-btn="look" aria-selected="true">
+              Look<sup class="switch__sup">01</sup>
+            </button>
+            <button class="switch__btn" role="tab" data-mode-btn="read" aria-selected="false">
+              Read<sup class="switch__sup">02</sup>
+            </button>
+          </div>
+          <span class="switch__hint">— two ways through the work</span>
+        </div>
+
+        <div class="cta">
+          <a href="#contact" class="cta__primary">Get in touch</a>
+          <a href="images\Resume\Resume_Harigovind.pdf" class="cta__secondary">Download CV</a>
+        </div>
+      </div>
+
+      <div class="hero__scrollcue">Selected work ↓</div>
+    </section>
+
+    <!-- ============ READ MOMENT ============ -->
+    <section class="read-moment" data-panel="read" aria-label="Read — case study">
+      <div class="read-moment__inner">
+        <div class="eyebrow">Read</div>
+
+        <h2 class="read-moment__title">Hiro — Task Starting Assistant</h2>
+
+        <p class="read-moment__lede">A behavioural productivity assistant designed to help people overcome procrastination by reducing the friction between intention and starting work.</p>
+
+        <div class="metarow">
+          <span>2026</span>
+          <span class="metarow__dot">·</span>
+          <span>UX/UI Case Study</span>
+          <span class="metarow__dot">·</span>
+          <span>Behavioral Design</span>
+        </div>
+
+        <div class="plate plate--wide" role="img" aria-label="Hiro — Task Starting Assistant">
+          <img src="images/Hiro/Title.jpg" alt="Hiro Case Study Title" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        </div>
+
+        <p class="read-moment__body">Hiro is a productivity assistant designed to help people overcome the starting barrier of work. By reducing cognitive friction and adapting to fluctuating energy levels, Hiro helps users start earlier and maintain momentum throughout a task.</p>
+
+        <a href="#case-study" class="readlink" data-project="hiro-assistant">Continue reading <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+
+    <!-- ============ READ — MORE WORK RAIL ============ -->
+    <section class="rail" data-panel="read" aria-label="More work in Read" id="railSection">
+      <div class="rail__pin">
+        <div class="rail__head">
+          <div class="eyebrow">More work</div>
+          <div class="rail__hint" aria-hidden="true" id="railHint">Scroll to explore ↓</div>
+        </div>
+
+        <ul class="rail__track" tabindex="0" aria-label="Project list, scrollable">
+        <li class="pcard">
+          <a class="pcard__link" href="#beneath" data-project="city-beneaththesurface">
+            <div class="plate pcard__plate" style="--phue:210;" role="img" aria-label="City: Beneath the Surface">
+              <img src="images/City/City_Main.jpg" alt="City: Beneath the Surface Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <h3 class="pcard__title">City: Beneath the Surface</h3>
+            <p class="pcard__desc">Dublin's hidden workforce as a physics-based data narrative.</p>
+            <div class="metarow pcard__meta"><span>2025</span><span class="metarow__dot">·</span><span>Data viz</span><span class="metarow__dot">·</span><span>Three.js</span></div>
+          </a>
+        </li>
+        
+        <li class="pcard">
+          <a class="pcard__link" href="#dub" data-project="dub-transit">
+            <div class="plate pcard__plate" style="--phue:150;" role="img" aria-label="DUB Transit">
+                <img src="images/dubtransit/dubscreen.png" alt="DUB Transit Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <h3 class="pcard__title">DUB Transit</h3>
+            <p class="pcard__desc">Real-time transit interface with glanceable route cards.</p>
+            <div class="metarow pcard__meta"><span>2024</span><span class="metarow__dot">·</span><span>UX</span><span class="metarow__dot">·</span><span>Mobility</span></div>
+          </a>
+        </li>
+        
+        <li class="pcard">
+          <a class="pcard__link" href="#theyyam" data-project="theyyam-threads">
+            <div class="plate pcard__plate" style="--phue:12;" role="img" aria-label="Theyyam Threads">
+              <img src="images/Theyyam/Theyyam_1.jpg" alt="Theyyam Threads Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <h3 class="pcard__title">Theyyam Threads</h3>
+            <p class="pcard__desc">A Kerala ritual art form translated into contemporary apparel.</p>
+            <div class="metarow pcard__meta"><span>2023</span><span class="metarow__dot">·</span><span>Visual</span><span class="metarow__dot">·</span><span>Research</span></div>
+          </a>
+        </li>
+        
+        <li class="pcard">
+          <a class="pcard__link" href="#artbox" data-project="artbox">
+            <div class="plate pcard__plate" style="--phue:280;" role="img" aria-label="ArtBox">
+              <img src="images/Artbox/Artbox.jpg" alt="ArtBox Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <h3 class="pcard__title">ArtBox</h3>
+            <p class="pcard__desc">Identity, packaging and unboxing as one designed journey.</p>
+            <div class="metarow pcard__meta"><span>2023</span><span class="metarow__dot">·</span><span>Brand</span><span class="metarow__dot">·</span><span>Packaging</span></div>
+          </a>
+        </li>
+        
+        <li class="pcard">
+          <a class="pcard__link" href="#aujus" data-project="aujus">
+            <div class="plate pcard__plate" style="--phue:90;" role="img" aria-label="Aujus Case Study">
+              <img src="images/Aujus/Aujus.jpg" alt="Aujus Case Study Title" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
+            <h3 class="pcard__title">Aujus</h3>
+            <p class="pcard__desc">A wayfinding and service system with a unified visual identity.</p>
+            <div class="metarow pcard__meta"><span>2022</span><span class="metarow__dot">·</span><span>Systems</span><span class="metarow__dot">·</span><span>Wayfinding</span></div>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+<!-- ============ LOOK MOMENT — FORGE ============ -->
+<section class="forge" data-panel="look" aria-label="Look — Forge 3D work">
+
+    <header class="forge__header">
+        <div class="eyebrow">Look</div>
+        <h2 class="forge__title">
+            Motion & 3D
+        </h2>
+        <p class="forge__intro">
+            Real-time renders, animation studies and experimental motion work.
+        </p>
+    </header>
+
+    <section class="forge__section">
+        <div class="forge__section-head">
+            <h3>Motorhead</h3>
+        </div>
+        <div class="forge__cars" id="forgeCars">
+        </div>
+    </section>
+
+    <section class="forge__section">
+        <div class="forge__section-head">
+            <h3>3D Typography</h3>
+        </div>
+        <div class="forge__grid" id="glyphGrid">
+        </div>
+    </section>
+
+</section>
+
+<!-- ============ LOOK MOMENT — CHROMA ============ -->
+<section class="chroma" data-panel="look" aria-label="Look — Chroma photography">
+
+    <header class="chroma__head">
+        <div class="eyebrow">Look</div>
+        <h2 class="chroma__title">Chroma</h2>
+        <p class="chroma__intro">
+            A growing collection of photographs documenting people, colour, architecture and everyday moments.
+        </p>
+    </header>
+
+    <div class="chroma__field" id="chromaField"></div>
+
+    <!-- 1. CAPTION & VIEW ALL BUTTON (Moved ABOVE the video) -->
+    <div class="chroma__caption" style="margin-bottom: 80px;">
+        <p id="chromaCaption">Sorted by hue, not by date.</p>
+        <button type="button" class="chroma__viewall" id="chromaViewAll">View all photographs</button>
     </div>
 
-    <div id="intro-overlay"
-        class="fixed inset-0 z-[100] bg-[#0d0d0d] flex flex-col items-center justify-center transition-transform duration-1000 ease-in-out">
-
-        <!-- LOADER (GOES HERE) -->
-        <div id="loader" class="mb-12 flex flex-col items-center gap-4">
-            <div class="w-48 h-[2px] bg-[#FBF5DD]/20 overflow-hidden">
-                <div id="loader-bar" class="h-full w-0 bg-[#DDA853] transition-all duration-300"></div>
-            </div>
-            <span id="loader-text" class="text-xs tracking-widest text-[#FBF5DD]/60 uppercase">
-                Loading assets 0%
-            </span>
-        </div>
-
-        <h1 class="font-serif text-5xl md:text-8xl mb-8 opacity-0 animate-fade-in-up">Harigovind.</h1>
-        <p class="font-sans text-[#A6CDC6] text-lg mb-12 opacity-0 animate-fade-in-up" style="animation-delay: 0.2s">
-            Visual & Experience Designer</p>
-        <button id="skip-intro"
-            class="px-8 py-3 border border-[#FBF5DD]/30 hover:bg-[#FBF5DD] hover:text-[#16404D] transition-all font-sans text-sm tracking-widest uppercase opacity-0 animate-fade-in-up"
-            style="animation-delay: 0.4s">
-            Enter Site
-        </button>
-    </div>
-
-    <aside
-        class="fixed left-0 top-0 w-full h-[60px] md:w-[60px] md:h-full md:bottom-0 z-50 border-b md:border-b-0 md:border-r border-[#FBF5DD]/10 bg-[#111] flex flex-row md:flex-col items-center justify-between px-4 md:px-0 md:py-8 transition-all">
-
-        <button id="menu-toggle"
-            class="menu-btn group flex flex-col gap-1.5 p-2 focus:outline-none cursor-pointer hover:scale-110 transition-transform">
-            <span class="line"></span>
-            <span class="line"></span>
-        </button>
-
-
-
-        <div class="sidebar-name flex items-center gap-4 text-xs tracking-[0.2em] text-[#FBF5DD]/70">
-            <span class="hover:text-[#A6CDC6] transition-colors cursor-pointer">HARIGOVIND.IE</span>
-        </div>
-
-        <div class="flex flex-row md:flex-col items-center gap-6">
-
-            <a href="https://instagram.com/haxrxri" target="_blank"
-                class="text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:scale-110 duration-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-            </a>
-
-            <a href="https://linkedin.com/in/harigovind-s" target="_blank"
-                class="text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:scale-110 duration-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                </svg>
-            </a>
-
-            <a href="mailto:harigovind.ie@gmail.com?subject=We%20would%20like%20to%20Hire%20you&body=YOUR%20WORKS%20ARE%20AMAZINGGGG!!!"
-                class="text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:scale-110 duration-300">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                    <polyline points="22,6 12,13 2,6"></polyline>
-                </svg>
-            </a>
-
-        </div>
-    </aside>
-
-    <div id="about-menu"
-        class="fixed inset-0 z-[200] bg-[#0d0d0d] text-[#FBF5DD] translate-x-[-100%] transition-transform duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] custom-scrollbar">
-
-        <button id="menu-close"
-            class="fixed top-8 right-8 z-[210] text-[#FBF5DD] hover:text-[#DDA853] transition-colors hover:rotate-90 duration-300 mix-blend-difference">
-            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-
-        <div class="h-full overflow-y-auto">
-            <div class="container max-w-6xl mx-auto px-6 py-24 md:py-32">
-
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
-
-                    <div class="lg:col-span-4 flex flex-col md:flex-row lg:flex-col gap-8 md:gap-12 lg:gap-8">
-
-                        <div class="w-full md:w-5/12 lg:w-full shrink-0">
-                            <div
-                                class="relative w-full aspect-[3/4] overflow-hidden rounded-sm grayscale hover:grayscale-0 transition-all duration-700">
-                                <img src="images/Profile_image2.jpg" class="object-cover w-full h-full"
-                                    alt="Harigovind">
-                            </div>
-                        </div>
-
-                        <div class="w-full md:w-7/12 lg:w-full flex-grow space-y-8">
-                            <div class="space-y-4 font-sans text-sm">
-                                <div>
-                                    <span class="block text-[#DDA853] text-xs uppercase tracking-widest mb-1">Based
-                                        In</span>
-                                    <span class="block text-[#FBF5DD]/80">Dublin, Ireland</span>
-                                </div>
-                                <div>
-                                    <span
-                                        class="block text-[#DDA853] text-xs uppercase tracking-widest mb-1">Contact</span>
-                                    <a href="mailto:harigovind.ie@gmail.com"
-                                        class="block text-[#FBF5DD]/80 hover:text-[#A6CDC6] transition-colors">harigovind.ie@gmail.com</a>
-                                    <a href="tel:+3530894783193"
-                                        class="block text-[#FBF5DD]/80 hover:text-[#A6CDC6] transition-colors">+353 089
-                                        478 3193</a>
-                                </div>
-                                <div class="pt-2">
-                                    <a href="images/Resume/Resume_Harigovind.pdf" download
-                                        class="inline-flex items-center gap-2 border-b border-[#DDA853] pb-1 text-[#DDA853] hover:text-[#FBF5DD] hover:border-[#FBF5DD] transition-all uppercase tracking-widest text-xs font-bold">
-                                        Download Resume
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
-                                            </path>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-
-                            <div class="w-full h-px bg-[#FBF5DD]/10"></div>
-
-                            <div>
-                                <h3 class="font-serif text-xl text-[#A6CDC6] mb-4">Education</h3>
-                                <div class="space-y-4">
-                                    <div>
-                                        <h4 class="font-bold text-[#FBF5DD] text-sm">MA Creative Arts - Visual
-                                            Communications</h4>
-                                        <p class="text-[#DDA853] text-xs italic">TU Dublin, 2025</p>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-[#FBF5DD] text-sm">B.Des Communication Design</h4>
-                                        <p class="text-[#DDA853] text-xs italic">IIT Bombay, 2023</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="w-full h-px bg-[#FBF5DD]/10"></div>
-
-                            <div>
-                                <h3 class="font-serif text-xl text-[#A6CDC6] mb-4">Skills</h3>
-                                <div class="flex flex-wrap gap-x-2 gap-y-2 text-[#FBF5DD]/70 text-sm leading-relaxed">
-                                    <span>UX/UI Design</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Interaction Design</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Visual Storytelling</span> <span class="text-[#DDA853]">•</span>
-                                    <span>3D Modeling (Blender)</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Motion Graphics</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Unity</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Adobe Creative Suite</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Prototyping</span> <span class="text-[#DDA853]">•</span>
-                                    <span>Photography</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="lg:col-span-8">
-
-                        <div class="flex flex-row items-center justify-between mb-8">
-                            <h2 class="font-serif text-5xl md:text-6xl lg:text-7xl leading-tight">About Me</h2>
-                            <a href="EasterEgg/Egg.html" target="_blank"
-                                class="opacity-30 hover:opacity-100 hover:scale-110 hover:rotate-6 transition-all duration-500 cursor-pointer"
-                                title="Hmm, what's this?">
-                                <svg width="40" height="52" viewBox="0 0 100 130" xmlns="http://www.w3.org/2000/svg"
-                                    class="drop-shadow-[0_0_15px_rgba(221,168,83,0.4)]">
-                                    <path
-                                        d="M50 5C25 5 10 40 10 75C10 110 30 125 50 125C70 125 90 110 90 75C90 40 75 5 50 5Z"
-                                        fill="none" stroke="#DDA853" stroke-width="6" />
-                                    <path d="M22 35 Q 50 55 78 35" fill="none" stroke="#A6CDC6" stroke-width="5"
-                                        stroke-linecap="round" />
-                                    <path d="M15 55 Q 50 75 85 55" fill="none" stroke="#DDA853" stroke-width="5"
-                                        stroke-linecap="round" />
-                                    <path d="M14 85 L 30 70 L 50 85 L 70 70 L 86 85" fill="none" stroke="#A6CDC6"
-                                        stroke-width="5" stroke-linejoin="round" />
-                                    <path d="M25 110 Q 50 95 75 110" fill="none" stroke="#DDA853" stroke-width="5"
-                                        stroke-linecap="round" />
-                                    <circle cx="50" cy="20" r="5" fill="#A6CDC6" />
-                                </svg>
-                            </a>
-                        </div>
-                        <p class="text-xl lg:text-2xl text-[#FBF5DD]/80 leading-relaxed font-sans font-light mb-16">
-                            Visual & Experience Designer with a background in 3D and immersive media, focused on
-                            creating intuitive, user-centered digital experiences. Passionate about visual storytelling,
-                            both in design and through photography and videography.
-                        </p>
-
-                        <div class="w-full h-px bg-[#FBF5DD]/10 mb-16"></div>
-
-                        <div class="mb-16">
-                            <h3 class="font-serif text-3xl md:text-4xl text-[#A6CDC6] mb-10">Experience</h3>
-
-                            <div class="space-y-12 border-l border-[#FBF5DD]/10 pl-8 md:pl-12">
-
-                                <div class="relative">
-                                    <span
-                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#DDA853] rounded-full border-4 border-[#0d0d0d]"></span>
-                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
-                                        <h4 class="text-xl font-bold text-[#FBF5DD]">UX Analyst & Content Curator</h4>
-                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">Jan '25
-                                            — March '25</span>
-                                    </div>
-                                    <p class="text-[#DDA853] font-serif italic mb-4">Grido</p>
-                                    <ul
-                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
-                                        <li>Designed and launched a card-based content platform using Grido’s AI-powered
-                                            architecture.</li>
-                                        <li>Curated and structured historical automotive content into accessible,
-                                            thematic card formats.</li>
-                                        <li>Conducted UX analysis as the first external user, identifying usability
-                                            issues.</li>
-                                        <li>Collaborated with product teams to refine UX and support product-market fit.
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="relative">
-                                    <span
-                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
-                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
-                                        <h4 class="text-xl font-bold text-[#FBF5DD]">Creative Director (Freelance)</h4>
-                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">Dec '23
-                                            — Feb '24</span>
-                                    </div>
-                                    <p class="text-[#DDA853] font-serif italic mb-4">Wesualize Studios</p>
-                                    <ul
-                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
-                                        <li>Led creative direction, overseeing concept development of VFX ad campaigns.
-                                        </li>
-                                        <li>Developed storyboards integrating 3D elements and animation into
-                                            live-action.</li>
-                                        <li>Directed cross-functional teams of cinematographers and VFX artists.</li>
-                                    </ul>
-                                </div>
-
-                                <div class="relative">
-                                    <span
-                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
-                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
-                                        <h4 class="text-xl font-bold text-[#FBF5DD]">Design Intern</h4>
-                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">June
-                                            '22 — Aug '22</span>
-                                    </div>
-                                    <p class="text-[#DDA853] font-serif italic mb-4">Tata Consultancy Services (TCS)</p>
-                                    <ul
-                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
-                                        <li>Ideated user flows and transitions across diverse virtual environments.</li>
-                                        <li>Conducted research on user-environment interaction within the metaverse.
-                                        </li>
-                                        <li>Created 3D environment and asset concepts using reference sketches.</li>
-                                    </ul>
-                                </div>
-
-                                <div class="relative">
-                                    <span
-                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
-                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
-                                        <h4 class="text-xl font-bold text-[#FBF5DD]">Visual Designer</h4>
-                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">Dec '20
-                                            — Jan '22</span>
-                                    </div>
-                                    <p class="text-[#DDA853] font-serif italic mb-4">YoZu</p>
-                                    <ul
-                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
-                                        <li>Designed 3D models and developed a production pipeline for Unity
-                                            integration.</li>
-                                        <li>Managed a team of 5 junior artists, ensuring timely and high-quality output.
-                                        </li>
-                                        <li>Created interactive, educational 3D visuals for a voice-based AI assistant.
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <div class="relative">
-                                    <span
-                                        class="absolute -left-[37px] md:-left-[53px] top-2 w-3 h-3 bg-[#16404D] rounded-full border-4 border-[#0d0d0d]"></span>
-                                    <div class="flex flex-col md:flex-row md:items-baseline justify-between mb-2">
-                                        <h4 class="text-xl font-bold text-[#FBF5DD]">3D Artist</h4>
-                                        <span class="text-xs font-mono text-[#FBF5DD]/50 uppercase mt-1 md:mt-0">May '22
-                                            — June '22</span>
-                                    </div>
-                                    <p class="text-[#DDA853] font-serif italic mb-4">Numeronix</p>
-                                    <ul
-                                        class="space-y-2 text-[#FBF5DD]/70 text-base font-light list-disc pl-4 marker:text-[#DDA853]">
-                                        <li>Designed and optimized low-poly 3D models for Android devices.</li>
-                                        <li>Refined and finalized assets created by other artists to meet game-ready
-                                            standards.</li>
-                                    </ul>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- 2. VIDEO SHOWCASE (Moved BELOW the button) -->
+    <div class="chroma__showcase">
+        <div class="eyebrow">Color Grading</div>
+        <div class="cs-frame">
+          <iframe src="https://player.vimeo.com/video/1211043548?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="In the time between things"></iframe>
         </div>
     </div>
 
-    <main id="horizontal-scroll"
-        class="relative z-10 flex flex-col md:flex-row h-auto md:h-screen w-full pt-[60px] md:pt-0 md:pl-[60px] overflow-x-hidden md:overflow-y-hidden">
+</section>
 
-        <section
-            class="h-screen w-full md:w-[80vw] md:min-w-[80vw] flex-shrink-0 flex items-center justify-center p-6 md:p-20 border-b md:border-b-0 md:border-r border-[#FBF5DD]/10 relative">
-            <div class="max-w-4xl z-10 text-center md:text-left">
-                <h2 class="font-serif text-5xl md:text-9xl leading-none mb-6">Designing <br> <span
-                        class="text-[#A6CDC6] italic">Systems That Care</span></h2>
-                <p class="font-sans text-lg md:text-2xl text-[#FBF5DD]/60 max-w-xl leading-relaxed mx-auto md:mx-0">
-                    Exploring the intersection of User Experience, Visual Systems, and Everyday Life
-                </p>
-
-                <div
-                    class="mt-12 flex items-center justify-center md:justify-start gap-6 opacity-80 hover:opacity-100 transition-opacity duration-300">
-                    <div
-                        class="w-[26px] h-[42px] border-2 border-[#DDA853]/60 rounded-full relative flex justify-center box-border">
-                        <div class="mouse-wheel w-[2px] h-[6px] bg-[#DDA853] rounded-full absolute top-2"></div>
-                    </div>
-                    <div class="text-[#DDA853]/60 arrow-nudge">
-                        <svg class="w-8 h-8 md:rotate-0 rotate-90" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"></path>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-
-            <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none overflow-hidden">
-                <h1 class="text-[10rem] md:text-[20rem] font-serif leading-none mix-blend-overlay translate-y-[20%]">Hg
-                </h1>
-            </div>
-        </section>
-
-        <div id="projects-track" class="flex flex-col md:flex-row h-auto md:h-full w-full">
+<!-- ============ CHROMA ARCHIVE OVERLAY ============ -->
+<div class="chroma-archive" id="chromaArchive" aria-hidden="true" role="dialog" aria-modal="true" aria-label="All photographs">
+    <div class="chroma-archive__bar">
+        <div class="chroma-archive__meta">
+            <span class="chroma-archive__title">Chroma — full archive</span>
+            <span class="chroma-archive__count" id="chromaArchiveCount"></span>
         </div>
-
-    </main>
-
-    <div id="pageBackdrop" class="page-backdrop"></div>
-    <div id="projectOverlay" class="project-overlay">
-        <div class="project-overlay-content bg-[#FBF5DD]">
-            <div id="overlayScrollWrapper"></div>
-        </div>
-        <div id="closeOverlay"
-            class="close-button absolute top-[80px] md:top-6 right-6 z-[250] text-[#16404D] hover:scale-110 transition-transform cursor-pointer"
-            aria-label="Close">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </div>
+        <button type="button" class="chroma-archive__close" id="chromaArchiveClose" aria-label="Close archive">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
     </div>
-
-    <!-- Image Lightbox Gallery -->
-    <div id="imageLightbox" class="image-lightbox">
-        <button id="closeLightbox"
-            class="lightbox-close fixed top-[80px] md:top-6 right-6 z-[250] text-[#16404D] hover:scale-110 transition-transform cursor-pointer"
-            aria-label="Close gallery">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-
-        <button id="prevImage" class="lightbox-nav lightbox-prev" aria-label="Previous image">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-            </svg>
-        </button>
-
-        <button id="nextImage" class="lightbox-nav lightbox-next" aria-label="Next image">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-        </button>
-
-        <div class="lightbox-content">
-            <div class="lightbox-image-wrapper">
-                <img id="lightboxImage" src="" alt="" class="lightbox-image">
-            </div>
-            <div class="lightbox-counter">
-                <span id="lightboxCounter"></span>
-            </div>
-        </div>
+    <div class="chroma-archive__scroll">
+        <div class="chroma__filters" id="chromaFilters" role="group" aria-label="Filter photos by tag"></div>
+        <div class="chroma__field" id="chromaArchiveField"></div>
     </div>
+</div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="script.js?v=3"></script>
+  </div>
+
+  <!-- ============ FORGE LIGHTBOX (video player) ============ -->
+  <div class="forge-lightbox" id="forgeLightbox" aria-hidden="true">
+    <button type="button" class="forge-lightbox__close" id="forgeLightboxClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="lightbox__btn lightbox__btn--prev" id="forgeLightboxPrev" aria-label="Previous">‹</button>
+    <button type="button" class="lightbox__btn lightbox__btn--next" id="forgeLightboxNext" aria-label="Next">›</button>
+    <video class="forge-lightbox__video" id="forgeLightboxVideo" controls loop playsinline></video>
+    <img class="forge-lightbox__img" id="forgeLightboxImg" alt="" />
+    <div class="forge-lightbox__cap" id="forgeLightboxCap"></div>
+  </div>
+
+<!-- ============ PROJECT DETAIL MODAL ============ -->
+  <div class="project-modal" id="projectModal" aria-hidden="true" tabindex="-1">
+    <div class="project-modal__scroll">
+      
+      <header class="project-modal__header">
+        <button type="button" class="project-modal__back" data-modal-close aria-label="Close project">
+          &larr; Harigovind Sajimon
+        </button>
+        <div class="project-modal__cat" id="projectModalTopCat">UX/UI Case Study</div>
+      </header>
+
+      <div class="project-modal__inner">
+        <div class="project-modal__eyebrow">READ &mdash; CASE STUDY</div>
+        <h1 class="project-modal__title" id="projectModalTitle"></h1>
+        <p class="project-modal__desc" id="projectModalDesc"></p>
+        
+        <div class="metarow project-modal__meta" id="projectModalMeta"></div>
+
+        <div class="plate project-modal__plate" id="projectModalPlate" role="img" aria-hidden="true">
+          <span class="plate__label" id="projectModalPlateLabel"></span>
+        </div>
+        
+        <div class="project-modal__content" id="projectModalContent"></div>
+
+        <footer class="project-modal__footer">
+          <div class="project-modal__footer-eyebrow">NEXT <span>&rarr;</span></div>
+          <button class="project-modal__footer-title" id="projectModalNextTitle"></button>
+        </footer>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ CHROMA LIGHTBOX (full-size popup) ============ -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox__count" id="lightboxCount"></div>
+    <button type="button" class="lightbox__close" id="lightboxClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="lightbox__btn lightbox__btn--prev" id="lightboxPrev" aria-label="Previous">&#8249;</button>
+    <img class="lightbox__img" id="lightboxImg" alt="">
+    <button type="button" class="lightbox__btn lightbox__btn--next" id="lightboxNext" aria-label="Next">&#8250;</button>
+    <div class="lightbox__cap" id="lightboxCap"></div>
+  </div>
+
+  <script src="script.js"></script>
+
+<!-- ============ CONTACT MODAL ============ -->
+<div class="project-modal" id="contactModal" aria-hidden="true" tabindex="-1">
+  <div class="project-modal__scroll">
+    <header class="project-modal__header">
+      <button type="button" class="project-modal__back" data-modal-close aria-label="Close contact">
+        &larr; Harigovind Sajimon
+      </button>
+    </header>
+
+    <div class="project-modal__inner">
+      <div class="project-modal__eyebrow">GET IN TOUCH</div>
+      <h1 class="project-modal__title">Let's create something together.</h1>
+      
+      <p class="project-modal__desc">
+        I’m currently open to new opportunities for UX design, behavioral research, or 3D/motion projects. If you have an idea, a complex problem that needs analysis, or just want to chat, I'd love to hear from you.
+      </p>
+
+      <div class="cs-card">
+        <div class="cs-label">Email me directly</div>
+        <p><a href="mailto:harigovind.ie@gmail.com" class="contact-email">harigovind.ie@gmail.com</a></p>
+      </div>
+
+      <form action="https://formspree.io/f/xrenqprp" method="POST" class="cs-contact-form">
+  <div class="cs-card">
+    <input type="text" name="name" placeholder="Your Name" required>
+  </div>
+  <div class="cs-card">
+    <input type="email" name="email" placeholder="Your Email" required>
+  </div>
+  <div class="cs-card">
+    <textarea name="message" placeholder="Your Message" required></textarea>
+  </div>
+  
+  <button type="submit" class="cta__primary">Send Message</button>
+</form>
+    </div>
+  </div>
+</div>
+
 </body>
-
 </html>

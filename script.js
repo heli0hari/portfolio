@@ -1,2757 +1,1275 @@
-// ---- SAFARI VIEWPORT HEIGHT FIX ----
-function setVH() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-}
+/* =========================================================
+   Harigovind Sajimon — portfolio behaviour
+   Plain vanilla JS. No framework, no build step.
+   Replaces the Claude Design <x-dc> runtime entirely.
+   ========================================================= */
 
-setVH();
-window.addEventListener('resize', setVH);
+(function () {
+  'use strict';
 
+  var body    = document.body;
+  var stage   = document.getElementById('stage');
+  var buttons = document.querySelectorAll('[data-mode-btn]');
 
-// ===== INTRO IMAGE PRELOADER (ADD THIS AT THE TOP) =====
-document.addEventListener("DOMContentLoaded", () => {
-    const intro = document.getElementById("intro-overlay");
-    const loader = document.getElementById("loader");
-    const loaderBar = document.getElementById("loader-bar");
-    const loaderText = document.getElementById("loader-text");
-    const introChildren = intro.querySelectorAll("h1, p, button");
+  /* Always open at the top. Browsers restore the previous scroll position on
+     reload, which drops visitors into the middle of the page. */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-    // Hide intro content initially
-    introChildren.forEach(el => el.style.opacity = 0);
+  /* ---------- Shareable mode URLs ----------
+     Look is the default landing view (harigovind.ie).
+     Read has its own shareable link (harigovind.ie/#read).
+     Toggling REPLACES the URL rather than pushing history, so the back button
+     leaves the site instead of stepping back through view toggles. */
+  var VALID_MODES = ['look', 'read'];
 
-    // Collect ALL image sources
-    const imageSources = new Set();
+  function modeFromURL() {
+    var h = (location.hash || '').replace('#', '').toLowerCase();
+    return VALID_MODES.indexOf(h) !== -1 ? h : 'look';
+  }
 
-    // 1. Images already in DOM
-    document.querySelectorAll("img").forEach(img => {
-        if (img.src) imageSources.add(img.src);
+  function syncURL(mode) {
+    var target = (mode === 'look') ? location.pathname + location.search
+                                   : location.pathname + location.search + '#read';
+    if (location.href !== new URL(target, location.origin).href) {
+      history.replaceState(null, '', target);
+    }
+  }
+
+  /* read the transition duration from CSS so JS + CSS stay in sync */
+  function transitionMs() {
+    var raw = getComputedStyle(body).getPropertyValue('--dur').trim(); // e.g. "600ms"
+    var n = parseFloat(raw);
+    return isNaN(n) ? 600 : n;
+  }
+
+  var blurTimer = null;
+  /* assigned later once the rail is set up; called after a mode switch
+     since the rail's dimensions only exist while its panel is visible */
+  var layoutRail = null;
+  var onRailScroll = null;
+
+  function switchTo(mode) {
+    if (mode === body.getAttribute('data-mode')) return;
+
+    /* set the mode — CSS variables + panel visibility follow automatically */
+    body.setAttribute('data-mode', mode);
+
+    /* update the switch buttons' selected state */
+    buttons.forEach(function (btn) {
+      btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === mode));
     });
 
-    // 2. Images from projects data
-    if (typeof projects !== "undefined") {
-        projects.forEach(project => {
-            if (project.image) imageSources.add(project.image);
-            if (project.imageDesktop) imageSources.add(project.imageDesktop);
-            if (project.imageMobile) imageSources.add(project.imageMobile);
+    /* fire the mid-transition blur on the content wrapper */
+    clearTimeout(blurTimer);
+    stage.classList.remove('is-switching');
+    /* force reflow so the animation restarts even on rapid toggles */
+    void stage.offsetWidth;
+    stage.classList.add('is-switching');
+    blurTimer = setTimeout(function () {
+      stage.classList.remove('is-switching');
+    }, transitionMs() + 60);
 
-            project.details?.content?.forEach(item => {
-                if (item.type === "image" && item.value?.src) {
-                    imageSources.add(item.value.src);
-                }
+    if (mode === 'read' && layoutRail) { layoutRail(); onRailScroll(); }
+
+    syncURL(mode);
+  }
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      switchTo(btn.dataset.modeBtn);
+    });
+  });
+
+  /* ---------- Initial mode from the URL ----------
+     #read opens Read directly (shareable); anything else lands on Look. */
+  (function initMode() {
+    var initial = modeFromURL();
+    var current = body.getAttribute('data-mode');
+
+    if (initial !== current) {
+      // set state without the switch animation on first paint
+      body.setAttribute('data-mode', initial);
+      buttons.forEach(function (btn) {
+        btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === initial));
+      });
+    }
+    syncURL(initial);
+
+    // start at the top regardless of what the browser remembered
+    requestAnimationFrame(function () { window.scrollTo(0, 0); });
+  })();
+
+  /* if someone edits the hash or uses back/forward, follow it */
+  window.addEventListener('hashchange', function () {
+    switchTo(modeFromURL());
+  });
+
+  /* ---------- Forge: cars gallery + alphabet ----------
+     Reads forge.json. Cars is a mixed gallery of images and looping videos.
+     Alphabet cells show a thumbnail, play their video on hover, and open it
+     in the Forge lightbox on click. Videos are muted (required for autoplay),
+     load lazily (preload="none") so the page stays fast, and fall back to
+     tap-to-play on touch devices where hover doesn't exist. */
+  var carsGrid = document.getElementById('forgeCars');
+  var glyphGrid = document.getElementById('glyphGrid');
+  var isTouch = window.matchMedia('(hover: none)').matches;
+  var forgeMedia = [];
+  var forgeIndex = 0;
+
+  if (carsGrid || glyphGrid) {
+    fetch('forge.json')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { initForge(d); })
+      .catch(function (e) { console.warn('Forge: could not load forge.json', e); });
+  }
+
+  function initForge(data) {
+    forgeMedia = data.cars || [];
+    if (carsGrid && data.cars) buildCars(data.cars);
+    if (glyphGrid && data.alphabet) buildAlphabet(data.alphabet);
+  }
+
+  function playSafe(video) {
+    var p = video.play();
+    if (p && p.catch) p.catch(function () {});   // ignore autoplay rejections
+  }
+
+  /* Ambient car videos play only while visible. This prevents many videos
+     playing at once (which browsers throttle, causing the random-pause bug)
+     and saves battery on mobile. The lightbox pauses all of these while open. */
+  var ambientObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(function (entries) {
+        // if the lightbox is open, leave everything paused
+        var lbOpen = flb && flb.classList.contains('is-open');
+        entries.forEach(function (en) {
+          var v = en.target;
+          if (en.isIntersecting && !lbOpen) playSafe(v);
+          else v.pause();
+        });
+      }, { threshold: 0.25 })
+    : null;
+
+  function observeAmbient(v) {
+    if (ambientObserver) ambientObserver.observe(v);
+    else playSafe(v);   // no observer support: fall back to plain play
+  }
+
+  function buildCars(cars) {
+    var frag = document.createDocumentFragment();
+    cars.forEach(function (item, i) {
+      var cell = document.createElement('button');
+      cell.type = 'button';
+      var shape = item.shape || 'landscape';
+      cell.className = 'fcar fcar--' + shape;
+      cell.setAttribute('aria-label', item.alt || 'Car work');
+
+      if (item.type === 'video' && item.video) {
+        var v = document.createElement('video');
+        v.src = item.video;
+        if (item.poster) v.poster = item.poster;   // optional, usually omitted
+        v.muted = true; v.loop = true; v.playsInline = true;
+        v.setAttribute('playsinline', '');
+        v.setAttribute('data-ambient', '');        // ambient loop (resumes after lightbox)
+        v.preload = 'metadata';
+        // NOT autoplay — an observer plays it only while it's on screen, so we
+        // never have many videos competing (the cause of random pausing) and we
+        // save battery/bandwidth on mobile.
+        v.className = 'fcar__media';
+        if (item.focus) v.style.objectPosition = item.focus;
+        cell.appendChild(v);
+        cell.dataset.video = item.video;
+        observeAmbient(v);
+      } else if (item.type === 'image' && item.image) {
+        var img = document.createElement('img');
+        img.src = item.image; img.alt = item.alt || '';
+        img.loading = 'lazy'; img.className = 'fcar__media';
+        if (item.focus) img.style.objectPosition = item.focus;
+        // a missing image falls back to the cell tint instead of a broken icon
+        img.addEventListener('error', function () { img.style.display = 'none'; });
+        cell.appendChild(img);
+        // images are their own content — they do NOT open a video
+      }
+
+      // car cells open the Forge lightbox for either video or image content
+      if ((item.type === 'video' && cell.dataset.video) || (item.type === 'image' && item.image)) {
+        cell.addEventListener('click', function () {
+          openForgeLightbox(item, i);
+        });
+      } else {
+        cell.style.cursor = 'default';
+      }
+      frag.appendChild(cell);
+    });
+    carsGrid.innerHTML = '';
+    carsGrid.appendChild(frag);
+  }
+
+  function buildAlphabet(letters) {
+    var frag = document.createDocumentFragment();
+    letters.forEach(function (L) {
+      var cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'glyph';
+      cell.setAttribute('aria-label', 'Letter ' + L.char + ' — 3D animation');
+      cell.dataset.video = L.video || '';
+
+      // thumbnail (always present, shown at rest)
+      var img = document.createElement('img');
+      img.src = L.image; img.alt = L.char;
+      img.loading = 'lazy'; img.className = 'glyph__thumb';
+      // if a still is missing (e.g. no c.jpg), hide the broken image so the
+      // cell's tint shows instead — hover video and label still work
+      img.addEventListener('error', function () { img.style.display = 'none'; });
+      cell.appendChild(img);
+
+      // hover video (created lazily on first hover so 26 videos don't preload)
+      var vid = null;
+      function ensureVideo() {
+        if (vid || !L.video) return;
+        vid = document.createElement('video');
+        vid.src = L.video;
+        vid.muted = true; vid.loop = true; vid.playsInline = true;
+        vid.setAttribute('playsinline', '');
+        vid.preload = 'auto';
+        vid.className = 'glyph__video';
+        cell.appendChild(vid);
+        vid.load();                        // kick off loading so play() works
+      }
+
+      if (!isTouch) {
+        cell.addEventListener('mouseenter', function () {
+          ensureVideo();
+          if (vid) { cell.classList.add('is-playing'); playSafe(vid); }
+        });
+        cell.addEventListener('mouseleave', function () {
+          if (vid) { cell.classList.remove('is-playing'); vid.pause(); vid.currentTime = 0; }
+        });
+      }
+
+      // click opens the full video in the Forge lightbox
+      cell.addEventListener('click', function () {
+        if (L.video) openForgeLightbox(L.video, 'Letter ' + L.char);
+      });
+
+      // small char label overlay so the grid still reads as an alphabet
+      var tag = document.createElement('span');
+      tag.className = 'glyph__char';
+      tag.textContent = L.char;
+      cell.appendChild(tag);
+
+      frag.appendChild(cell);
+    });
+    glyphGrid.innerHTML = '';
+    glyphGrid.appendChild(frag);
+  }
+
+  /* ---------- Forge lightbox (video player, separate from Chroma) ---------- */
+  var flb = document.getElementById('forgeLightbox');
+  var flbVideo = flb && document.getElementById('forgeLightboxVideo');
+  var flbImg = flb && document.getElementById('forgeLightboxImg');
+  var flbCap = flb && document.getElementById('forgeLightboxCap');
+
+  function allCellVideos() {
+    return Array.prototype.slice.call(
+      document.querySelectorAll('.fcar video, .glyph video')
+    );
+  }
+
+  function openForgeLightbox(item, index) {
+    if (!flb) return;
+    // pause every background cell video so nothing competes with the lightbox
+    // (competing videos are what caused the random pausing, esp. on mobile)
+    allCellVideos().forEach(function (v) { v.pause(); });
+
+    forgeIndex = typeof index === 'number' ? index : 0;
+    var mediaType = item.type;
+    var src = mediaType === 'image' ? item.image : item.video;
+
+    if (mediaType === 'image') {
+      if (flbImg) {
+        flbImg.src = src;
+        flbImg.alt = item.alt || '';
+        flbImg.style.display = 'block';
+      }
+      if (flbVideo) {
+        flbVideo.pause();
+        flbVideo.removeAttribute('src');
+        flbVideo.style.display = 'none';
+      }
+    } else {
+      if (flbVideo) {
+        flbVideo.style.display = 'block';
+        flbVideo.src = src;
+        flbVideo.muted = false;          // sound on when explicitly opened
+      }
+      if (flbImg) {
+        flbImg.style.display = 'none';
+        flbImg.removeAttribute('src');
+      }
+    }
+
+    flbCap.textContent = item.alt || '';
+    flb.classList.add('is-open');
+    flb.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    if (mediaType === 'video' && flbVideo) playSafe(flbVideo);
+  }
+  function closeForgeLightbox() {
+    if (!flb) return;
+    if (flbVideo) {
+      flbVideo.pause();
+      flbVideo.removeAttribute('src');
+      flbVideo.style.display = 'none';
+      flbVideo.load();
+    }
+    if (flbImg) {
+      flbImg.removeAttribute('src');
+      flbImg.style.display = 'none';
+    }
+    flb.classList.remove('is-open');
+    flb.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+    // resume the ambient car loops that were playing at rest
+    allCellVideos().forEach(function (v) {
+      if (v.hasAttribute('data-ambient')) playSafe(v);
+    });
+  }
+
+  function forgeShowIndex(delta) {
+    if (!forgeMedia || forgeMedia.length === 0) return;
+    forgeIndex = (forgeIndex + delta + forgeMedia.length) % forgeMedia.length;
+    openForgeLightbox(forgeMedia[forgeIndex], forgeIndex);
+  }
+  if (flb) {
+    document.getElementById('forgeLightboxClose').addEventListener('click', closeForgeLightbox);
+    document.getElementById('forgeLightboxPrev').addEventListener('click', function () { forgeShowIndex(-1); });
+    document.getElementById('forgeLightboxNext').addEventListener('click', function () { forgeShowIndex(1); });
+    flb.addEventListener('click', function (e) { if (e.target === flb) closeForgeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && flb.classList.contains('is-open')) closeForgeLightbox();
+      if (e.key === 'ArrowLeft' && flb.classList.contains('is-open')) forgeShowIndex(-1);
+      if (e.key === 'ArrowRight' && flb.classList.contains('is-open')) forgeShowIndex(1);
+    });
+  }
+
+
+  /* ---------- Chroma: photo field + tag filters ----------
+     Reads photos.json (built by build-photos.js / build-photos.ps1) and
+     renders one tile per photo plus a tag-filter chip row. Tile width
+     follows each photo's real aspect ratio via the --ar custom property;
+     see .chroma__field / .tile in styles.css. */
+  var chromaField   = document.getElementById('chromaField');
+  var chromaFilters = document.getElementById('chromaFilters');
+  var chromaCaption = document.getElementById('chromaCaption');
+
+  if (chromaField) {
+    fetch('photos.json')
+      .then(function (res) { return res.json(); })
+      .then(function (data) { initChroma(data); })
+      .catch(function (err) { console.warn('Chroma: could not load photos.json', err); });
+  }
+
+  function initChroma(data) {
+    var photos = (data && data.photos) || [];
+    if (!photos.length) return;
+
+    var activeTags = new Set();
+
+    /* ---- Featured / archive split ----
+       Photos flagged "feature": true in photos.json are the curated landing
+       set. Everything else lives in the "View all" archive overlay. If nothing
+       is flagged yet, we fall back to a spread across the hue range so the
+       section still looks intentional rather than empty. */
+    var featured = photos.filter(function (p) { return p.feature === true; });
+    var usingFallback = false;
+    if (!featured.length) {
+      usingFallback = true;
+      var want = Math.min(16, photos.length);
+      var step = Math.max(1, Math.floor(photos.length / want));
+      for (var k = 0; k < photos.length && featured.length < want; k += step) {
+        featured.push(photos[k]);
+      }
+    }
+
+    /* Build one tile. `idx` is the index into the FULL photos array so the
+       lightbox opens the right image regardless of which grid it came from. */
+    function makeTile(p, idx, scope, isFeatured) {
+      var tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.style.setProperty('--hue', (p.hue != null ? p.hue : 240));
+      if (p.bw) tile.classList.add('is-bw');
+
+      /* Gapless justified grid: tiles span extra cells by orientation so
+         tall/wide/large tiles interlock and dense packing leaves no holes. */
+      var seed = (idx * 2654435761) % 4294967296;
+      var r = (seed % 1000) / 1000;
+      var ratio = (p.w && p.h) ? (p.w / p.h) : 1;
+
+      /* Size by ORIENTATION. Featured landing tiles use a structured,
+         repeatable pattern so the grid stays varied but still clean. */
+      var cw = 1, ch = 1;
+      if (isFeatured) {
+        var featuredPos = Array.isArray(scope) ? scope.indexOf(idx) : -1;
+        var pattern = featuredPos >= 0 ? featuredPos % 8 : -1;
+        if (pattern === 0 || pattern === 4) {
+          if (ratio >= 1.4) { cw = 2; ch = 1; }
+        } else if (pattern === 1 || pattern === 7) {
+          if (ratio <= 0.8) { cw = 1; ch = 2; }
+        } else if (pattern === 2 || pattern === 6) {
+          if (ratio >= 1.35) { cw = 2; ch = 1; }
+          else if (ratio <= 0.72) { cw = 1; ch = 2; }
+        } else if (pattern === 3) {
+          if (ratio > 0.9 && ratio < 1.4) { cw = 2; ch = 2; }
+        } else if (pattern === 5) {
+          if (ratio >= 1.2) { cw = 2; ch = 1; }
+        }
+      } else {
+        if (ratio >= 1.35) {
+          if (r < 0.55) { cw = 2; ch = 1; }
+          else if (r < 0.65) { cw = 2; ch = 2; }
+          else { cw = 1; ch = 1; }
+        } else if (ratio <= 0.72) {
+          if (r < 0.6) { cw = 1; ch = 2; }
+          else if (r < 0.68) { cw = 2; ch = 2; }
+          else { cw = 1; ch = 1; }
+        } else {
+          cw = 1; ch = 1;
+          if (r < 0.08) { cw = 2; ch = 2; }
+        }
+      }
+      tile.style.setProperty('--cw', cw);
+      tile.style.setProperty('--ch', ch);
+      if (p.feature === true) tile.classList.add('is-feature');
+
+      tile.dataset.tags = (p.tags || []).join('|');
+      tile.dataset.index = idx;
+      tile.setAttribute('role', 'button');
+      tile.setAttribute('tabindex', '0');
+      var lbl = (p.tags && p.tags.length) ? p.tags.slice(0, 2).join(' \u00b7 ') : 'photograph';
+      tile.setAttribute('aria-label', 'Open photograph: ' + lbl);
+
+      var img = document.createElement('img');
+      img.src = p.thumb || p.src;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.alt = p.alt || ('Chroma photograph' + (p.tags && p.tags.length ? ', ' + p.tags.join(', ') : ''));
+      img.addEventListener('load', function () { this.classList.add('is-loaded'); });
+      tile.appendChild(img);
+
+      if (p.tags && p.tags.length) {
+        var cap = document.createElement('span');
+        cap.className = 'tile__cap';
+        cap.textContent = p.tags.slice(0, 2).join(' \u00b7 ');
+        tile.appendChild(cap);
+      }
+
+      tile.addEventListener('click', function () { openLightbox(idx, scope); });
+      tile.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(idx, scope); }
+      });
+      return tile;
+    }
+
+    /* ---- featured grid (the landing view) ----
+       Featured tiles page through the FEATURED set only, so the lightbox
+       doesn't silently drop the visitor into all 126 photos. */
+    var featuredIndices = featured.map(function (p) { return photos.indexOf(p); });
+    var fFrag = document.createDocumentFragment();
+    featured.forEach(function (p, n) {
+      fFrag.appendChild(makeTile(p, featuredIndices[n], featuredIndices, true));
+    });
+    chromaField.appendChild(fFrag);
+
+    /* ---- archive grid (inside the overlay) ----
+       No scope = pages through every photo, respecting the tag filter. */
+    var archiveField = document.getElementById('chromaArchiveField');
+    if (archiveField) {
+      var aFrag = document.createDocumentFragment();
+      photos.forEach(function (p, i) { aFrag.appendChild(makeTile(p, i, null, false)); });
+      archiveField.appendChild(aFrag);
+    }
+    var archiveTiles = archiveField ? archiveField.querySelectorAll('.tile') : [];
+
+    initLightbox(photos, function () { return activeTags; });
+
+    /* ---- "View all" button ---- */
+    var viewAllBtn = document.getElementById('chromaViewAll');
+    if (viewAllBtn) {
+      viewAllBtn.textContent = 'View all ' + photos.length + ' photographs';
+      viewAllBtn.addEventListener('click', openArchive);
+    }
+
+    /* ---- tag chips (live in the archive overlay, where they're useful) ---- */
+    if (chromaFilters && data.tags && data.tags.length) {
+      var counts = {};
+      data.tags.forEach(function (t) { counts[t] = 0; });
+      photos.forEach(function (p) {
+        (p.tags || []).forEach(function (t) { if (counts[t] !== undefined) counts[t]++; });
+      });
+
+      var allChip = document.createElement('button');
+      allChip.type = 'button';
+      allChip.className = 'chip';
+      allChip.textContent = 'All (' + photos.length + ')';
+      allChip.setAttribute('aria-pressed', 'true');
+      allChip.addEventListener('click', function () { activeTags.clear(); applyFilter(); });
+      chromaFilters.appendChild(allChip);
+
+      data.tags.forEach(function (tag) {
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip';
+        chip.textContent = tag + ' (' + counts[tag] + ')';
+        chip.dataset.tag = tag;
+        chip.setAttribute('aria-pressed', 'false');
+        chip.addEventListener('click', function () {
+          if (activeTags.has(tag)) activeTags.delete(tag); else activeTags.add(tag);
+          applyFilter();
+        });
+        chromaFilters.appendChild(chip);
+      });
+    }
+
+    function applyFilter() {
+      var chips = chromaFilters ? chromaFilters.querySelectorAll('.chip') : [];
+      chips.forEach(function (chip) {
+        var pressed = chip.dataset.tag ? activeTags.has(chip.dataset.tag) : activeTags.size === 0;
+        chip.setAttribute('aria-pressed', String(pressed));
+      });
+
+      var visible = 0;
+      archiveTiles.forEach(function (tile) {
+        var tags = tile.dataset.tags ? tile.dataset.tags.split('|') : [];
+        var show = activeTags.size === 0 || tags.some(function (t) { return activeTags.has(t); });
+        tile.classList.toggle('is-hidden', !show);
+        if (show) visible++;
+      });
+
+      var archiveCount = document.getElementById('chromaArchiveCount');
+      if (archiveCount) {
+        archiveCount.textContent = activeTags.size === 0
+          ? photos.length + ' photographs — sorted by hue'
+          : visible + ' of ' + photos.length + ' — sorted by hue';
+      }
+    }
+
+    if (chromaCaption) {
+      chromaCaption.textContent = usingFallback
+        ? 'A selection — sorted by hue, not by date'
+        : featured.length + ' selected works — sorted by hue, not by date';
+    }
+
+    applyFilter();   // set the archive count on load
+  }
+
+  /* ---------- Chroma archive overlay ---------- */
+  var archiveEl = document.getElementById('chromaArchive');
+
+  function openArchive() {
+    if (!archiveEl) return;
+    archiveEl.classList.add('is-open');
+    archiveEl.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    var closeBtn = document.getElementById('chromaArchiveClose');
+    if (closeBtn) closeBtn.focus();
+  }
+  function closeArchive() {
+    if (!archiveEl) return;
+    archiveEl.classList.remove('is-open');
+    archiveEl.setAttribute('aria-hidden', 'true');
+    // only unlock the page if the lightbox isn't also open
+    var lbOpen = document.getElementById('lightbox');
+    if (!(lbOpen && lbOpen.classList.contains('is-open'))) {
+      document.body.classList.remove('modal-open');
+    }
+  }
+  if (archiveEl) {
+    var aClose = document.getElementById('chromaArchiveClose');
+    if (aClose) aClose.addEventListener('click', closeArchive);
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      var lbOpen = document.getElementById('lightbox');
+      // Escape closes the lightbox first, then the archive
+      if (lbOpen && lbOpen.classList.contains('is-open')) return;
+      if (archiveEl.classList.contains('is-open')) closeArchive();
+    });
+  }
+
+  /* ---------- Chroma lightbox (full-size popup) ---------- */
+  var lb = document.getElementById('lightbox');
+  var lbImg = lb && document.getElementById('lightboxImg');
+  var lbCap = lb && document.getElementById('lightboxCap');
+  var lbCount = lb && document.getElementById('lightboxCount');
+  var lbPhotos = [];
+  var lbGetActiveTags = function () { return new Set(); };
+  var lbList = [];
+  var lbPos = 0;
+
+  function initLightbox(photos, getActiveTags) {
+    lbPhotos = photos;
+    if (getActiveTags) lbGetActiveTags = getActiveTags;
+  }
+
+  /* Which set the lightbox pages through. Set by openLightbox() from the grid
+     that was clicked: the featured grid pages through featured photos only,
+     the archive pages through everything (respecting the tag filter). */
+  var lbScope = null;   // null = all photos; otherwise an array of indices
+
+  function lbBuildList() {
+    var active = lbGetActiveTags();
+    lbList = [];
+    var pool = lbScope || lbPhotos.map(function (_, i) { return i; });
+    pool.forEach(function (i) {
+      var p = lbPhotos[i];
+      if (!p) return;
+      var tags = p.tags || [];
+      // the tag filter only applies to the archive; the featured set is already
+      // a deliberate selection, so it pages through in full
+      var passesFilter = lbScope
+        ? true
+        : (!active || active.size === 0 || tags.some(function (t) { return active.has(t); }));
+      if (passesFilter) lbList.push(i);
+    });
+  }
+  function openLightbox(photoIndex, scope) {
+    if (!lb) return;
+    lbScope = scope || null;
+    lbBuildList();
+    lbPos = lbList.indexOf(photoIndex);
+    if (lbPos < 0) lbPos = 0;
+    showLightbox();
+    lb.classList.add('is-open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function showLightbox() {
+    var p = lbPhotos[lbList[lbPos]];
+    if (!p) return;
+    lbImg.src = p.src || p.thumb;
+    lbImg.alt = p.alt || (p.tags || []).join(', ');
+    lbCap.textContent = (p.tags || []).join(' · ');
+    lbCount.textContent = (lbPos + 1) + ' / ' + lbList.length;
+  }
+  function closeLightbox() {
+    lb.classList.remove('is-open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  function lbNext() { lbPos = (lbPos + 1) % lbList.length; showLightbox(); }
+  function lbPrev() { lbPos = (lbPos - 1 + lbList.length) % lbList.length; showLightbox(); }
+
+  if (lb) {
+    document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+    document.getElementById('lightboxNext').addEventListener('click', lbNext);
+    document.getElementById('lightboxPrev').addEventListener('click', lbPrev);
+    lb.addEventListener('click', function (e) { if (e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      else if (e.key === 'ArrowRight') lbNext();
+      else if (e.key === 'ArrowLeft') lbPrev();
+    });
+  }
+
+  /* ---------- Project data ----------
+     Sourced from github.com/heli0hari/portfolio (script.js `projects` array),
+     condensed for this site's lighter-weight modal. */
+  /* Project case studies are loaded from projects.json (ported from the old
+     portfolio). Rendered by renderBlocks() into the instrument-panel language. */
+  var projectData = {};
+  fetch('projects.json')
+    .then(function (r) { return r.json(); })
+    .then(function (d) { projectData = d; })
+    .catch(function (e) { console.warn('[projects]', e.message); });
+
+  /* ---------- Project detail modal ---------- */
+  var modal = document.getElementById('projectModal');
+  var modalPanel      = modal && modal.querySelector('.project-modal__panel');
+  var modalScroll      = modal && modal.querySelector('.project-modal__scroll');
+  var modalPlate       = document.getElementById('projectModalPlate');
+  var modalPlateLabel  = document.getElementById('projectModalPlateLabel');
+  var modalMeta        = document.getElementById('projectModalMeta');
+  var modalTitle       = document.getElementById('projectModalTitle');
+  var modalDesc        = document.getElementById('projectModalDesc');
+  var modalTags        = document.getElementById('projectModalTags');
+  var modalContent     = document.getElementById('projectModalContent');
+  var modalLastFocused = null;
+
+  function modalFocusables() {
+    return modalPanel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  }
+
+  function onModalKeydown(e) {
+    if (e.key === 'Escape' || e.key === 'Esc') { closeProject(); return; }
+    if (e.key !== 'Tab') return;
+    var els = modalFocusables();
+    if (!els.length) return;
+    var first = els[0], last = els[els.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus();
+    }
+  }
+
+
+  /* ---------- Case study block renderer ----------
+     Renders the ported content blocks in the site's instrument-panel language:
+     rounded cards, hairline borders, tiny uppercase labels, generous padding. */
+  function mk(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.innerHTML = text;
+    return e;
+  }
+
+  function renderBlocks(blocks, into) {
+    into.innerHTML = '';
+    into.classList.add('cs');       // keep the element's existing classes
+    (blocks || []).forEach(function (b) {
+      var v = b.value;
+      var node = null;
+
+      switch (b.type) {
+        case 'heading': {
+          node = mk('h2');
+          node.innerHTML = v;
+          break;
+        }
+        case 'subheading': {
+          node = mk('h3');
+          node.innerHTML = v;
+          break;
+        }
+
+        case 'paragraph': {
+          node = mk('p');
+          node.innerHTML = v;           // old content contains inline links
+          break;
+        }
+
+        case 'quote': {
+          node = mk('blockquote', 'cs-quote');
+          node.appendChild(mk('p', null, v.text || v));
+          if (v.author) node.appendChild(mk('cite', null, v.author));
+          break;
+        }
+
+        case 'image': {
+          node = mk('figure', 'cs-figure');
+          var img = mk('img');
+          img.src = v.src; img.alt = v.alt || ''; img.loading = 'lazy';
+          node.appendChild(img);
+          if (v.caption) node.appendChild(mk('figcaption', null, v.caption));
+          break;
+        }
+
+        case 'table': {
+          node = mk('div', 'cs-card');
+          if (v.title) node.appendChild(mk('div', 'cs-label', v.title));
+          
+          // Create the new responsive wrapper
+          var tableWrap = mk('div', 'cs-table-wrap');
+          var t = mk('table', 'cs-table');
+          
+          if (Array.isArray(v)) {
+            v.forEach(function (row, i) {
+              var tr = mk('tr');
+              row.forEach(function (cell) { 
+                var cellNode = mk(i === 0 ? 'th' : 'td');
+                cellNode.innerHTML = cell;
+                tr.appendChild(cellNode); 
+              });
+              t.appendChild(tr);
             });
-        });
-    }
+          } else {
+            if (v.headers) {
+              var tr = mk('tr');
+              v.headers.forEach(function (h) { var th = mk('th'); th.innerHTML = h; tr.appendChild(th); });
+              t.appendChild(tr);
+            }
+            (v.rows || []).forEach(function (row) {
+              var tr2 = mk('tr');
+              row.forEach(function (cell) { var td = mk('td'); td.innerHTML = cell; tr2.appendChild(td); });
+              t.appendChild(tr2);
+            });
+          }
+          
+          // Inject the table into the wrapper, and the wrapper into the card
+          tableWrap.appendChild(t);
+          node.appendChild(tableWrap);
+          break;
+        }
 
-    const images = Array.from(imageSources);
-    let loaded = 0;
+        case 'gallery':
+        case 'portrait-pair':
+        case 'portrait_pair': {
+          node = mk('div', 'cs-pair');
+          (v.images || v || []).forEach(function (im) {
+            var f = mk('figure', 'cs-figure');
+            var i3 = mk('img'); i3.src = im.src || im; i3.alt = im.alt || ''; i3.loading = 'lazy';
+            f.appendChild(i3);
+            if (im.caption) f.appendChild(mk('figcaption', null, im.caption));
+            node.appendChild(f);
+          });
+          break;
+        }
 
-    function updateLoader() {
-        loaded++;
-        const percent = Math.round((loaded / images.length) * 100);
-        loaderBar.style.width = `${percent}%`;
-        loaderText.textContent = `Loading assets ${percent}%`;
+        case 'list': {
+          node = mk('ul', 'cs-list');
+          (v.items || v).forEach(function (it) { 
+            var li = mk('li');
+            li.innerHTML = it;
+            node.appendChild(li); 
+          });
+          break;
+        }
 
-        if (loaded === images.length) {
-            setTimeout(() => {
-                loader.classList.add("is-hidden");
+        case 'lined-list': {
+          node = mk('ul', 'cs-lined');
+          (v.items || v).forEach(function (it) {
+            var li = mk('li');
+            li.innerHTML = (typeof it === 'string') ? it
+              : ('<strong>' + (it.title || '') + '</strong> ' + (it.text || it.description || ''));
+            node.appendChild(li);
+          });
+          break;
+        }
 
-                introChildren.forEach((el, i) => {
-                    el.style.opacity = 1;
-                    el.style.animationDelay = `${i * 0.15}s`;
+        case 'box-list': {
+          node = mk('ul', 'cs-boxes');
+          (v.items || v).forEach(function (it) {
+            var li = mk('li');
+            li.innerHTML = (typeof it === 'string') ? it
+              : ('<strong>' + (it.title || '') + '</strong><br>' + (it.text || it.description || ''));
+            node.appendChild(li);
+          });
+          break;
+        }
+
+        case 'comparison': {
+          node = mk('div', 'cs-compare');
+          if (v.title) node.appendChild(mk('div', 'cs-compare__title', v.title));
+          var cols = mk('div', 'cs-compare__cols');
+          [v.left, v.right].forEach(function (side) {
+            if (!side) return;
+            var c = mk('div', 'cs-compare__col');
+            c.appendChild(mk('h4', null, side.title));
+            var ul = mk('ul');
+            (side.items || []).forEach(function (it) { ul.appendChild(mk('li', null, it)); });
+            c.appendChild(ul);
+            cols.appendChild(c);
+          });
+          node.appendChild(cols);
+          break;
+        }
+
+        case 'table': {
+          node = mk('div', 'cs-card');
+          if (v.title) node.appendChild(mk('div', 'cs-label', v.title));
+          var t = mk('table', 'cs-table');
+          if (v.headers) {
+            var tr = mk('tr');
+            v.headers.forEach(function (h) { tr.appendChild(mk('th', null, h)); });
+            t.appendChild(tr);
+          }
+          (v.rows || []).forEach(function (row) {
+            var tr2 = mk('tr');
+            row.forEach(function (cell) { tr2.appendChild(mk('td', null, cell)); });
+            t.appendChild(tr2);
+          });
+          node.appendChild(t);
+          break;
+        }
+
+        /* architecture, concept-grid, snake-flow, flow, horizontal-flow all
+           become node panels — a grid of bordered cards */
+        case 'architecture': {
+          node = mk('div', 'cs-arch');
+          if (v.title) node.appendChild(mk('div', 'cs-label', v.title));
+          var layers = Array.isArray(v) ? v : (v.layers || v.items || []);
+          layers.forEach(function (layer, li) {
+            var row = mk('div', 'cs-arch__layer');
+            if (layer && !Array.isArray(layer) && (layer.text || layer.highlight)) {
+              var hero = mk('div', 'cs-arch__node cs-arch__node--hero');
+              hero.innerHTML = layer.text || '';
+              row.appendChild(hero);
+            } else {
+              var groups = Array.isArray(layer) ? layer : [layer];
+              groups.forEach(function (group) {
+                var col = mk('div', 'cs-arch__group');
+                var cells = Array.isArray(group) ? group : [group];
+                cells.forEach(function (cell) {
+                  var n = mk('div', 'cs-arch__node');
+                  if (cell && cell.highlight) n.classList.add('cs-arch__node--hero');
+                  n.innerHTML = (cell && cell.text != null) ? cell.text : (cell || '');
+                  col.appendChild(n);
                 });
-            }, 400);
-        }
-    }
-
-    images.forEach(src => {
-        const img = new Image();
-        img.onload = updateLoader;
-        img.onerror = updateLoader;
-        img.src = src;
-    });
-});
-// ===== END INTRO IMAGE PRELOADER =====
-
-const projects = [
-    {
-        id: "hiro-assistant",
-        title: "Hiro — Task Starting Assistant",
-        category: "UX/UI Case Study",
-        description: "A behavioural productivity assistant designed to help people overcome procrastination by reducing the friction between intention and starting work.",
-        image: "images/Hiro/Title.jpg",
-        year: "2026",
-        tags: ["UX Design", "Product Strategy", "Behavioral Design", "Interaction Design", "User Research"],
-
-        details: {
-            content: [
-
-                { type: 'image', value: { src: 'images/Hiro/Title.jpg', alt: 'Hiro productivity assistant title' } },
-
-                { type: 'paragraph', value: "Hiro is a productivity assistant designed to help people overcome the starting barrier of work. Instead of focusing on scheduling or task management, the system focuses on the moment users struggle most: the transition between intention and action." },
-
-                { type: 'paragraph', value: "By reducing cognitive friction, adapting to fluctuating energy levels, and encouraging small initial actions, Hiro helps users start earlier and maintain momentum throughout a task." },
-
-                { type: 'heading', value: 'Understanding Procrastination' },
-
-                { type: 'paragraph', value: "Procrastination means postponing something that would benefit you if done today. This may include studying for exams, completing assignments, making phone calls, or finishing professional tasks." },
-
-                { type: 'image', value: { src: 'images/Hiro/Proc.jpg', alt: 'Procrastination' } },
-
-
-                { type: 'paragraph', value: "Research shows procrastination is not laziness but a coping mechanism used to temporarily escape unpleasant emotions such as anxiety, boredom, frustration, or self-doubt." },
-
-
-                { type: 'heading', value: 'Neurological Explanation' },
-
-                { type: 'paragraph', value: "At a neurological level, procrastination is a battle between two primary regions of the brain: the limbic system and the prefrontal cortex. The limbic system, often referred to as the emotional brain, prioritises immediate satisfaction and pleasure, seeking short-term fulfilment. The prefrontal cortex, in contrast, is responsible for more complex cognitive functions, including long-term planning, impulse control, and decision-making." },
-
-
-                {
-                    type: "comparison",
-                    value: {
-                        title: "Brain Conflict During Procrastination",
-                        left: {
-                            title: "Limbic System",
-                            items: [
-                                "Emotional brain",
-                                "Seeks immediate pleasure",
-                                "Social media",
-                                "Entertainment",
-                                "Low-effort activities"
-                            ]
-                        },
-                        right: {
-                            title: "Prefrontal Cortex",
-                            items: [
-                                "Logical planning",
-                                "Decision making",
-                                "Studying",
-                                "Writing assignments",
-                                "Complex tasks"
-                            ]
-                        }
-                    }
-                },
-
-                { type: 'paragraph', value: "When tasks feel unpleasant or difficult, the limbic system prioritises immediate comfort over the logical reasoning of the prefrontal cortex, resulting in procrastination." },
-
-
-                { type: 'subheading', value: 'Additional Causes of Procrastination' },
-
-
-                {
-                    type: 'lined-list',
-                    value: [
-                        "Many people believe motivation must come before action, when in reality action often creates motivation.",
-                        "Fear of failure is a major cause of task avoidance.",
-                        "Perfectionists delay tasks because they believe everything must be done perfectly.",
-                        "Self-criticism and unrealistic expectations reinforce avoidance behaviour.",
-                        "Frequent 'should' statements create guilt and resentment, leading to further procrastination."
-                    ]
-                },
-
-
-                { type: 'heading', value: 'Existing Productivity Approaches' },
-
-                { type: 'paragraph', value: "One traditional approach to overcoming procrastination is SMART goal setting." },
-
-                {
-                    type: 'table',
-                    value: [
-                        ["SMART Component", "Explanation"],
-                        ["Specific", "Define clear and precise study goals"],
-                        ["Measurable", "Track progress using checklists or measurable outputs"],
-                        ["Achievable", "Break the goal into smaller concrete achievable steps"],
-                        ["Realistic", "Ensure goals are achievable"],
-                        ["Time Based", "Work backwards from deadlines"]
-                    ]
-                },
-
-                { type: 'image', value: { src: 'images/Hiro/smart.jpg', alt: 'SMART' } },
-
-
-                { type: 'paragraph', value: "Other behavioural techniques include establishing a routine, preparing tasks for the next study session, and rewarding yourself after completing goals." },
-
-
-                { type: 'heading', value: 'User Research' },
-
-
-                { type: 'paragraph', value: "To understand real behaviour patterns, I conducted a Google survey targeting students, young adults, and early professionals." },
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Primary users: students, young professionals, early career workers",
-                        "Digital-native behaviour with heavy smartphone usage",
-                        "People juggle study, work, and personal responsibilities",
-                        "Motivation fluctuates rather than ability"
-                    ]
-                },
-
-                { type: 'subheading', value: 'Behavioural Insights' },
-
-
-                {
-                    type: 'table',
-                    value: [
-                        ["Observation", "Insight"],
-                        ["~78% delay tasks sometimes", "Procrastination is common behaviour"],
-                        ["Task complexity", "Users avoid unclear starting points"],
-                        ["Low energy", "Energy strongly influences task engagement"],
-                        ["Distant deadlines", "Urgency appears late"],
-                        ["Unclear instructions", "Users struggle with task initiation"]
-                    ]
-                },
-
-
-                { type: 'paragraph', value: "The research indicates that people are not lazy; they are context-sensitive starters." },
-
-
-                { type: 'subheading', value: 'What Users Do Instead' },
-
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Social media",
-                        "Other productive tasks",
-                        "Small chores"
-                    ]
-                },
-
-                { type: 'paragraph', value: "Users rarely remain inactive. Instead they switch to easier tasks that provide immediate psychological rewards." },
-
-
-                { type: 'subheading', value: 'Emotional State After Procrastinating' },
-
-
-                {
-                    type: 'table',
-                    value: [
-                        ["Emotion", "Frequency"],
-                        ["Slight concern", "High"],
-                        ["Stress", "Moderate"],
-                        ["Guilt", "Common"]
-                    ]
-                },
-
-
-                { type: 'paragraph', value: "Users already experience psychological cost after procrastinating. Therefore guilt-based design approaches are ineffective." },
-
-
-                { type: 'heading', value: 'Core UX Problem Statement' },
-
-
-                { type: 'paragraph', value: "Young adults delay tasks not because of lack of motivation, but because of low energy, unclear starting points, and distant deadlines. This leads to task switching toward easier activities and increased stress." },
-
-
-                { type: 'heading', value: 'User Personas' },
-
-
-                { type: 'subheading', value: 'Rick Austin — The Overloaded Student (20)' },
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Heavy smartphone user",
-                        "Constant social media exposure",
-                        "Delays tasks when they feel complex",
-                        "Switches to social media when unsure how to begin"
-                    ]
-                },
-
-                {
-                    type: 'lined-list',
-                    value: [
-                        "<strong>Behavioural Insight:</strong> Rick avoids the unclear beginning of large tasks.",
-                        "<strong>Quote:</strong> 'I'll start after one reel… maybe after this one.'",
-                        "<strong>Design Need:</strong> Automatic task breakdown and quick first action."
-                    ]
-                },
-
-
-                { type: 'subheading', value: 'Riya Jerald — Independent Planner (38)' },
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Freelancer and parent",
-                        "Prefers structured planning",
-                        "Delays work when urgency feels low"
-                    ]
-                },
-
-                {
-                    type: 'lined-list',
-                    value: [
-                        "<strong>Behavioural Insight:</strong> Deadline distance reduces urgency.",
-                        "<strong>Quote:</strong> 'There's time. I'll block it tomorrow.'",
-                        "<strong>Design Need:</strong> Visual deadline compression and progress visibility."
-                    ]
-                },
-
-
-                { type: 'subheading', value: 'Rahul Dev — Balancing Professional (29)' },
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Uses productivity apps inconsistently",
-                        "Struggles with mental fatigue after work"
-                    ]
-                },
-
-                {
-                    type: 'lined-list',
-                    value: [
-                        "<strong>Behavioural Insight:</strong> Rahul engages in productive procrastination.",
-                        "<strong>Quote:</strong> 'Let me clear emails first.'",
-                        "<strong>Design Need:</strong> Energy-based task suggestions."
-                    ]
-                },
-
-
-                { type: 'heading', value: 'User Journey Map — The Delay Loop' },
-
-                {
-                    type: 'table',
-                    value: [
-                        [
-                            "User Actions",
-                            "Journey Stage",
-                            "Thoughts",
-                            "Emotions",
-                            "Pain Points",
-                            "Opportunities (Design Intervention)"
-                        ],
-
-                        [
-                            "Receives assignment brief",
-                            "Awareness",
-                            "I have plenty of time.",
-                            "😌 Calm",
-                            "Deadline feels distant",
-                            "Show visual timeline compression"
-                        ],
-
-                        [
-                            "Opens laptop, thinks about starting",
-                            "Intention",
-                            "Where do I even begin?",
-                            "😐 Uncertain",
-                            "Task feels large & unclear",
-                            "Auto-generate first step"
-                        ],
-
-                        [
-                            "Reads brief briefly, closes tab",
-                            "Friction",
-                            "I'll do it later when I feel ready.",
-                            "😕 Mild avoidance",
-                            "Cognitive overload",
-                            "Simplify task into micro-actions"
-                        ],
-
-                        [
-                            "Scrolls social media",
-                            "Delay Loop",
-                            "Just a short break.",
-                            "🙂 Comfortable → 😬 Guilty",
-                            "Easy dopamine replaces effort",
-                            "Provide low-effort start mode"
-                        ],
-
-                        [
-                            "Remembers assignment occasionally",
-                            "Emotional Build-up",
-                            "I should start soon…",
-                            "😟 Concern rising",
-                            "No structured re-entry point",
-                            "Gentle re-engagement prompts"
-                        ],
-
-                        [
-                            "Deadline gets close",
-                            "Pressure Point",
-                            "Now I HAVE to do it.",
-                            "😰 Stress",
-                            "Panic-driven productivity",
-                            "Earlier urgency visualization"
-                        ],
-
-                        [
-                            "Starts working intensely",
-                            "Action",
-                            "This wasn’t that hard actually.",
-                            "😤 Focused",
-                            "Starting barrier disappears late",
-                            "Encourage early momentum"
-                        ],
-
-                        [
-                            "Submits assignment",
-                            "Reflection",
-                            "Why didn’t I start earlier?",
-                            "😓 Relief + regret",
-                            "Pattern repeats next task",
-                            "Reflection & learning feedback"
-                        ]
-                    ]
-                },
-
-
-                { type: 'paragraph', value: "Critical observation: the highest friction point occurs between intention and starting." },
-
-
-                { type: 'heading', value: 'Experience Breakdown — Cognitive States' },
-
-                {
-                    type: 'table',
-                    value: [
-                        ["Phase", "Mental Mode"],
-
-                        ["Awareness", "Low urgency"],
-
-                        ["Friction", "High uncertainty"],
-
-                        ["Delay", "Instant reward seeking"],
-
-                        ["Pressure", "Anxiety-driven action"],
-
-                        ["Action", "Flow state achieved"]
-                    ]
-                },
-
-
-                {
-                    type: 'heading',
-                    value: 'Theoretical Framework — Temporal Motivation Theory'
-                },
-
-                {
-                    type: 'paragraph',
-                    value: "Temporal Motivation Theory (TMT) explains procrastination as a decision-making process in which people choose the activity with the highest perceived motivational value at a given moment. Tasks with immediate rewards are often prioritised over tasks with delayed benefits, even if the long-term outcome is more important."
-                },
-
-                {
-                    type: 'paragraph',
-                    value: "The theory describes motivation using the following formula:"
-                },
-
-                {
-                    type: 'architecture',
-                    value: [
-
-
-                        [
-                            [
-                                "<strong>Motivation = (Expectancy × Value) / (Sensitivity to Delay × Time Delay)</strong>"
-                            ]
-                        ]
-                    ]
-                },
-
-                {
-                    type: 'paragraph',
-                    value: "Each variable represents a psychological factor that influences whether a person starts or delays a task."
-                },
-
-                {
-                    type: 'concept-grid',
-                    value: [
-                        {
-                            title: "Expectancy",
-                            description: "Confidence in successfully completing the task"
-                        },
-                        {
-                            title: "Value",
-                            description: "How rewarding or enjoyable the task feels"
-                        },
-                        {
-                            title: "Sensitivity to Delay",
-                            description: "Preference for immediate rewards over delayed benefits"
-                        },
-                        {
-                            title: "Time Delay",
-                            description: "The time until the reward or outcome is received"
-                        }
-                    ]
-                },
-
-                {
-                    type: 'subheading',
-                    value: 'Design Implications'
-                },
-
-                {
-                    type: 'lined-list',
-                    value: [
-                        "<strong>Expectancy:</strong> Increase confidence by breaking large tasks into smaller steps.",
-                        "<strong>Value:</strong> Increase perceived reward through micro-progress and feedback.",
-                        "<strong>Sensitivity to Delay:</strong> Reduce impulsive switching by providing quick start actions.",
-                        "<strong>Time Delay:</strong> Reduce perceived delay through timeline compression and intermediate checkpoints."
-                    ]
-                },
-
-                { type: 'paragraph', value: "Motivation increases when expectancy and value increase while delay decreases." },
-
-
-
-
-                { type: 'heading', value: 'Product Concept - Hiro' },
-                { type: 'paragraph', value: "Hiro is a productivity assistant designed to help people overcome the starting barrier of work. Instead of focusing on scheduling or task management, Hiro focuses on the moment when users struggle most; the transition between intention and action." },
-                { type: 'paragraph', value: "The system helps users begin tasks by automatically breaking them into manageable steps, suggesting actions based on the user’s current energy level, and enabling optional co-working sessions that provide light social accountability." },
-                { type: 'subheading', value: 'Why the name Hiro?' },
-                { type: 'paragraph', value: "The name Hiro comes from a conceptual blend of:" },
-                {
-                    type: 'lined-list',
-                    value: [
-                        "<strong>Hermes</strong> the messenger and guide who helps movement and transition.",
-                        "<strong>Kairos</strong> the greek diety representing the concept of the right time"
-                    ]
-                },
-                { type: 'paragraph', value: "Together, the name reflects the purpose of the system: Helping users recognise and act in the right moment to begin work." },
-                { type: 'paragraph', value: "The name also phonetically resembles “Hero,” reinforcing the idea that users take small steps toward overcoming procrastination." },
-                { type: 'subheading', value: 'Behavioral Model — The Procrastination Loop' },
-
-                { type: 'paragraph', value: "User behaviour often follows a predictable procrastination loop driven by uncertainty, low urgency, and immediate distractions." },
-
-                {
-                    type: 'snake-flow',
-                    value: [
-                        "Task Assigned",
-                        "Task feels large or unclear",
-                        "Uncertainty about where to start",
-                        "Avoidance",
-                        "Switch to easy reward (social media)",
-                        "Guilt or mild stress",
-                        "Deadline pressure",
-                        "Panic productivity",
-                        "Task completed",
-                        "Cycle repeats"
-                    ]
-                },
-
-                { type: 'paragraph', value: "This cycle shows that the real problem is not completing tasks but starting them." },
-
-                { type: 'subheading', value: 'Hiro Intervention Model' },
-
-                { type: 'paragraph', value: "Hiro interrupts the procrastination loop before avoidance begins by reducing cognitive friction and helping users take the first action." },
-
-                {
-                    type: 'snake-flow',
-                    value: [
-                        "User enters task",
-                        "Smart task breakdown",
-                        "Energy level selection",
-                        "System suggests appropriate task",
-                        "First-step generator",
-                        "Start Mode activated",
-                        "Momentum builds",
-                        "Sustained progress"
-                    ]
-                },
-
-
-
-                { type: 'subheading', value: 'Information Architecture' },
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Home — Today’s suggested task",
-                        "Tasks — Active tasks and task breakdown",
-                        "Energy Mode — Current energy level selection",
-                        "Focus Session — Active focus timer",
-                        "Profile & Settings"
-                    ]
-                },
-
-                { type: 'heading', value: 'Visual Development' },
-
-                { type: 'paragraph', value: 'The design system for Hiro is called <strong>The Digital Sanctuary</strong> — engineered to counteract the high-cortisol environment of task management. Most productivity tools feel like digital clipboards: rigid, cold, and demanding. Hiro aims to feel like a quiet, sun-drenched library where the architecture is organic and the atmosphere is breathable.' },
-
-                { type: 'image', value: { src: 'images/Hiro/layout.png', alt: 'Hiro visual layout and design system overview' } },
-
-                { type: 'subheading', value: 'Colour: Tonal Architecture' },
-
-                { type: 'paragraph', value: 'The palette is a dialogue between Sage (primary), Muted Blue (secondary), and Warm Cream (background). Colour is never used to alert — it is used to embrace.' },
-
-                {
-                    type: 'box-list',
-                    value: [
-                        '<strong>Background</strong> — #fafaf5 (Warm Cream)',
-                        '<strong>Primary</strong> — #4a6550 (Sage)',
-                        '<strong>Secondary</strong> — Muted Blue',
-                        '<strong>Surface tiers</strong> replace borders entirely',
-                        '<strong>No 1px lines</strong> — boundaries are background shifts only'
-                    ]
-                },
-
-                { type: 'subheading', value: 'Typography' },
-
-                {
-                    type: 'table',
-                    value: [
-                        ['Role', 'Typeface', 'Use'],
-                        ['Display & Headlines', 'Plus Jakarta Sans', '3.5rem — Welcome states, vast open space'],
-                        ['Body & Titles', 'Be Vietnam Pro', '0.875rem — Warm, humanist, never crowded'],
-                    ]
-                },
-
-                { type: 'paragraph', value: 'Large headlines use tight tracking (−0.02em) to feel premium. Body copy stays at body-md to ensure the interface never feels dense.' },
-
-
-
-                { type: 'subheading', value: 'Screen Flow' },
-
-                {
-                    type: 'snake-flow',
-                    value: [
-                        "Home Screen",
-                        "Add Task",
-                        "Enter Task + Deadline",
-                        "System generates task breakdown",
-                        "User selects energy level",
-                        "Task recommendation appears",
-                        "User activates Start Mode",
-                        "Focus session begins",
-                        "Task progress updated"
-                    ]
-                },
-
-                { type: 'paragraph', value: "Instead of overwhelming users with large tasks, Hiro always presents a single, achievable starting action." },
-
-                { type: 'subheading', value: 'System 1 - Intelligent Task Breakdown' },
-
-
-                {
-                    type: 'box-list',
-                    value: [
-                        "Breaks large tasks into smaller actions",
-                        "Schedules work before deadline",
-                        "Creates buffer time"
-                    ]
-                },
-
-                {
-                    type: 'portrait-pair', value: [
-                        { src: 'images/Hiro/Task1.png', alt: 'Task upload screen 1' },
-                        { src: 'images/Hiro/Task2.png', alt: 'Task upload screen 2' },
-                        { src: 'images/Hiro/Task3.png', alt: 'Task upload screen 3' }
-                    ]
-                },
-
-                { type: 'paragraph', value: 'Users begin by uploading a task to Hiro — simply entering the task name and deadline. Rather than presenting the full scope of the work, the system immediately breaks it down into smaller, manageable steps using the <strong>Gemini API</strong>.' },
-
-                { type: 'paragraph', value: 'Gemini analyses the task and generates a structured breakdown — splitting the work into milestones scheduled across the available time before the deadline, with built-in buffer time to reduce last-minute pressure.' },
-
-
-                {
-                    type: 'portrait-pair', value: [
-                        { src: 'images/Hiro/Breakdown1.png', alt: 'Task breakdown screen 1' },
-                        { src: 'images/Hiro/Breakdown2.png', alt: 'Task breakdown screen 2' }
-                    ]
-                },
-
-
-                { type: 'subheading', value: 'System 2 - Energy Based Task Assignment' },
-
-                { type: 'paragraph', value: 'Once the task is broken down, Hiro doesn\'t hand the user a flat to-do list. Instead, it surfaces different suggested steps depending on the user\'s current <strong>energy level</strong> — so someone running low can still make meaningful progress without feeling overwhelmed.' },
-                {
-                    type: 'table',
-                    value: [
-                        ["Energy Level", "Example Tasks"],
-                        ["Low", "Read article, collect sources"],
-                        ["Medium", "Write outline, summarise research"],
-                        ["High", "Write main section, deep work"]
-                    ]
-                },
-
-
-                {
-                    type: 'portrait-pair', value: [
-                        { src: 'images/Hiro/Energy1.png', alt: 'Energy level 1' },
-                        { src: 'images/Hiro/Energy2.png', alt: 'Energy level 2' },
-                        { src: 'images/Hiro/Energy3.png', alt: 'Energy level 3' }
-                    ]
-                },
-
-                { type: 'subheading', value: 'Snooze mode - Intentional Pause' },
-
-
-                { type: 'paragraph', value: "Snooze Mode allows users to temporarily pause tasks, reminders, and notifications when they need time to rest or step away. Instead of forcing continuous productivity, Hiro recognises that recovery is essential for sustained focus." },
-                { type: 'paragraph', value: "Users can choose predefined durations or create custom schedules, ensuring that breaks are intentional rather than avoidant. All progress is preserved, and tasks are gently reintroduced once the snooze period ends." },
-                { type: 'paragraph', value: "This feature prevents burnout while maintaining a clear path back to action, supporting a healthier and more sustainable productivity cycle." },
-
-                {
-                    type: 'portrait-pair', value: [
-                        { src: 'images/Hiro/Snooze1.png', alt: 'Snooze screen 1' },
-                        { src: 'images/Hiro/Snooze2.png', alt: 'Snooze screen 2' },
-                    ]
-                },
-
-                { type: 'heading', value: 'Core Product Capabilities' },
-
-
-                {
-                    type: 'table',
-                    value: [
-                        ["Problem", "Feature"],
-                        ["Task feels too big", "Smart Task Breakdown"],
-                        ["Energy fluctuates", "Energy-Aware Suggestions"],
-                        ["Starting feels difficult", "Start Mode"]
-                    ]
-                },
-
-
-                { type: 'heading', value: 'Example Scenario' },
-
-
-                { type: 'paragraph', value: "A student enters the task 'Write essay — due in 7 days'. Hiro automatically creates milestones and suggests today's first action: Find three research sources (10 minutes)." },
-
-
-                { type: 'heading', value: 'Break Reminder' },
-
-                {
-                    type: 'portrait-pair', value: [
-                        { src: 'images/Hiro/Break.png', alt: 'Break Reminder screen 1' },
-                        { src: 'images/Hiro/Break2.png', alt: 'Break Reminder screen 2' }
-                    ]
-                },
-
-                { type: 'paragraph', value: 'Most productivity apps remind users to start a task very often. But users already feel pressure to start. Adding more start-reminders increases anxiety rather than motivation.' },
-
-                {
-                    type: 'snake-flow',
-                    value: [
-                        'User starts working',
-                        'System protects focus',
-                        'Suggests breaks at the right moment',
-                        'User returns refreshed',
-                        'Sustained momentum'
-                    ]
-                },
-
-                { type: 'paragraph', value: 'This avoids notification fatigue. Instead of pushing users to begin, Hiro steps back once work has started — shielding focus and nudging breaks only when beneficial. The system shifts from being a starter to being a guardian of sustained effort.' },
-
-                { type: 'heading', value: 'Conclusion' },
-
-
-
-                { type: 'paragraph', value: "Hiro demonstrates that solving procrastination requires empathetic behavioural design rather than strict scheduling. By focusing on task initiation and reducing cognitive friction, the system helps users move from uncertainty to action and maintain momentum." }
-
-            ]
-        }
-    },
-    {
-        id: "dub-transit",
-        title: "Dublin Public Transport App",
-        category: "User Experience Design",
-        description: "A real-time transit application that simplifies navigating Dublin’s transport network through intuitive route discovery, live bus tracking, service alerts, integrated weather insights, and an AI-powered journey assistant.",
-        image: "images/dubtransit/dubscreen.png",
-        year: "2025",
-        tags: ["UX Design", "Visual Communication", "Mobile App Design", "InteractionDesign", "AI-Driven Interfaces"],
-        details: {
-            content: [
-                { type: 'image', value: { src: 'images/dubtransit/dubtitlescreen.jpg', alt: 'Title card showing "transport network" over a visualization of interconnected bubbles.' } },
-
-                { type: 'paragraph', value: "DubTransit is a mobile application built to unify Dublin’s fragmented public transport information into one clear, minimal, and elegant experience." },
-                { type: 'paragraph', value: "The app combines:" },
-                {
-                    type: 'list', value: [
-                        `<span class="icon-wrapper">
-                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                 </span>
-                 <span><strong>Route Search & Stop Lookup</strong><br> Intuitive navigation across the network.</span>`,
-
-                        `<span class="icon-wrapper">
-                    <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
-                 </span>
-                 <span><strong>Live Network Map</strong><br> Real-time visuals with simulated tracking.</span>`,
-
-                        `<span class="icon-wrapper">
-                    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                 </span>
-                 <span><strong>Service Alerts</strong><br> Live updates for events, delays, and accidents.</span>`,
-
-                        `<span class="icon-wrapper">
-                   <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 12l-6.91 3.74L12 22l-3.09-6.26L2 12l6.91-3.74z"></path></svg>
-                 </span>
-                 <span><strong>AI Journey Planning</strong><br> Smart assistance powered by Gemini.</span>`,
-
-                        `<span class="icon-wrapper">
-                    <svg viewBox="0 0 24 24"><path d="M12 2v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="M20 12h2"></path><path d="m19.07 4.93-1.41 1.41"></path><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"></path><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"></path></svg>
-                 </span>
-                 <span><strong>Weather-Aware Guidance</strong><br> Travel advice based on live forecast.</span>`
-                    ]
-                },
-                { type: 'heading', value: 'Problem & Opportunity' },
-                { type: 'subheading', value: "Dublin’s transport experience is often fragmented:" },
-                {
-                    type: 'list', value: ["-Outdated interfaces and inconsistent behaviour",
-                        "-Live location accuracy issues",
-                        "-Limited route discovery",
-                        "-No contextual travel info (weather, events, delays)"]
-                },
-                { type: 'subheading', value: 'User Research Findings' },
-                {
-                    type: 'list', value: ["-Commuters want quick and simple route lookup (bus numbers, origins/destinations).",
-                        "-People check real-time bus status frequently.",
-                        "-Dublin residents rely on Google Maps, but hate its delay unpredictability.",
-                        "-Users want alerts before problems happen.",
-                        "-Weather affects travel significantly"]
-                },
-                { type: 'image', value: { src: 'images/dubtransit/dublinstpatrick.jpg', alt: "Traffic control during St Patrick's day" } },
-                { type: 'subheading', value: "Opportunity" },
-                { type: 'paragraph', value: "Create a single, friendly, modern app that integrates routing, AI guidance, alerts, weather, and live tracking together." },
-                { type: 'heading', value: 'Design Process & UX Approach' },
-                { type: 'subheading', value: "User Requirements" },
-                { type: 'paragraph', value: "Through informal interviews with students, workers, and migrants in Dublin, I identified key priorities:" },
-                {
-                    type: 'lined-list', value: ["“Just show me where the bus is.”",
-                        "“I don’t want to figure out inbound/outbound.”",
-                        "“I just want a clean app that works.”",
-                        "“Weather screws up my commute, tell me beforehand.”"]
-                },
-                { type: 'paragraph', value: "These insights shaped the core flows." },
-                { type: 'subheading', value: "Information Architecture & Key Screens" },
-                { type: 'image', value: { src: 'images/dubtransit/dubmockup.jpg', alt: "Mockup screens of the app" } },
-                { type: 'paragraph', value: "1. Routes Directory" },
-                { type: 'paragraph', value: "A minimal search-first interface that lets users quickly find routes by number or name." },
-                {
-                    type: 'box-list', value: ["Clear typography",
-                        "Line-colour coding",
-                        "Simple forward/backward direction labels (“A → B”, “B → A”)"]
-                },
-                { type: 'paragraph', value: "2. Live Map & Tracking" },
-                { type: 'paragraph', value: "A full-screen map visualizing:" },
-                {
-                    type: 'box-list', value: ["Bus stop markers",
-                        "Route polylines",
-                        "Live (or simulated) bus positions",
-                        "Smooth marker animation for realism"]
-                },
-                { type: 'paragraph', value: "3. Service Alerts" },
-                { type: 'paragraph', value: "Supports categories:" },
-                {
-                    type: 'box-list', value: ["GENERAL",
-                        "EVENT",
-                        "ACCIDENT",
-                        "WEATHER"]
-                },
-                { type: 'paragraph', value: "4. AI Journey Planner" },
-                { type: 'paragraph', value: "An interface where users type the current location and destination location. The AI responds with:" },
-                {
-                    type: 'box-list', value: ["Multi-modal journey",
-                        "Clear step-by-step navigation",
-                        "Estimated travel time",
-                        "Weather at departure and arrival",
-                        "Notes about delays or events"]
-                },
-                { type: 'paragraph', value: "5. Empty States & Loading Screens" },
-                { type: 'paragraph', value: "Designed intentionally to reduce anxiety and create trust:" },
-                {
-                    type: 'box-list', value: ["Encouraging microcopy",
-                        "Soft colour palette",
-                        "Clean visuals"]
-                },
-                { type: 'heading', value: 'System Architecture' },
-                {
-                    type: 'architecture', value: [
-                        // Row 1: Top Level
-                        { text: "<strong>Mobile App</strong><br>DubTransit (React Native)", highlight: true },
-
-                        // Row 2: Parallel Branches (3 Columns)
-                        [
-                            // Column 1: GPS / Crowdsourcing Flow
-                            [
-                                "<strong>User Location</strong><br>GPS (With Consent)",
-                                "<strong>Crowd Data Formatter</strong><br>Anonymizer",
-                                "<strong>Crowdsourced DB</strong><br>Bus Position Database",
-                                "<strong>Data Smoothing</strong><br>Interpolation & Kalman Filter"
-                            ],
-                            // Column 2: Route / Data Flow
-                            [
-                                "<strong>User Query</strong><br>'Bus 15', 'UCD'",
-                                "<strong>Firestore Routes</strong><br>GTFS Static Data",
-                                "<strong>GTFS-Realtime Feed</strong><br>Official Vehicle Positions",
-                                "<strong>Data Fusion Engine</strong><br>Merging Crowd + Official Data"
-                            ],
-                            // Column 3: AI / Weather Flow
-                            [
-                                "<strong>Origin / Destination</strong><br>Metadata extraction",
-                                "<strong>Gemini AI Processor</strong><br>Journey Reasoning",
-                                "<strong>Weather API</strong><br>Open-Meteo (Current & Forecast)"
-                            ]
-                        ],
-
-                        // Row 3: Merging Logic
-                        [
-                            // Merging Col 1 & 2
-                            ["<strong>Live Bus Position API</strong><br>Unified Source"],
-                            // Merging Logic
-                            ["<strong>Map Renderer</strong><br>Polyline + Smooth Animation"]
-                        ],
-
-                        // Row 4: Final Output
-                        { text: "<strong>AI Journey Planner Output</strong><br>ETA + Weather + Steps", highlight: true }
-                    ]
-                },
-                { type: 'heading', value: 'Visual Design Language' },
-                { type: 'paragraph', value: "I chose a dark, modern UI with a yellow similar to the Dublin bus color (#E3CD00) as the primary accent." },
-                { type: 'image', value: { src: 'images/dubtransit/dubcolor.jpg', alt: "Colorscheme for the app" } },
-                { type: 'subheading', value: "Reasons:" },
-                {
-                    type: 'list', value: ["High visibility",
-                        "Works great on OLED screens",
-                        "Creates strong brand identity"]
-                },
-                { type: 'heading', value: 'Prototyping & Iteration' },
-                { type: 'paragraph', value: "I iterated through several cycles:" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Redesigned direction labels from Inbound/Outbound → A → B / B → A</span>`,
-                        `<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Rebuilt the map for readability and smooth marker animation</span>`,
-                        `<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Optimised the AI planner’s information density (steps, ETA, weather)</span>`,
-                        `<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Refined empty states and loading behaviours to reduce user stress</span>`,
-                        `<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Enhanced the weather integration after feedback (“show arrival weather too”)</span>`]
-                },
-                { type: 'subheading', value: 'AI-Assisted Prototyping Process' },
-                { type: 'paragraph', value: "This prototype heavily used AI tools during iteration:" },
-                {
-                    type: 'list', value: ["Google AI Studio — initial drafts of features & logic",
-                        "DeepSeek — refining data structures, simulation logic, and route handling",
-                        "ChatGPT — final refinements, debugging, API integration, UX adjustments",]
-                },
-                { type: 'image', value: { src: 'images/dubtransit/dubaiuses.jpg', alt: "Usage of Google AI Studio for the development" } },
-                { type: 'paragraph', value: "AI helped speed up prototyping, letting me focus on design and experience rather than spending too much time on development." },
-                { type: 'heading', value: 'Live Prototype' },
-                { type: 'paragraph', value: "To make Dub.Transit accessible directly from the browser, I created a web-based preview of the app. This allows the viewers to interact with the interface without installing the Android app." },
-                { type: 'mobile-demo', value: 'https://dublintransporttracker.netlify.app' },
-                { type: 'box-list', value: ['You can also <a href="https://dublintransporttracker.netlify.app" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">open the app in a new tab</a> to explore it fully.'] },
-                { type: 'paragraph', value: "The current version preserves the overall UX, typography, and component layout so viewers can understand the design system." },
-                { type: 'heading', value: 'Advanced Features' },
-                {
-                    type: 'subheading', value: `<span class="icon-wrapper">
-                    <svg viewBox="0 0 24 24"><path d="M12 2v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="M20 12h2"></path><path d="m19.07 4.93-1.41 1.41"></path><path d="M15.947 12.65a4 4 0 0 0-5.925-4.128"></path><path d="M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"></path></svg>
-                 </span>
-                 <span>Weather Integration</span>`},
-                { type: 'paragraph', value: "Using Open-Meteo, the app fetches: Current temperature, Feels-like, Rain probability, Wind, Weather at arrival time, for journey planning This allows the AI to adjust trip suggestions (e.g., “Expect rain when you arrive at St. Stephen’s Green”)." },
-                { type: 'image', value: { src: 'images/dubtransit/dubweather.jpg', alt: "Screen showing weather details at the current location and destination location" } },
-                {
-                    type: 'subheading', value: `<span class="icon-wrapper">
-                   <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 12l-6.91 3.74L12 22l-3.09-6.26L2 12l6.91-3.74z"></path></svg>
-                 </span>
-                 <span>Gemini AI Journey Assistant</span>`},
-                { type: 'paragraph', value: "A central highlight of the project." },
-                { type: 'paragraph', value: "The assistant: Reads user’s start + destination, Checks possible transport modes, Considers weather conditions, Provides a human-readable plan, Gives suggestions (“Leave 10 minutes early, traffic is heavy near Drumcondra”)." },
-                { type: 'paragraph', value: "Gemini acts as the smart layer on top of the transit data." },
-                { type: 'image', value: { src: 'images/dubtransit/dubaiapp.jpg', alt: "Screen showing navigation details and steps" } },
-                { type: 'heading', value: 'Crowdsourced Real-Time Tracking (Future Feature)' },
-                { type: 'paragraph', value: "A key innovation planned for DubTransit is a community-powered real-time bus tracking system, designed to overcome the limitations of existing transport data sources in Dublin." },
-
-                { type: 'subheading', value: 'Why Crowdsourcing?' },
-                { type: 'paragraph', value: "GTFS-Realtime (GTFS-R) feeds are:" },
-                {
-                    type: 'box-list', value: ["often inconsistent or delayed",
-                        "missing direction accuracy",
-                        "expensive or restricted for developers",
-                        "unreliable for smaller-scale apps",
-                        "out of scope for a prototype project"]
-                },
-                { type: 'paragraph', value: "Although GTFS-Realtime is a standard, its accuracy in Dublin varies, and buses frequently jump, freeze, or move in the wrong direction, which is exactly what I experienced while testing." },
-                { type: 'paragraph', value: "Crowdsourcing solves this by decentralizing the live tracking system, similar to how Waze collects real-world traffic data from its drivers." },
-                { type: 'subheading', value: 'How the Crowdsourced System Works?' },
-                { type: 'paragraph', value: "With user consent, the app would:" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Detect when a passenger is inside a bus (based on movement patterns + manual confirmation).</span>`,
-                        `<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Upload minimal, anonymous data such as:</span>`,]
-                },
-                {
-                    type: 'box-list', value: ["GPS location",
-                        "Route number",
-                        "Timestamp"]
-                },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Combine data from multiple passengers on the same route.</span>`,
-                        `<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Smooth and interpolate positions on the backend to produce a highly accurate, real-time view.</span>`,]
-                },
-                { type: 'subheading', value: 'Privacy-Preserving Design' },
-                {
-                    type: 'lined-list', value: ["No personal identity stored",
-                        "No background tracking unless explicitly enabled",
-                        "Data expires and is deleted automatically after a few minutes",
-                        "Users opt-in on a per-trip basis"]
-                },
-                { type: 'heading', value: 'Limitations & Technical Challenges' },
-                { type: 'paragraph', value: "Crowdsourcing isn’t magic, it introduces a new set of challenges:" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Requires a critical mass of active users</span>`,]
-                },
-                { type: 'paragraph', value: "--(early versions may have sparse tracking)" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Data quality varies</span>`,]
-                },
-                { type: 'paragraph', value: "--(e.g., inaccurate GPS, people on the wrong bus)" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Requires server-side smoothing</span>`,]
-                },
-                { type: 'paragraph', value: "--(Kalman filtering, interpolation, direction correction)" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>Detecting whether a user is genuinely on a bus</span>`,]
-                },
-                { type: 'paragraph', value: "--(signal patterns, speed, or manual confirmation)" },
-                {
-                    type: 'list', value: [`<span class="icon-wrapper">
-                                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle></svg>
-                                        </span>
-                 <span>User outreach is essential</span>`,]
-                },
-                { type: 'paragraph', value: "--The quality of tracking depends directly on the number of participants." },
-                { type: 'paragraph', value: "I present these limitations openly as part of the project’s honest, real-world constraints." },
-                { type: 'heading', value: 'Prototype Status & Future Improvements' },
-                { type: 'subheading', value: 'The current version of DubTransit is a functional prototype, with:' },
-                {
-                    type: 'box-list', value: ["fully working AI-powered journey planner (Gemini API)",
-                        "Weather-aware routing using Open-Meteo",
-                        "Working route search, stop lookup, and route shapes",
-                        "Simulated live buses moving along real route geometry",
-                        "Cross-platform mobile UI built in React Native"
-                    ]
-                },
-                { type: 'subheading', value: 'What’s next?' },
-                { type: 'paragraph', value: "Here’s the roadmap for turning this into a full production app:" },
-                {
-                    type: 'roadmap', value: [
-                        {
-                            title: "Short-Term Goals",
-                            items: [
-                                "<strong>Crowdsourced GPS</strong><br>Backend Setup (User Opt-in)",
-                                "<strong>Push Notifications</strong><br>Delays & ETA Alerts",
-                                "<strong>Real GTFS-R</strong><br>Integration with Fallback",
-                                "<strong>Offline Caching</strong><br>For poor network areas",
-                                "<strong>Improved Onboarding</strong><br>User education flows",
-                                "<strong>Smarter AI</strong><br>Journey Tuning & Context"
-                            ]
-                        },
-                        {
-                            title: "Long-Term Goals",
-                            items: [
-                                "<strong>Real-Time Multimodal</strong><br>Bus + Luas + DART Unified",
-                                "<strong>Predictive Congestion</strong><br>Historical Traffic Models",
-                                "<strong>ML Delay Prediction</strong><br>Using Crowdsourced Data",
-                                "<strong>WearOS / Apple Watch</strong><br>Companion Experience",
-                                "<strong>Agency Partnerships</strong><br>Official Data Access",
-                                "<strong>Scale Infrastructure</strong><br>For City-Wide Adoption"
-                            ]
-                        }
-                    ]
-                },
-                { type: 'heading', value: 'Final Thoughts' },
-                { type: 'paragraph', value: "Dub.Transit represents more than a transit app, it’s a vision for a more efficient, accessible, and human-centered mobility experience in Dublin. This project brought together UX design, visual storytelling, mobile engineering, geospatial logic, AI integration, and systems thinking into one unified product." },
-                { type: 'paragraph', value: "The process taught me that designing for transit is ultimately designing for people: their routines, their anxieties, their unpredictability, and their need for clarity in moments of stress. By blending thoughtful design with emerging technologies like Gemini AI and future crowdsourced real-time data, Dub.Transit aims to make everyday commuting smoother, smarter, and more equitable." },
-                { type: 'quote', value: "“A developed country is not a place where the poor have cars. It's where the rich use public transportation.”", author: "Gustavo Petro (Former Mayor of Bogotá, Colombia)" },
-            ]
-        }
-    },
-    {
-        id: "city-beneaththesurface",
-        title: "City, Beneath the Surface",
-        category: "Data Visualization",
-        description: "An interactive data visualization and public installation that reveals the invisible labor sustaining cities by transforming public sentiment into dynamic visual form.",
-        image: "images/City/City_Main.jpg",
-        year: "2025",
-        tags: ["Information Design", "UX Design", "Data Visualization", "Public Installation", "Interactive Design"],
-        details: {
-            content: [
-                { type: 'image', value: { src: 'images/City/City_Title.jpg', alt: 'Title card showing "City, Beneath the Surface" over a visualization of interconnected bubbles.' } },
-                { type: 'quote', value: "“No work is insignificant. All labor that uplifts humanity has dignity and importance and should be undertaken with painstaking excellence.”", author: "Martin Luther King Jr." },
-                { type: 'heading', value: 'Project Overview' },
-                { type: 'paragraph', value: "City, Beneath the Surface is a data-driven interactive installation that reframes how we perceive care-based labor in cities. It visualizes the hidden hierarchies of essential workers — bus drivers, waste collectors, maintenance crews, and others — as dynamic bubble networks, transforming public sentiment and contextual data into living, responsive visuals.  \n\nBy situating the installation in everyday public spaces (bus stops, train stations), the project brings recognition to often unseen labor, sparking reflection on the value of those who sustain urban life." },
-                { type: 'heading', value: 'Context & Motivation' },
-                {
-                    type: 'list', value: ["Growing up in India, I observed cultural stigma toward manual and public-facing labor, often framed as “low-status” work.",
-                        "In contrast, while studying in Dublin, I noticed greater respect and infrastructural support for these workers, yet still a lack of emotional recognition.",
-                        "This project became both a personal reconciliation and a design intervention, aiming to shift public narratives by making invisible labor visible"]
-                },
-                { type: 'image', value: { src: 'images/City/City_Personal.jpg', alt: "Photograph of a street in India with visible waste, illustrating the project's personal motivation." } },
-                { type: 'quote', value: "“YOU WILL END UP PICKING TRASH, IF YOU DON'T STUDY WELL”", author: "A Random Teacher from My School" },
-                { type: 'heading', value: 'Problem Statement' },
-                { type: 'paragraph', value: "Despite being essential, care-based workers remain socially undervalued. Public frustration with systemic failures is often misdirected toward visible figures like drivers or cleaners, reinforcing stigma and invisibility" },
-                { type: 'heading', value: 'Research Question' },
-                { type: 'paragraph', value: "How might contextual data visualization be used to reframe public narratives surrounding care-based labor?" },
-                { type: 'image', value: { src: 'images/City/City_Ran.jpg', alt: "A person interacting with the 'City, Beneath the Surface' installation on a large public screen." } },
-                { type: 'heading', value: 'Objectives' },
-                {
-                    type: 'list', value: ["Expose the hidden tiers of labor that sustain the city.",
-                        "Collect and visualize sentiment data around urban workers.",
-                        "Build a responsive installation that shifts based on public interaction.",
-                        "Challenge stigma by connecting emotions, data, and design."]
-                },
-                { type: 'heading', value: 'Design Concept' },
-                { type: 'image', value: { src: 'images/City/City_Diag.jpg', alt: "Diagram illustrating the project's design concept: data input leads to interactive visualization and an AR layer." } },
-                {
-                    type: 'list', value: ["Dynamic Bubbles: Each sector of urban labor (waste, water, transport, construction, electrical, sanitation, emergency, etc.) is represented as a parent bubble. Roles and sub-roles emerge around it, creating a living hierarchy of workers.",
-                        "Network Visualization: The installation shows how different sectors connect and interdepend to keep the city functioning, emphasizing systemic collaboration rather than isolated roles.",
-                        "Public Interaction: Users can tap or click bubbles to reveal details about roles, responsibilities, and worker counts within each sector.",
-                        "Augmented Reality Layer: In the mobile app, the AR view links the virtual system to real-world objects. For example, pointing at a bus, trash can, or streetlight reveals the associated bubble, its sector, and data about the number of workers behind it.",
-                        "Atmosphere: Idle animations and floating motion give the system a “living” quality, symbolizing the ongoing, often unnoticed work beneath the city."]
-                },
-                { type: 'heading', value: 'Theoretical Frameworks' },
-                { type: 'list', value: ["Everyday Life and Cultural Theory (Ben Highmore) → Centers ordinary, undervalued labor as culturally significant."] },
-                { type: 'image', value: { src: 'images/City/City_T1.jpg', alt: "Slide explaining the theoretical framework of 'Everyday Life and Cultural Theory by Ben Highmore'." } },
-                { type: 'list', value: ["Maintenance and Care (Shannon Mattern) → Frames maintenance as essential, emotional, and infrastructural labor."] },
-                { type: 'image', value: { src: 'images/City/City_T2.jpg', alt: "Slide explaining the theoretical framework of 'Maintenance and Care by Shannon Mattern'." } },
-                { type: 'list', value: ["Convergence Culture (Henry Jenkins) → Informs how public narratives and digital participation shape collective meaning."] },
-                { type: 'image', value: { src: 'images/City/City_T3.jpg', alt: "Slide explaining the theoretical framework of 'Convergence Culture by Henry Jenkins'." } },
-                { type: 'paragraph', value: "<em>These frameworks guided the design in making invisible work visible, reframing workers not just as functional roles but as vital cultural and social contributors.</em>" },
-                { type: 'heading', value: 'Tools & Development' },
-                { type: 'list', value: ["Early Prototyping: Initial concepts tested in p5.js to explore visual states and interaction ideas. Some other concepts were also explored, using 3D models and map data of the city."] },
-                { type: 'paragraph', value: "Prototype using map data and 3D models in blender" },
-                { type: 'image', value: { src: 'images/City/City_Prot1.jpg', alt: "Early 3D prototype showing a map of a city with data points rendered in Blender." } },
-                { type: 'paragraph', value: "Second Prototype using p5.js" },
-                { type: 'image', value: { src: 'images/City/City_Prot2.jpg', alt: "Screenshot of a p5.js prototype with colorful circular data points on a dark background." } },
-                { type: 'list', value: ["Final Implementation: Live Interactive Installation"] },
-                { type: 'paragraph', value: "Built as a web-based interactive installation with an accompanying mobile AR app." },
-                { type: 'list', value: ["Development Workflow: Iteratively coded using ChatGPT, Claude.ai, and Google AI Studio, with final refinements and debugging done manually."] },
-                { type: 'image', value: { src: 'images/City/City_AI.jpg', alt: "Screenshot of code being generated using an AI tool, illustrating the project's development workflow." } },
-                { type: 'list', value: ["Delivery Platforms: Public Installation → large screen or projection in transit hubs. Mobile Application → includes Hierarchy View and AR View linking bubbles to real-world city objects."] },
-                { type: 'heading', value: 'User Journey - Storyboard' },
-                { type: 'image', value: { src: 'images/City/City_User.jpg', alt: "A three-panel storyboard showing a user's journey from seeing the installation to interacting with it." } },
-                { type: 'heading', value: 'Final Output' },
-                { type: 'list', value: ["Mobile AR App UI Prototypes: Extends the installation into everyday life, letting users scan familiar city objects to uncover the workers and systems behind them.",] },
-                { type: 'image', value: { src: 'images/City/City_App.jpg', alt: "UI mockups of the mobile AR app, showing the hierarchy view and the camera-based AR view." } },
-                { type: 'list', value: ["Interactive Visualization: A responsive bubble system representing the city’s essential workers.",] },
-                { type: 'iframe', value: { src: 'https://city-beneath-surface.netlify.app/', title: 'City, Beneath the Surface - Live Installation' } },
-                { type: 'paragraph', value: 'You can also <a href="https://city-beneath-surface.netlify.app/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">open the installation in a new tab</a> to explore it fully.' },
-                {
-                    type: 'list', value: ["Exhibition Setup: Designed for public spaces where passersby can engage with the installation and explore hidden labor systems.",
-                        "Message: Cities thrive because of invisible labor — this project transforms that invisibility into a visible, interactive network.",]
-                },
-                { type: 'heading', value: 'Reflection' },
-                { type: 'paragraph', value: "This project taught me how design, data, and empathy can merge into impactful public interventions. It demonstrated:" },
-                {
-                    type: 'list', value: ["The power of interactive visualization in making complex labor systems approachable and humanized.",
-                        "How accurate datasets (not just sentiment) can ground storytelling in realism while still keeping the experience poetic and engaging.",
-                        "The potential and limits of AI-assisted coding as a design partner, and the importance of taking creative control in the final refinements.",
-                        "The need to balance clarity and exploration, ensuring accessibility for the general public while keeping the experience compelling for institutions and stakeholders."]
-                },
-                { type: 'image', value: { src: 'images/City/City_Last.jpg', alt: "Final exhibition shot of the data visualization glowing on a screen in a dark room." } },
-            ]
-        }
-    },
-    {
-        id: "theyyam-threads",
-        title: "Theyyam Threads",
-        category: "Visual Design",
-        description: "A project encapsulating Kerala's Theyyam art form into modern wearable art, blending tradition with contemporary design.",
-        image: "images/Theyyam/Theyyam_1.jpg",
-        year: "2023",
-        tags: ["T-Shirt", "Visual Communication", "Fashion"],
-        details: {
-            content: [
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_3.jpg', alt: "Closeup of the 'Theyyam Threads' t-shirt design, a powerful black and white graphic of a Theyyam face." } },
-                { type: 'quote', value: "“He was made man that we might be made God”", author: "St. Athanasius of Alexandria" },
-                { type: 'heading', value: 'Project Overview' },
-                { type: 'paragraph', value: "'Theyyam Threads' is a unique project encapsulating the essence of Kerala's vibrant Theyyam art form into modern wearable art. Inspired by the rich cultural heritage of Kerala, this project seamlessly blends tradition with contemporary design, resulting in visually stunning and culturally significant t-shirt designs." },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_2.jpg', alt: "A person wearing the Theyyam t-shirt, looking away from the camera in a stylish pose." } },
-                { type: 'heading', value: 'Colors' },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_col.jpg', alt: "Color palette for the project, showing primary red, yellow, and black inspired by Theyyam costumes." } },
-                { type: 'heading', value: 'Inspirations' },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_insp.jpg', alt: "A grid of inspiration photos showing the vibrant colors and intense expressions of Theyyam performers." } },
-                { type: 'heading', value: 'Development' },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_dev1.jpg', alt: "Initial pencil sketches exploring different compositions for the Theyyam face graphic." } },
-                { type: 'paragraph', value: "Sketch was made as a joint effort of me and my friend Adithya. We tried to explore several forms based on our references and came up with the idea of just the facial expression of Theyyam. Some sparks were also added later in front to show the intense artform." },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_dev2.jpg', alt: "Digital illustration of the Theyyam graphic in progress, showing monochrome vector lines." } },
-                { type: 'paragraph', value: "Later we decided to go with a  monochrome approach, showing just the black and white elements." },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_dev3.jpg', alt: "Refined digital version of the Theyyam graphic with added details and textures." } },
-                { type: 'paragraph', value: "Some extra details were added to make the design more likeable by the youth." },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_8.jpg', alt: "The final Theyyam graphic with added spark and grunge details for a modern feel." } },
-                { type: 'heading', value: 'Learnings' },
-                { type: 'paragraph', value: "Beyond mere aesthetics, this project delves deeper into the cultural significance and historical roots of Theyyam, aiming to foster a deeper appreciation and understanding of Kerala's cultural heritage. Through thoughtful artwork and design choices, 'Theyyam Threads' serves as a platform for cultural exchange and celebration, bridging the gap between tradition and modernity." },
-                { type: 'image', value: { src: 'images/Theyyam/Theyyam_tshirt.jpg', alt: "Mockup of the final design on a black t-shirt." } },
-            ]
-        }
-    },
-    {
-        id: "artbox",
-        title: "ArtBox",
-        category: "Product Design",
-        description: "A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.",
-        imageDesktop: "images/Artbox/Artbox.jpg",
-        imageMobile: "images/Artbox/ArtboxS.jpg",
-        year: "2022",
-        tags: ["Brand", "Packaging", "UX Design", "Service Design"],
-        details: {
-            content: [
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Title.jpg', alt: "Title image for the ArtBox project, displaying the logo and tagline on a branded box." } },
-                { type: 'heading', value: 'Area of Intervention' },
-                { type: 'paragraph', value: "After some deliberation, we narrowed it down to three sectors namely education, health and small businesses. We tried to identify various problems these sectors face to help us weigh in between these." },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_1.jpg', alt: "Mind map diagram exploring problem areas in education, health, and small business sectors." } },
-                { type: 'heading', value: 'Design Model' },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Model.jpg', alt: "Diagram showing the ArtBox service design model connecting artisans, the platform, and customers." } },
-                { type: 'heading', value: 'Visual Identity' },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Visual1.jpg', alt: "Visual identity board for ArtBox, showing the logo, color palette, and typography." } },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Visual2.jpg', alt: "Second visual identity board for ArtBox, showing iconography and brand patterns." } },
-                { type: 'heading', value: 'User Flow' },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Userflow.jpg', alt: "A user flow diagram mapping the customer's journey from discovery to receiving their ArtBox kit." } },
-                { type: 'heading', value: 'Prototypes' },
-                { type: 'paragraph', value: "Website" },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Website.jpg', alt: "Screenshots of the ArtBox website user interface, showing the homepage and product pages." } },
-                { type: 'paragraph', value: "Product" },
-                { type: 'image', value: { src: 'images/Artbox/Artbox_Product.jpg', alt: "Photographs of the physical ArtBox product: a beautifully packaged craft kit with tools and materials." } },
-            ]
-        }
-    },
-    {
-        id: "aujus",
-        title: "Aujus",
-        category: "System Design",
-        description: "A 5-week semester project to understand and design for complex, interconnected socio-economic problems.",
-        imageDesktop: "images/Aujus/Aujus.jpg",
-        imageMobile: "images/Aujus/AujusS.jpg",
-        year: "2022",
-        tags: ["System Design", "Service Design", "Wayfinding", "UX/UI"],
-        details: {
-            content: [
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Title.jpg', alt: "Title card for the Aujus project with its logo and a brief description." } },
-                { type: 'heading', value: 'Initial Steps' },
-                { type: 'heading', value: 'Understanding Medical Systems' },
-                { type: 'paragraph', value: "We started by looking at problem areas within a medical system, starting with an initial study by looking into the normal procedures happening inside a hospital." },
-                { type: 'paragraph', value: "We looked at various departments and their functions inside hospitals." },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_1.jpg', alt: "Diagram mapping the different departments and functions within a hospital system." } },
-                { type: 'heading', value: 'Identifying system components' },
-                { type: 'paragraph', value: "We started our process by looking studying how, where and why datas are collected inside hospitals and identified the  system components which helps us to evaluate the system." },
-                { type: 'paragraph', value: "We identified the components through an entity relationship mapping of the hospital." },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_entity.jpg', alt: "An entity-relationship diagram illustrating the data connections within a hospital." } },
-                { type: 'paragraph', value: "Entity-relationship mapping" },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_comp.jpg', alt: "A list of identified system components, such as patient data, diagnosis, and medical records." } },
-                { type: 'paragraph', value: "Identified system components" },
-                { type: 'heading', value: 'Connection circles' },
-                { type: 'paragraph', value: "In the process of identifying system components we started grouping these identified system components which are patient information, patient diagnosis, and medical research." },
-                { type: 'paragraph', value: "Negative and positive connections are shown with red and green coloured arrows, respectively, with the direction of the connections." },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Pat.jpg', alt: "Connection circle diagram showing the relationships within patient information data." } },
-                { type: 'paragraph', value: "Patient info" },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Med.jpg', alt: "Connection circle diagram showing the relationships within medical research data." } },
-                { type: 'paragraph', value: "Medical Research" },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Diag.jpg', alt: "Connection circle diagram showing the relationships within patient diagnosis data." } },
-                { type: 'paragraph', value: "Patient diagnosis" },
-                { type: 'heading', value: 'System Implementation' },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Sys1.jpg', alt: "System flow diagram identifying points of data entry." } },
-                { type: 'paragraph', value: "Identified areas of data entry and data accessing in the system." },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Sys2.jpg', alt: "System flow diagram identifying points of data access for patients and medical staff." } },
-                { type: 'heading', value: 'AUJUS' },
-                { type: 'paragraph', value: "Aujus is a system with centralised medical database where data can be entered and accessed by the patients from anywhere at any point." },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Card.jpg', alt: "Closeup of the Aujus medical information card design." } },
-                { type: 'image', value: { src: 'images/Aujus/Aujus_Screen.jpg', alt: "Mockup of the Aujus user interface on a screen, displaying patient medical data." } },
-            ]
-        }
-    },
-    {
-        id: "3dtype",
-        title: "3D Typography",
-        category: "3D Art",
-        description: "Crafted using Blender, each letter is a blend of creativity and technical skill. ",
-        imageDesktop: "images/3D/3D_Title.jpg",
-        imageMobile: "images/3D/3D_TitleS.jpg",
-        year: "2023",
-        tags: ["3D", "Blender", "Art"],
-        details: {
-            content: [
-                { type: 'heading', value: 'About' },
-                { type: 'paragraph', value: "In this 3D Typography Project, I've brought letters A to G to life in stunning three-dimensional form. Crafted using Blender, each letter is a blend of creativity and technical skill. While my academic commitments paused the project, these letters stand as a testament to my passion for design and innovation. Explore the fusion of artistry and technology in this captivating showcase of 3D typography." },
-                { type: 'heading', value: 'Letter a' },
-                { type: 'image', value: { src: 'images/3D/3D_a.jpg', alt: "A 3D rendering of the letter 'A' as an abstract shape with white fur and a marble texture." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/851099588?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="A"></iframe>` },
-                { type: 'paragraph', value: "Made it into an abstract form.  Added some hair using particle system. And a marble texture was created procedurally using nodes in blender." },
-                { type: 'heading', value: 'Letter b' },
-                { type: 'image', value: { src: 'images/3D/3D_b.jpg', alt: "A diesel-punk themed letter 'B' made of metal with glowing orange lights and flames." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/851099981?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="B"></iframe>` },
-                { type: 'paragraph', value: "Went with diesel punk theme for this. Created some flames and light emission animations" },
-                { type: 'heading', value: 'Letter c' },
-                { type: 'image', value: { src: 'images/3D/3D_c.jpg', alt: "A playful 3D letter 'C' designed to look like a piece of Swiss cheese." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/851101527?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="C"></iframe>` },
-                { type: 'paragraph', value: "Made C into cheese. Created some extra elements using geometry nodes and scattered them across." },
-                { type: 'heading', value: 'Letter d' },
-                { type: 'image', value: { src: 'images/3D/3D_d.jpg', alt: "A furry, orange 3D letter 'D' with smaller 'D' shapes attached to its hair." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/851102005?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="D"></iframe>` },
-                { type: 'paragraph', value: "Created some hair and parented some extra D elements for this one." },
-                { type: 'heading', value: 'Letter e' },
-                { type: 'image', value: { src: 'images/3D/3D_e.jpg', alt: "A 3D letter 'E' made of a reflective, iridescent material that transitions through colors." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/851102127?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="E"></iframe>` },
-                { type: 'paragraph', value: "Made two elements and a ring at the middle to transition between the both." },
-                { type: 'heading', value: 'Letter f' },
-                { type: 'image', value: { src: 'images/3D/3D_f.jpg', alt: "A 3D letter 'F' composed of many small, transparent bubbles against a blue background." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/851102860?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="F"></iframe>` },
-                { type: 'paragraph', value: "Created random bubbles and made a simple animation using geometry nodes." },
-                { type: 'heading', value: 'Letter g' },
-                { type: 'image', value: { src: 'images/3D/3D_g.jpg', alt: "A 3D letter 'G' with a grassy texture and a rope element wrapping around it." } },
-                { type: 'video', value: `<iframe src="https://player.vimeo.com/video/935374270?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="G"></iframe>` },
-                { type: 'paragraph', value: "Made a grass form for the circular element and a rope to go around it. Animated the wind on the grass, as well as the rope movement." },
-
-            ]
-        }
-    },
-    {
-        id: "revvedup",
-        title: "Revved Up - 3D Cars in motion",
-        category: "3D",
-        description: "Animated 3D cars, including original models created in Blender, showcasing modeling and motion skills. ",
-        image: "images/Cars/Cars_Main.jpg",
-        year: "2023",
-        tags: ["3D Modeling", "Blender", "Art", "Animation"],
-        details: {
-            content: [
-                { type: 'heading', value: 'About' },
-                { type: 'paragraph', value: "In this project, I've meticulously crafted and animated a collection of stunning car models using Blender. Through the magic of animation, I have made some of these cars come to life, showcasing their agility, power, and elegance in dynamic motion." },
-                { type: 'heading', value: 'Rendered Stills' },
-                { type: 'image', value: { src: 'images/Cars/Cars_Img1.jpg', alt: "A beautifully lit 3D render of a classic Honda Civic in a photorealistic studio setting." } },
-                { type: 'paragraph', value: "Some models were created from scratch, focusing on realistic materials and lighting." },
-                { type: 'image', value: { src: 'images/Cars/Cars_Img2.jpg', alt: "A 3D model of a vintage Honda Civic shown in a clay render style to highlight its form." } },
-                { type: 'heading', value: 'Interactive 3D Models' },
-                { type: 'paragraph', value: 'You can interact with the models below. Click and drag to rotate, scroll to zoom, and right-click to pan.' },
-                { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="Honda Civic First Generation" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share" src="https://sketchfab.com/models/9d71ea92a33c4a1e82cc589730822f63/embed?autospin=1&autostart=1"> </iframe> </div>` },
-                { type: 'sketchfab', value: `<div class="sketchfab-embed-wrapper"> <iframe title="SB1 Civic in Naked Style" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share" src="https://sketchfab.com/models/fab52fc398b44564be1b22f8a4dbf23c/embed?autospin=1&autostart=1"> </iframe> </div>` },
-                { type: 'heading', value: 'Videos' },
-                { type: 'paragraph', value: "The animation showcases 3D cars modeled in Blender, driving through richly detailed environments composed of sourced elements. The project highlights both modeling and animation skills, bringing vehicles to life within dynamic scenes." },
-                { type: 'video', isPortrait: true, value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935375739?h=783ccfb540" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
-                { type: 'video', isPortrait: true, value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935377589?h=b915c93a62" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
-                { type: 'video', isPortrait: true, value: `<iframe title="vimeo-player" src="https://player.vimeo.com/video/935377842?h=b5226399db" width="640" height="360" frameborder="0" referrerpolicy="strict-origin-when-cross-origin" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"   allowfullscreen></iframe>` },
-            ]
-        }
-    },
-    {
-        id: "christmas-party",
-        title: "Christmas Party - Dublin",
-        category: "Photography",
-        description: "A low-light photo series capturing the energy, emotion, and joy of a student Christmas party. ",
-        image: "images/Christ/Christ_Main.jpg",
-        year: "2024",
-        tags: ["Photography", "Lightroom", "Photoshop"],
-        details: {
-            content: [
-                { type: 'heading', value: 'About' },
-                { type: 'paragraph', value: "This photo series captures the electric energy and intimacy of a student-led Christmas party. From close-knit conversations under warm lights to moments of pure joy on the dance floor, these images celebrate youth, expression, and the unfiltered warmth of festive gatherings. The shoot focuses on movement, emotion, and the interplay of dynamic lighting in a club environment. I approached this project with a low-light documentary style, aiming to preserve the authenticity of the atmosphere without flash interference. Each shot was composed to retain the ambient hues, stage lights, and crowd interactions that define nightlife storytelling." },
-                { type: 'heading', value: 'Lights and connection' },
-                { type: 'paragraph', value: "where dance becomes conversation" },
-                { type: 'image', value: { src: 'images/Christ/Christ_1.jpg', alt: "A candid photo of a DJ at a Christmas party, focused on their hands on the turntables with the crowd blurred." } },
-                { type: 'paragraph', value: 'Shortlisted for the Fujifilm Life As You See It Competition 2025. <a href="https://www.fujifilm-houseofphotography.com/life-as-you-see-it-2025/" target="_blank" rel="noopener noreferrer" class="underline hover:text-[#DDA853]">CLick here to know more about the Competition.</a>' },
-                { type: 'heading', value: 'Gear' },
-                { type: 'list', value: ["Fujifilm X-T5 + 30mm f/1.4 Lens"] },
-                { type: 'paragraph', value: " Ideal for low-light detail, shallow depth of field, and capturing color fidelity in dim conditions." },
-                { type: 'list', value: ["Sony A6400 + 18-55mm f/3.5–5.6"] },
-                { type: 'paragraph', value: " Versatile for wider scenes, DJ booth shots, and dynamic zoom-in portraits." },
-                { type: 'heading', value: 'Gallery' },
-                {
-                    type: 'gallery', value: [
-                        { src: 'images/Christ/Christ_2.jpg', alt: 'Two people laughing together on the dance floor, bathed in warm ambient light.' },
-                        { src: 'images/Christ/Christ_3.jpg', alt: 'A high-energy shot of the crowd dancing, with motion blur capturing the movement.' },
-                        { src: 'images/Christ/Christ_4.jpg', alt: 'A singer performing on stage, silhouetted against bright concert lighting.' },
-                        { src: 'images/Christ/Christ_5.jpg', alt: 'An intimate moment of two friends talking away from the main dance floor.' }
-                    ]
-                },
-                { type: 'heading', value: 'Post-Processing' },
-                { type: 'list', value: ["Color correction for ambient light consistency, using Adobe Lightroom", "Noise reduction selectively applied to maintain texture.", "Cropped for cinematic balance while preserving crowd energy."] },
-                { type: 'paragraph', value: "This Christmas party series was more than just an exercise in event photography, it was a study in atmosphere, spontaneity, and human connections. Working in a challenging low-light environment pushed me to embrace the unpredictability of club lighting and focus on capturing raw, honest moments rather than posed perfections. The project reinforced the value of observation, knowing when to step in, when to wait, and how to let the ambient mood shape each frame. As a photographer, it reminded me that even in the most chaotic settings, there's always a story unfolding, if you’re willing to look for it." },
-                { type: 'image', value: { src: 'images/Christ/Christ_6.jpg', alt: "A wide shot of the entire venue, showing the packed dance floor and festive decorations." } },
-            ]
-        }
-    },
-
-];
-
-// [KEEP PROJECTS ARRAY]
-
-document.addEventListener('DOMContentLoaded', () => {
-
-    // --- 1. INTRO ---
-    let isIntroActive = true;
-    const introOverlay = document.getElementById('intro-overlay');
-    const skipBtn = document.getElementById('skip-intro');
-    if (skipBtn) {
-        skipBtn.addEventListener('click', () => {
-            introOverlay.style.transform = 'translateY(-100%)';
-            isIntroActive = false;
-            document.body.classList.remove('is-loading');
-            document.documentElement.classList.remove('is-loading');
-        });
-    }
-
-
-
-    // --- 2. SETUP ---
-    const track = document.getElementById('projects-track');
-    const scrollContainer = document.getElementById('horizontal-scroll');
-
-    let isLocked = false;
-    let activeIndex = -1;
-    let suppressPreviewClicksUntil = 0;
-    const closePressEvent = window.PointerEvent ? 'pointerdown' : 'touchstart';
-    let selectorApi = null;
-    let savedScrollPosition = 0;
-    let savedMobileScrollPosition = 0;
-
-    // --- 3. RENDER LOOP ---
-    projects.forEach((p, index) => {
-        const section = document.createElement('article');
-        section.className = 'project-panel group';
-        section.dataset.index = index;
-
-        const imgSrc = p.imageDesktop || p.image;
-
-        section.innerHTML = `
-            <div class="close-btn text-[#16404D] hover:scale-110 transition-transform">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </div>
-
-            <div class="panel-preview cursor-pointer">
-                
-                <div class="preview-content w-full max-w-[550px] mx-auto flex flex-col justify-center relative z-10">
-                    
-                    <div class="panel-image-wrapper mb-8 overflow-hidden rounded-md aspect-video">
-                        <img src="${imgSrc}" alt="${p.title}" class="panel-image object-cover w-full h-full transition-transform duration-75">
-                    </div>
-
-                    <div class="flex flex-col items-start gap-2 w-full">
-                        <span class="text-[#DDA853] text-xs font-bold tracking-widest uppercase">${p.category}</span>
-                        <h3 class="font-serif text-3xl md:text-4xl leading-tight group-hover:text-[#A6CDC6] transition-colors">${p.title}</h3>
-                        <p class="text-[#FBF5DD]/60 text-sm md:text-base mt-2 line-clamp-3">${p.description}</p>
-                        <div class="view-btn mt-6 flex items-center gap-2 text-xs border border-[#FBF5DD]/20 rounded-full px-4 py-2 group-hover:bg-[#FBF5DD] group-hover:text-[#111] transition-all">
-                            <span>VIEW PROJECT</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <span class="absolute bottom-10 left-10 text-[6rem] font-serif opacity-5 select-none pointer-events-none text-white stroke-text z-0">
-                    0${index + 1}
-                </span>
-            </div>
-
-            <div class="panel-details">
-                <div class="details-inner max-w-5xl mx-auto px-0 md:px-12 md:px-16 pb-16 pt-12"></div>
-            </div>
-        `;
-
-        const previewSide = section.querySelector('.panel-preview');
-        const closeBtn = section.querySelector('.close-btn');
-
-        previewSide.addEventListener('click', () => {
-            if (Date.now() < suppressPreviewClicksUntil) return;
-            if (activeIndex === index) return;
-            expandProject(index);
-        });
-
-        let closeHandledOnPress = false;
-
-        const handleCloseProject = (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            suppressPreviewClicksUntil = Date.now() + 450;
-            collapseProject();
-        };
-
-        closeBtn.addEventListener(closePressEvent, (e) => {
-            closeHandledOnPress = true;
-            handleCloseProject(e);
-        });
-
-        closeBtn.addEventListener('click', (e) => {
-            if (closeHandledOnPress) {
-                closeHandledOnPress = false;
-                e.preventDefault();
-                e.stopPropagation();
-                return;
+                row.appendChild(col);
+              });
             }
-            handleCloseProject(e);
-        });
+            node.appendChild(row);
+            if (li < layers.length - 1) {
+              var conn = mk('div', 'cs-arch__connector');
+              conn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg>';
+              node.appendChild(conn);
+            }
+          });
+          break;
+        }
 
-        track.appendChild(section);
+        case 'concept-grid': {
+          node = mk('div', 'cs-concept');
+          if (v.title) node.appendChild(mk('div', 'cs-label', v.title));
+          var cg = mk('div', 'cs-concept__grid');
+          var citems = Array.isArray(v) ? v : (v.items || []);
+          citems.forEach(function (it) {
+            var card = mk('div', 'cs-concept__card');
+            card.appendChild(mk('div', 'cs-concept__t', it.title || it.name || ''));
+            if (it.description || it.text) card.appendChild(mk('div', 'cs-concept__d', it.description || it.text));
+            cg.appendChild(card);
+          });
+          node.appendChild(cg);
+          break;
+        }
+
+        case 'snake-flow':
+        case 'flow':
+        case 'horizontal-flow': {
+          var steps = Array.isArray(v) ? v : (v.items || v.steps || []);
+          var last = String(steps[steps.length - 1] || '').toLowerCase();
+          var isLoop = /repeat|cycle|loop|back to|returns to/.test(last);
+
+          node = mk('div', 'cs-flow' + (isLoop ? ' cs-flow--loop' : ''));
+          if (v.title) node.appendChild(mk('div', 'cs-label', v.title));
+
+          var track = mk('div', 'cs-flow__track');
+          steps.forEach(function (it, i) {
+            var step = mk('div', 'cs-flow__step');
+            var num = mk('span', 'cs-flow__num', isLoop ? String(i + 1) : String(i + 1));
+            var txt = mk('span', 'cs-flow__txt');
+            txt.innerHTML = (typeof it === 'string') ? it : (it.title || it.label || it.text || '');
+            step.appendChild(num);
+            step.appendChild(txt);
+            // the final step of a loop is the "return" marker
+            if (isLoop && i === steps.length - 1) step.classList.add('cs-flow__step--return');
+            track.appendChild(step);
+
+            if (i < steps.length - 1) {
+              var conn = mk('span', 'cs-flow__arrow');
+              conn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+              track.appendChild(conn);
+            }
+          });
+          node.appendChild(track);
+
+          // for loops, add an explicit "returns to start" ribbon
+          if (isLoop) {
+            var ribbon = mk('div', 'cs-flow__loopback');
+            ribbon.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.4 2.6L3 8"/><path d="M3 3v5h5"/></svg><span>Loops back to the start — the cycle repeats</span>';
+            node.appendChild(ribbon);
+          }
+          break;
+        }
+
+        case 'roadmap': {
+          node = mk('div', 'cs-road');
+          (v.phases || v.items || v).forEach(function (ph) {
+            var item = mk('div', 'cs-road__item');
+            item.appendChild(mk('div', 'cs-road__phase', ph.phase || ph.title || ''));
+            var bod = mk('div', 'cs-road__body');
+            if (ph.title && ph.phase) bod.appendChild(mk('h4', null, ph.title));
+            var ul2 = mk('ul');
+            (ph.items || ph.points || []).forEach(function (p2) { ul2.appendChild(mk('li', null, p2)); });
+            bod.appendChild(ul2);
+            item.appendChild(bod);
+            node.appendChild(item);
+          });
+          break;
+        }
+
+        case 'iframe': {
+          node = mk('div', 'cs-frame');
+          var fr = mk('iframe');
+          fr.src = v.src; fr.title = v.title || 'Embedded content';
+          fr.loading = 'lazy';
+          fr.setAttribute('allowfullscreen', '');
+          node.appendChild(fr);
+          break;
+        }
+
+        case 'video': {
+          node = mk('video', 'cs-video');
+          node.src = v.src || v;
+          node.controls = true; node.muted = true; node.loop = true;
+          node.setAttribute('playsinline', '');
+          if (v.poster) node.poster = v.poster;
+          break;
+        }
+
+        case 'mobile-demo': {
+          node = mk('div', 'cs-phone');
+          var demoUrl = typeof v === 'string' ? v : (v.src || v.url || v.image);
+          if (typeof demoUrl === 'string' && /^https?:\/\//i.test(demoUrl)) {
+            var frame = mk('iframe');
+            frame.src = demoUrl;
+            frame.title = 'Live prototype preview';
+            frame.loading = 'lazy';
+            frame.setAttribute('allowfullscreen', '');
+            frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+            node.appendChild(frame);
+          } else if (v && (v.video || (v.src && /\.(mp4|webm)$/i.test(v.src)))) {
+            var mv = mk('video');
+            mv.src = v.video || v.src;
+            mv.autoplay = true; mv.muted = true; mv.loop = true;
+            mv.setAttribute('playsinline', '');
+            node.appendChild(mv);
+          } else {
+            var mi = mk('img');
+            mi.src = demoUrl || '';
+            mi.alt = (typeof v === 'object' && v.alt) ? v.alt : 'Mobile demo preview';
+            mi.loading = 'lazy';
+            node.appendChild(mi);
+          }
+          break;
+        }
+
+        default: {
+          // unknown block: render any text we can find rather than dropping it
+          if (typeof v === 'string') node = mk('p', null, v);
+          break;
+        }
+      }
+
+      if (node) into.appendChild(node);
+    });
+  }
+
+  function openProject(id) {
+    var data = projectData[id];
+    if (!modal || !data) return;
+
+    modalLastFocused = document.activeElement;
+
+    // Update Top Navigation
+    var modalTopCat = document.getElementById('projectModalTopCat');
+    if (modalTopCat) modalTopCat.textContent = data.category;
+
+    // Handle Hero Image
+    modalPlate.style.setProperty('--phue', data.hue);
+    var existingHero = modalPlate.querySelector('img');
+    if (existingHero) existingHero.remove();
+    if (data.image) {
+      var hero = document.createElement('img');
+      hero.src = data.image;
+      hero.alt = data.title;
+      hero.className = 'project-modal__hero';
+      modalPlate.appendChild(hero);
+      modalPlateLabel.style.display = 'none';
+    } else {
+      modalPlateLabel.style.display = '';
+      modalPlateLabel.textContent = data.title;
+    }
+
+    // Flatten tags into the Meta Row (Year · Category · Tags...)
+    modalMeta.innerHTML = '';
+    var metaArr = [data.year, data.category].concat(data.tags || []);
+    metaArr.forEach(function (text, i) {
+      if (i > 0) {
+        var dot = document.createElement('span');
+        dot.className = 'metarow__dot';
+        dot.textContent = '·';
+        modalMeta.appendChild(dot);
+      }
+      var span = document.createElement('span');
+      span.textContent = text;
+      modalMeta.appendChild(span);
     });
 
+    modalTitle.textContent = data.title;
+    modalDesc.textContent = data.description;
 
+    renderBlocks(data.content, modalContent);
 
-
-
-    // --- 4. EXPAND / LOCK LOGIC ---
-    function expandProject(index) {
-        if (activeIndex !== -1) collapseProject();
-
-        activeIndex = index;
-        isLocked = true;
-
-        // Update URL for deep linking
-        if (projects[index] && projects[index].id) {
-            const url = new URL(window.location);
-            url.searchParams.set('project', projects[index].id);
-            window.history.pushState({ projectId: projects[index].id }, '', url);
-        }
-
-        if (selectorApi) selectorApi.setActive(index, true);
-
-        // Capture scroll BEFORE classes that reset it
-        if (window.innerWidth < 768) {
-            savedMobileScrollPosition = window.scrollY;
-        }
-
-        document.documentElement.classList.add('project-open');
-        document.body.classList.add('project-open');
-
-        const ambientBg = document.getElementById('ambient-background');
-        if (ambientBg) ambientBg.style.opacity = '0.05';
-
-        const panel = track.children[index];
-        const contentContainer = panel.querySelector('.details-inner');
-
-        populateContent(projects[index], contentContainer);
-
-        if (window.innerWidth >= 768) {
-            // DESKTOP: Horizontal Logic
-            savedScrollPosition = targetScroll;
-            const targetPanelScroll = panel.offsetLeft;
-            scrollContainer.scrollTo({ left: targetPanelScroll, behavior: 'smooth' });
-
-            setTimeout(() => {
-                panel.classList.add('is-expanded');
-                document.body.classList.add('overflow-hidden');
-                scrollContainer.scrollLeft = panel.offsetLeft;
-            }, 300);
-
-        } else {
-            // MOBILE: Modal Logic
-            panel.classList.add('is-expanded');
-            document.body.classList.add('overflow-hidden'); // Locks background
-            panel.scrollTop = 0; // Resets modal scroll to top
-        }
+    // Setup Next Project Footer Button
+    var keys = Object.keys(projectData);
+    var currIdx = keys.indexOf(id);
+    var nextIdx = (currIdx + 1) % keys.length;
+    var nextId = keys[nextIdx];
+    var nextBtn = document.getElementById('projectModalNextTitle');
+    
+    if (nextBtn) {
+      nextBtn.textContent = projectData[nextId].title;
+      nextBtn.onclick = function() {
+        if (modalScroll) modalScroll.scrollTop = 0;
+        openProject(nextId);
+      };
     }
 
-    function collapseProject() {
-        if (activeIndex === -1) return;
-        suppressPreviewClicksUntil = Date.now() + 450;
+    modal.setAttribute('aria-hidden', 'false');
+    body.classList.add('modal-open');
+    document.addEventListener('keydown', onModalKeydown);
+    if (modalScroll) modalScroll.scrollTop = 0;
+    requestAnimationFrame(function () { modal.focus(); });
+  }
 
-        // Clear URL deep link parameter without reloading
-        const url = new URL(window.location);
-        url.searchParams.delete('project');
-        window.history.pushState({}, '', url);
+  function closeProject() {
+    if (!modal || modal.getAttribute('aria-hidden') === 'true') return;
+    modal.setAttribute('aria-hidden', 'true');
+    body.classList.remove('modal-open');
+    document.removeEventListener('keydown', onModalKeydown);
+    if (modalLastFocused && typeof modalLastFocused.focus === 'function') modalLastFocused.focus();
+  }
 
-        // ✅ REMOVE PROJECT-OPEN STATE FIRST (prevents tap-through)
-        document.documentElement.classList.remove('project-open');
-        document.body.classList.remove('project-open');
+  if (modal) {
+    modal.querySelectorAll('[data-modal-close]').forEach(function (el) {
+      el.addEventListener('click', closeProject);
+    });
+    document.querySelectorAll('.readlink[data-project]').forEach(function (el) {
+      el.addEventListener('click', function (e) {
+        e.preventDefault();
+        openProject(el.dataset.project);
+      });
+    });
+  }
 
-        const ambientBg = document.getElementById('ambient-background');
-        if (ambientBg) ambientBg.style.opacity = '0.5';
+  /* ---------- Rail: pinned scroll-jack (desktop) + fallback drag/scroll (mobile) ---------- */
+  var railSection = document.getElementById('railSection');
+  var railPin      = document.querySelector('.rail__pin');
+  var railTrack    = document.querySelector('.rail__track');
+  var railHint     = document.getElementById('railHint');
 
-        const panel = track.children[activeIndex];
+  if (railSection && railPin && railTrack) {
+    var desktopMQ = window.matchMedia('(min-width: 721px)');
+    var reduceMQ  = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var railPinned = false;
+    var railMax = 0;
 
-        panel.classList.add('is-closing');
+    function railShouldPin() { return desktopMQ.matches && !reduceMQ.matches; }
 
-        document.body.classList.remove('overflow-hidden');
-        panel.classList.remove('is-expanded');
+    /* recompute pin state + the extra scroll height the section needs to
+       hold to have room to reveal every card before releasing the page */
+    layoutRail = function () {
+      var shouldPin = railShouldPin();
+      if (shouldPin !== railPinned) {
+        railPinned = shouldPin;
+        railSection.classList.toggle('is-pinned', railPinned);
+        railTrack.style.transform = '';
+        railTrack.scrollLeft = 0;
+        railSection.style.height = '';
+        if (railHint) railHint.textContent = railPinned ? 'Scroll to explore ↓' : 'Drag or scroll →';
+      }
+      if (!railPinned) return;
+      /* railTrack itself is sized to its full content (width: max-content),
+         so measure overflow against the clipping pin container, not the track */
+      railMax = Math.max(0, railTrack.scrollWidth - railPin.clientWidth);
+      railSection.style.height = (window.innerHeight + railMax) + 'px';
+    };
 
-        // Reset styles
-        panel.style.minWidth = '';
-        panel.style.width = '';
+    /* translate the track horizontally in proportion to how far we've
+       scrolled through the section's pinned range */
+    onRailScroll = function () {
+      if (!railPinned || body.getAttribute('data-mode') !== 'read') return;
+      var total = railSection.offsetHeight - window.innerHeight;
+      if (total <= 0) { railTrack.style.transform = ''; return; }
+      var progress = Math.min(1, Math.max(0, -railSection.getBoundingClientRect().top / total));
+      railTrack.style.transform = 'translate3d(' + (-progress * railMax).toFixed(1) + 'px,0,0)';
+    };
 
-        setTimeout(() => {
-            const inner = panel.querySelector('.details-inner');
-            if (inner) inner.innerHTML = '';
-            panel.classList.remove('is-closing');
-        }, 600);
-
-        activeIndex = -1;
-        isLocked = false;
-
-        // Restore scroll position for desktop layout
-        if (window.innerWidth >= 768) {
-            targetScroll = savedScrollPosition;
-            scrollContainer.scrollTo({ left: savedScrollPosition, behavior: 'auto' });
-        } else {
-            window.scrollTo(0, savedMobileScrollPosition);
-        }
-
-        if (selectorApi) selectorApi.sync();
-    }
-
-    // --- HANDLE DEEP LINK ON LOAD ---
-    const urlParams = new URLSearchParams(window.location.search);
-    const deepLinkProject = urlParams.get('project');
-    if (deepLinkProject) {
-        const targetIndex = projects.findIndex(p => p.id === deepLinkProject);
-        if (targetIndex !== -1) {
-            // Slight delay ensures the DOM layout is ready before animating/expanding
-            setTimeout(() => expandProject(targetIndex), 100);
-        }
-    }
-
-    // Also handle browser back/forward buttons (popstate)
-    window.addEventListener('popstate', (e) => {
-        const currentParams = new URLSearchParams(window.location.search);
-        const projectId = currentParams.get('project');
-        if (projectId) {
-            const idx = projects.findIndex(p => p.id === projectId);
-            if (idx !== -1 && idx !== activeIndex) {
-                expandProject(idx);
-            }
-        } else if (activeIndex !== -1) {
-            collapseProject();
-        }
+    layoutRail();
+    onRailScroll();
+    window.addEventListener('scroll', onRailScroll, { passive: true });
+    window.addEventListener('resize', function () { layoutRail(); onRailScroll(); });
+    var onMQChange = function () { layoutRail(); onRailScroll(); };
+    [desktopMQ, reduceMQ].forEach(function (mq) {
+      if (mq.addEventListener) mq.addEventListener('change', onMQChange);
+      else mq.addListener(onMQChange); // Safari < 14
     });
 
-    // --- NEW: HAMBURGER MENU LOGIC ---
-    const menuToggle = document.getElementById('menu-toggle');
-    const menuClose = document.getElementById('menu-close');
-    const aboutMenu = document.getElementById('about-menu');
+    /* drag-to-scroll + wheel-to-horizontal only apply in the unpinned
+       (mobile / reduced-motion) fallback, where the track scrolls itself */
+    var down = false, startX = 0, startScroll = 0, moved = false, downTarget = null;
 
-    function toggleMenu() {
-        const openingMenu = !aboutMenu.classList.contains('is-visible');
-
-        if (openingMenu) {
-            // Reset About scroll to top
-            const scrollWrapper = aboutMenu.querySelector('.h-full.overflow-y-auto');
-            if (scrollWrapper) {
-                scrollWrapper.scrollTop = 0;
-            }
-        }
-
-        aboutMenu.classList.toggle('is-visible');
-        document.body.classList.toggle('menu-open');
-        menuToggle.classList.toggle('is-open');
+    railTrack.addEventListener('pointerdown', function (e) {
+      downTarget = e.target.closest('[data-project]');
+      if (railPinned || e.pointerType === 'touch') return; // page scroll drives it when pinned; native touch handles itself
+      down = true; moved = false;
+      startX = e.clientX;
+      startScroll = railTrack.scrollLeft;
+      railTrack.setPointerCapture(e.pointerId);
+      railTrack.style.cursor = 'grabbing';
+      railTrack.style.scrollSnapType = 'none';   // don't fight the drag with snap
+    });
+    railTrack.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      railTrack.scrollLeft = startScroll - dx;
+    });
+    function endDrag() {
+      down = false;
+      railTrack.style.cursor = '';
+      railTrack.style.scrollSnapType = '';
     }
+    railTrack.addEventListener('pointerup', endDrag);
+    railTrack.addEventListener('pointercancel', endDrag);
 
-
-
-    if (menuToggle && aboutMenu) {
-        menuToggle.addEventListener('click', (e) => {
-
-            e.stopPropagation();
-            toggleMenu();
-        });
-    }
-
-    if (menuClose) {
-        menuClose.addEventListener('click', (e) => {
-            // 🚫 ALSO BLOCK CLOSE TAP FROM REOPENING MENU VIA BUBBLE
-            e.stopPropagation();
-
-            toggleMenu();
-        });
-    }
-
-
-
-    // --- 5. WHEEL CONTROLLER (Free Scroll) ---
-    // --- 5. SMOOTH SCROLL & MAGNETIC SNAP CONTROLLER ---
-
-    // Config
-    const scrollEase = 0.08;      // Smoothness (Lower = floatier)
-    const snapStrength = 0.03;    // Magnetic pull (Lower = softer docking)
-    const snapThreshold = 50;     // Magnet Range (Lower = easier to detach)
-    const scrollSensitivity = 2.5; // Scroll speed (Higher = less effort to move)
-
-    // State
-    let currentScroll = scrollContainer.scrollLeft;
-    let targetScroll = scrollContainer.scrollLeft;
-    let isWheeling = false;
-    let wheelTimeout;
-
-    // A. Wheel Listener: Updates the TARGET only
-    window.addEventListener('wheel', (e) => {
-        // Run on desktop/tablet layout and when no project is expanded
-        if (isLocked || isIntroActive || window.innerWidth < 768 || document.body.classList.contains('menu-open')) return;
-
-        // Update target based on wheel delta
-        targetScroll += e.deltaY * scrollSensitivity;
-
-        // Clamp target so we don't scroll past the start or end
-        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-        targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
-
-        // Detect when user stops wheeling
-        isWheeling = true;
-        clearTimeout(wheelTimeout);
-        wheelTimeout = setTimeout(() => {
-            isWheeling = false;
-        }, 150);
-    }, { passive: true });
-
-    // B. Touch Listener: Translate swipes to horizontal scroll
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    window.addEventListener('touchstart', (e) => {
-        if (isLocked || isIntroActive || window.innerWidth < 768 || document.body.classList.contains('menu-open')) return;
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-        if (isLocked || isIntroActive || window.innerWidth < 768 || document.body.classList.contains('menu-open')) return;
-
-        // Prevent default browser bouncing and native scrolling
-        if (e.cancelable) e.preventDefault();
-
-        const touchX = e.touches[0].clientX;
-        const touchY = e.touches[0].clientY;
-        const deltaX = touchStartX - touchX;
-        const deltaY = touchStartY - touchY;
-
-        // Accumulate both swipe axes (vertical and horizontal) to increase flexibility
-        // Increase sensitivity slightly on touch devices relative to wheel
-        targetScroll += (deltaX + deltaY * 1.5) * (scrollSensitivity * 0.8);
-
-        touchStartX = touchX;
-        touchStartY = touchY;
-
-        // Clamp target
-        const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-        targetScroll = Math.max(0, Math.min(targetScroll, maxScroll));
-
-        isWheeling = true;
-        clearTimeout(wheelTimeout);
-        wheelTimeout = setTimeout(() => { isWheeling = false; }, 150);
+    /* vertical wheel/trackpad scroll → horizontal rail scroll, released
+       at either end so the page keeps scrolling past the section normally */
+    railTrack.addEventListener('wheel', function (e) {
+      if (railPinned) return; // native page scroll already drives progress
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return; // native horizontal gesture, leave it alone
+      var atStart = railTrack.scrollLeft <= 0;
+      var atEnd = railTrack.scrollLeft + railTrack.clientWidth >= railTrack.scrollWidth - 1;
+      if ((atStart && e.deltaY < 0) || (atEnd && e.deltaY > 0)) return;
+      e.preventDefault();
+      railTrack.scrollLeft += e.deltaY;
     }, { passive: false });
 
-    // C. Physics Loop: Makes the CURRENT scroll catch up to TARGET
-    function animateScroll() {
-
-        // --- DESKTOP/TABLET SCROLL BEHAVIOR ---
-        if (!isLocked && window.innerWidth >= 768 && !document.body.classList.contains('menu-open')) {
-
-            // 1. Magnetic Snap Logic
-            if (!isWheeling) {
-                const panels = document.querySelectorAll('.project-panel');
-                let closestPanel = null;
-                let minDist = Infinity;
-
-                panels.forEach(panel => {
-                    const dist = Math.abs(panel.offsetLeft - targetScroll);
-                    if (dist < minDist) {
-                        minDist = dist;
-                        closestPanel = panel;
-                    }
-                });
-
-                if (closestPanel && minDist < snapThreshold && minDist > 1) {
-                    targetScroll +=
-                        (closestPanel.offsetLeft - targetScroll) * snapStrength;
-                }
-            }
-
-            // 2. Smooth interpolation
-            if (Math.abs(targetScroll - currentScroll) > 0.5) {
-                currentScroll +=
-                    (targetScroll - currentScroll) * scrollEase;
-
-                scrollContainer.scrollLeft = currentScroll;
-            } else {
-                scrollContainer.scrollLeft = targetScroll;
-                currentScroll = targetScroll;
-            }
-
-            // 3. Distance-based Image Scaling (Griflan-style)
-            const renderPanels = document.querySelectorAll('.project-panel');
-            renderPanels.forEach(p => {
-                const img = p.querySelector('.panel-image');
-                if (img) {
-                    // We measure distance from the panel's left edge to the scroll position
-                    // This aligns with how the snap logic works (snapping panel's left to viewport's left)
-                    const distanceFromActive = Math.abs(currentScroll - p.offsetLeft);
-
-                    // Base scale 1.0, max scale 1.30.
-                    // Divisor controls how fast it scales down as it moves away from the active spot.
-                    const scaleFactor = Math.max(1, 1.30 - (distanceFromActive / 2500));
-
-                    img.style.transform = `scale(${scaleFactor})`;
-                }
-            });
-
-            // 4. Ambient Background Parallax
-            const ambientBg = document.getElementById('ambient-background');
-            if (ambientBg) {
-                // Calculate how far along the track we are (0 to 1)
-                const maxScroll = scrollContainer.scrollWidth - scrollContainer.clientWidth;
-                const scrollProgress = maxScroll > 0 ? currentScroll / maxScroll : 0;
-
-                // Shift the background slowly (e.g. max -10vw horizontal, -5vh vertical over the whole site)
-                const bgX = scrollProgress * -10;
-                const bgY = scrollProgress * -5;
-
-                ambientBg.style.transform = `translate(${bgX}vw, ${bgY}vh)`;
-            }
-
-            // Continue loop
-            requestAnimationFrame(animateScroll);
-        }
-
-        // --- MOBILE OR LOCKED ---
-        else {
-            // Reset image scales when locked/mobile
-            document.querySelectorAll('.panel-image').forEach(img => {
-                img.style.transform = 'scale(1)';
-            });
-
-            // Sync values but DO NOT force scroll animation
-            currentScroll = scrollContainer.scrollLeft;
-            targetScroll = scrollContainer.scrollLeft;
-
-            // Only continue loop if returning to desktop later
-            requestAnimationFrame(animateScroll);
-        }
-    }
-
-
-    // Start the loop
-    animateScroll();
-
-    // --- 5.5. AMBIENT PARTICLES ---
-    function initAmbientParticles() {
-        const container = document.getElementById('ambient-background');
-        if (!container) return;
-
-        const colors = ['#16404D', '#A6CDC6', '#DDA853'];
-        const numParticles = window.innerWidth < 768 ? 20 : 50;
-
-        for (let i = 0; i < numParticles; i++) {
-            const particle = document.createElement('div');
-
-            // Random properties to match the reference image's subtle starry/dot look
-            const size = Math.random() * 8 + 2; // 2px to 10px
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            const left = Math.random() * 120 - 10; // -10% to 110%
-            const top = Math.random() * 120 - 10;
-            const opacity = Math.random() * 0.4 + 0.1; // 0.1 to 0.5
-            const animDuration = Math.random() * 10 + 8; // 8s to 18s
-            const animDelay = Math.random() * -10; // Negative delay to start mid-animation
-
-            particle.className = 'ambient-particle absolute rounded-full mix-blend-screen pointer-events-none';
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.backgroundColor = color;
-            particle.style.left = `${left}%`;
-            particle.style.top = `${top}%`;
-            particle.style.opacity = opacity;
-
-            // Custom CSS variable for animation distance (much larger motion now)
-            particle.style.setProperty('--travel-x', `${(Math.random() - 0.5) * 40}vw`);
-            particle.style.setProperty('--travel-y', `${(Math.random() - 0.5) * 40}vh`);
-
-            particle.style.animation = `particle-drift ${animDuration}s infinite alternate ease-in-out ${animDelay}s`;
-
-            container.appendChild(particle);
-        }
-    }
-
-    initAmbientParticles();
-
-
-    // --- 6. CONTENT POPULATOR ---
-    function populateContent(project, container) {
-        container.innerHTML = '';
-
-        // 1. HEADER (Title, Year, Tags)
-        const header = document.createElement('div');
-        // CHANGED: Reduced mb-12 -> mb-8, pt-10 -> pt-2, pb-6 -> pb-4
-        header.className = 'mb-8 pt-2 border-b border-[#16404D]/10 pb-4';
-        header.innerHTML = `
-            <h2 class="text-3xl font-serif font-bold text-[#16404D] mb-2">Project Insights</h2>
-            <div class="flex gap-4 text-sm text-[#DDA853] font-mono uppercase">
-                <span>${project.year}</span>
-                <span>//</span>
-                <span>${project.tags ? project.tags.join(', ') : ''}</span>
-            </div>
-        `;
-        container.appendChild(header);
-
-        // 2. CONTENT LOOP
-        if (project.details && project.details.content) {
-            project.details.content.forEach(item => {
-                let element = null;
-
-                switch (item.type) {
-                    case 'heading':
-                        element = document.createElement('h3');
-                        element.className = 'text-2xl font-serif font-bold text-[#16404D] mt-12 mb-4';
-                        element.textContent = item.value;
-                        break;
-
-                    case 'subheading':
-                        element = document.createElement('h4');
-                        element.className = 'text-xl font-bold text-[#16404D]/90 mt-8 mb-2 font-sans flex items-start gap-3';
-                        element.innerHTML = item.value;
-                        break;
-
-                    case 'paragraph':
-                        element = document.createElement('p');
-                        element.className = 'text-[#16404D]/80 leading-relaxed my-4 text-lg font-sans';
-                        element.innerHTML = item.value;
-                        break;
-
-                    case 'image': {
-                        if (item.isPortrait) {
-                            element = document.createElement('div');
-                            element.className = 'flex justify-center my-8';
-                            const portraitImg = document.createElement('img');
-                            portraitImg.className = 'h-auto rounded-sm shadow-md lightbox-trigger cursor-zoom-in';
-                            portraitImg.style.maxWidth = 'min(360px, 80%)';
-                            portraitImg.style.maxHeight = '70vh';
-                            portraitImg.style.objectFit = 'contain';
-                            portraitImg.src = item.value.src;
-                            portraitImg.alt = item.value.alt || '';
-                            element.appendChild(portraitImg);
-                        } else {
-                            element = document.createElement('img');
-                            element.className = 'w-full h-auto rounded-sm shadow-md my-8 lightbox-trigger cursor-zoom-in';
-                            element.src = item.value.src;
-                            element.alt = item.value.alt || '';
-                        }
-                        break;
-                    }
-
-                    case 'portrait-pair': {
-                        element = document.createElement('div');
-                        element.className = 'flex justify-center items-end gap-4 my-8 flex-wrap';
-                        const maxW = item.value.length >= 3 ? 'min(200px, 30%)' : 'min(280px, 45%)';
-                        item.value.forEach(imgData => {
-                            const img = document.createElement('img');
-                            img.className = 'h-auto rounded-sm shadow-md lightbox-trigger cursor-zoom-in';
-                            img.style.maxWidth = maxW;
-                            img.style.maxHeight = '70vh';
-                            img.style.objectFit = 'contain';
-                            img.src = imgData.src;
-                            img.alt = imgData.alt || '';
-                            element.appendChild(img);
-                        });
-                        break;
-                    }
-
-                    case 'box-list':
-                        element = document.createElement('ul');
-                        element.className = 'flex flex-wrap gap-3 my-6 justify-center';
-
-                        item.value.forEach(text => {
-                            const li = document.createElement('li');
-                            li.className = 'px-4 py-2 border border-[#16404D]/20 rounded-lg text-sm text-[#16404D] bg-[#16404D]/5 font-medium leading-relaxed';
-                            li.innerHTML = text;
-                            element.appendChild(li);
-                        });
-                        break;
-
-                    case 'lined-list':
-                        element = document.createElement('div');
-                        element.className = 'my-6 border-l-4 border-[#DDA853] pl-6 py-1';
-
-                        const ulLined = document.createElement('ul');
-                        ulLined.className = 'space-y-3 text-[#16404D]/90';
-
-                        item.value.forEach(text => {
-                            const li = document.createElement('li');
-                            li.className = 'leading-relaxed text-base';
-                            li.innerHTML = text;
-                            ulLined.appendChild(li);
-                        });
-                        element.appendChild(ulLined);
-                        break;
-
-                    case 'ascii':
-                        element = document.createElement('pre');
-                        element.className = 'ascii-terminal';
-                        element.textContent = item.value;
-                        break;
-
-                    case 'table':
-                        element = document.createElement('div');
-                        element.className = 'my-8 overflow-x-auto'; // Standard spacing wrapper
-                        element.innerHTML = `
-                            <div class="table-wrapper">
-                                <table class="case-table min-w-full text-left border-collapse border border-[#16404D]/20">
-                                    <tbody>
-                                        ${item.value.map((row, i) => `
-                                            <tr class="${i === 0 ? 'bg-[#16404D]/10' : 'border-t border-[#16404D]/10'}">
-                                                ${row.map(cell => `
-                                                    ${i === 0
-                                ? `<th class="p-3 font-serif font-bold text-[#16404D] border-b border-[#16404D]/20">${cell}</th>`
-                                : `<td class="p-3 font-sans text-sm text-[#16404D]/80 align-top">${cell}</td>`
-                            }
-                                                `).join("")}
-                                            </tr>
-                                        `).join("")}
-                                    </tbody>
-                                </table>
-                            </div>
-                        `;
-                        break;
-
-                    case 'roadmap':
-                        element = document.createElement('div');
-                        element.className = 'roadmap-wrapper';
-
-                        // 1. The Background Spine
-                        const spine = document.createElement('div');
-                        spine.className = 'roadmap-spine';
-                        element.appendChild(spine);
-
-                        item.value.forEach((phase, index) => {
-                            const phaseContainer = document.createElement('div');
-                            phaseContainer.className = 'roadmap-phase';
-
-                            // 2. Phase Header
-                            const header = document.createElement('div');
-                            header.className = 'roadmap-header-pill';
-                            header.textContent = phase.title;
-                            phaseContainer.appendChild(header);
-
-                            // 3. The Arrow
-                            const arrow = document.createElement('div');
-                            arrow.className = 'roadmap-arrow';
-                            phaseContainer.appendChild(arrow);
-
-                            // 4. The Split Bar
-                            const splitBar = document.createElement('div');
-                            splitBar.className = 'roadmap-split-bar';
-                            phaseContainer.appendChild(splitBar);
-
-                            // 5. The Grid of Boxes
-                            const grid = document.createElement('div');
-                            grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl'; // Added grid classes here
-
-                            phase.items.forEach(boxText => {
-                                const box = document.createElement('div');
-                                box.className = 'bg-[#FBF5DD] border border-[#16404D] text-[#16404D] p-4 rounded text-center text-sm shadow-[4px_4px_0px_rgba(22,64,77,0.1)]'; // Added styling classes
-                                box.innerHTML = boxText;
-                                grid.appendChild(box);
-                            });
-                            phaseContainer.appendChild(grid);
-
-                            // 6. Next Arrow (if not last)
-                            if (index < item.value.length - 1) {
-                                const nextArrow = document.createElement('div');
-                                nextArrow.className = 'roadmap-arrow';
-                                nextArrow.style.marginTop = '1rem';
-                                nextArrow.style.marginBottom = '1rem';
-                                phaseContainer.appendChild(nextArrow);
-                            }
-
-                            element.appendChild(phaseContainer);
-                        });
-                        break;
-
-                    case 'gallery':
-                        element = document.createElement('div');
-                        element.className = 'image-gallery';
-                        item.value.forEach(imageData => {
-                            const img = document.createElement('img');
-                            img.src = imageData.src;
-                            img.alt = imageData.alt;
-                            img.className = 'lightbox-trigger cursor-zoom-in';
-                            element.appendChild(img);
-                        });
-                        break;
-
-                    case 'quote':
-                        element = document.createElement('blockquote');
-                        element.className = 'my-12 border-l-4 border-[#DDA853] pl-6 italic text-2xl font-serif text-[#16404D]';
-                        const quoteText = String(item.value || '').replace(/^["“]|["”]$/g, '');
-                        element.innerHTML = `“${quoteText}”` + (item.author ? `<footer class="mt-4 text-sm text-[#16404D]/60 font-sans not-italic">— ${item.author}</footer>` : '');
-                        break;
-
-                    case 'video':
-                        element = document.createElement('div');
-                        if (item.isPortrait) {
-                            // Render portrait videos thinner and centered on mobile, but normal landscape on MD+ (tablets/desktops)
-                            element.className = 'my-8 w-full max-w-sm mx-auto aspect-[9/16] md:max-w-none md:aspect-video bg-[#16404D]/5 rounded overflow-hidden relative';
-                        } else {
-                            element.className = 'my-8 w-full aspect-video bg-[#16404D]/5 rounded overflow-hidden relative';
-                        }
-                        element.innerHTML = item.value.replace(/width="\d+"/, 'width="100%"').replace(/height="\d+"/, 'height="100%"');
-
-                        // Force iframe to fill the container regardless of initial attributes
-                        const vidFrame = element.querySelector('iframe');
-                        if (vidFrame) {
-                            vidFrame.style.position = 'absolute';
-                            vidFrame.style.top = '0';
-                            vidFrame.style.left = '0';
-                            vidFrame.style.width = '100%';
-                            vidFrame.style.height = '100%';
-                            vidFrame.style.border = '0';
-                        }
-                        break;
-
-                    case 'iframe':
-                        element = document.createElement('div');
-                        element.className = 'iframe-wrapper my-8 w-full aspect-video bg-[#16404D]/5 rounded overflow-hidden relative';
-                        element.innerHTML = `
-                            <iframe src="${item.value.src}" title="${item.value.title}" loading="lazy" class="absolute inset-0 w-full h-full border-0"></iframe>
-                            <button class="absolute bottom-4 right-4 bg-[#16404D] text-[#FBF5DD] p-2 rounded-full hover:bg-[#DDA853] transition-colors shadow-lg z-10" onclick="window.open('${item.value.src}', '_blank')" aria-label="Open in new tab">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            </button>
-                        `;
-                        break;
-
-                    case 'mobile-demo':
-                        element = document.createElement('div');
-                        element.className = 'mobile-demo-container my-12 flex flex-col items-center justify-center';
-                        element.innerHTML = `
-                             <div class="mobile-bezel relative w-[300px] h-[600px] bg-[#161616] rounded-[3rem] border-[8px] border-[#161616] shadow-2xl overflow-hidden">
-                                <div class="mobile-screen w-full h-full bg-white overflow-hidden rounded-[2.5rem]">
-                                    <iframe src="${item.value}" title="Live Mobile Prototype" class="w-full h-full border-0" allow="geolocation" loading="lazy"></iframe>
-                                </div>
-                            </div>
-                            <p class="text-center text-xs text-[#16404D]/50 mt-6 uppercase tracking-widest">Interact with the screen to test the app</p>
-                        `;
-                        break;
-
-                    case 'sketchfab':
-                        element = document.createElement('div');
-                        // 1. Create a responsive container with aspect ratio
-                        element.className = 'my-8 w-full aspect-video bg-[#16404D]/5 rounded overflow-hidden relative';
-
-                        // 2. Insert the Sketchfab HTML
-                        element.innerHTML = item.value;
-
-                        // 3. Find the inner elements and force them to fill the space
-                        const skWrapper = element.querySelector('.sketchfab-embed-wrapper');
-                        const skFrame = element.querySelector('iframe');
-
-                        // Force wrapper to full size if it exists
-                        if (skWrapper) {
-                            skWrapper.style.width = '100%';
-                            skWrapper.style.height = '100%';
-                            skWrapper.style.margin = '0';
-                        }
-
-                        // Force iframe to absolute positioning to fill the container
-                        if (skFrame) {
-                            skFrame.style.position = 'absolute';
-                            skFrame.style.top = '0';
-                            skFrame.style.left = '0';
-                            skFrame.style.width = '100%';
-                            skFrame.style.height = '100%';
-                            skFrame.removeAttribute('width');  // Remove fixed attributes
-                            skFrame.removeAttribute('height');
-                        }
-                        break;
-
-                    case 'architecture':
-                        element = document.createElement('div');
-                        element.className = 'arch-wrapper w-full overflow-x-auto py-8';
-
-                        item.value.forEach((row, index) => {
-                            const rowDiv = document.createElement('div');
-                            rowDiv.className = 'arch-row';
-
-                            if (Array.isArray(row)) {
-                                // Parallel Branches (Columns)
-                                row.forEach(colData => {
-                                    const colDiv = document.createElement('div');
-                                    colDiv.className = 'arch-col';
-
-                                    colData.forEach((boxHtml, i) => {
-                                        const box = document.createElement('div');
-                                        box.className = 'arch-box';
-                                        box.innerHTML = boxHtml;
-                                        colDiv.appendChild(box);
-
-                                        if (i < colData.length - 1) {
-                                            const arrow = document.createElement('div');
-                                            arrow.className = 'arch-arrow-down';
-                                            colDiv.appendChild(arrow);
-                                        }
-                                    });
-                                    rowDiv.appendChild(colDiv);
-                                });
-                            } else {
-                                // Full Width Box
-                                const box = document.createElement('div');
-                                const isHighlight = typeof row === 'object' && row.highlight;
-                                const content = typeof row === 'object' ? row.text : row;
-
-                                box.className = isHighlight ? 'arch-box highlight' : 'arch-box';
-                                box.style.maxWidth = "400px";
-                                box.innerHTML = content;
-                                rowDiv.appendChild(box);
-                            }
-
-                            element.appendChild(rowDiv);
-
-                            if (index < item.value.length - 1) {
-                                const mainArrow = document.createElement('div');
-                                mainArrow.className = 'arch-arrow-down';
-                                element.appendChild(mainArrow);
-                            }
-                        });
-                        break;
-
-                    case 'list':
-                        element = document.createElement('ul');
-                        element.className = 'space-y-3 my-6 text-[#16404D]/80 font-light';
-                        item.value.forEach(text => {
-                            const li = document.createElement('li');
-                            li.className = 'custom-list-item';
-                            li.innerHTML = text;
-                            element.appendChild(li);
-                        });
-                        break;
-
-                    case 'concept-grid':
-                        element = document.createElement('div');
-                        element.className = 'my-8 concept-grid-wrapper';
-                        element.innerHTML = `
-                            <div class="concept-grid grid grid-cols-1 md:grid-cols-2 gap-4">
-                                ${item.value.map(card => `
-                                    <div class="concept-card bg-[#FBF5DD] border border-[#16404D]/20 p-5 rounded-lg shadow-[4px_4px_0px_rgba(22,64,77,0.1)]">
-                                        <h4 class="font-serif font-bold text-[#16404D] text-lg mb-2">${card.title}</h4>
-                                        <p class="font-sans text-[#16404D]/80 text-sm leading-relaxed">${card.description}</p>
-                                    </div>
-                                `).join("")}
-                            </div>
-                        `;
-                        break;
-
-                    case 'flow':
-                        element = document.createElement('div');
-                        element.className = 'my-10 flow-container-wrapper flex justify-center';
-                        element.innerHTML = `
-                            <div class="flow-container flex flex-col items-center max-w-lg w-full">
-                                ${item.value.map((step, i) => `
-                                    <div class="flow-step flex items-center gap-4 bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-lg shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-full">
-                                        <div class="flow-number flex-shrink-0 w-8 h-8 flex items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full">${i + 1}</div>
-                                        <p class="font-sans text-[#16404D]/90 font-medium">${step}</p>
-                                    </div>
-                                    ${i < item.value.length - 1 ? '<div class="flow-arrow text-[#16404D]/40 my-2 text-xl font-bold">↓</div>' : ''}
-                                `).join("")}
-                            </div>
-                        `;
-                        break;
-
-                    case 'comparison':
-                        element = document.createElement('div');
-                        element.className = 'my-12 comparison-wrapper';
-                        element.innerHTML = `
-                            <div class="bg-[#FBF5DD] border border-[#16404D]/20 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] p-6 md:p-8">
-                                <h3 class="comparison-title font-serif font-bold text-[#16404D] text-2xl text-center mb-8 pb-4 border-b border-[#16404D]/10 text-balance">${item.value.title}</h3>
-                                
-                                <div class="comparison-grid flex flex-col md:flex-row gap-8 relative items-stretch">
-                                    
-                                    <!-- Left Side -->
-                                    <div class="comparison-side flex-1 pr-0 md:pr-4">
-                                        <h4 class="font-sans font-bold text-[#16404D] text-lg mb-4 text-center md:text-left">${item.value.left.title}</h4>
-                                        <ul class="space-y-3">
-                                            ${item.value.left.items.map(i => `
-                                                <li class="flex items-start text-[#16404D]/80 font-sans text-sm md:text-base">
-                                                    <span class="mr-2 text-[#DDA853] mt-1">•</span>
-                                                    <span>${i}</span>
-                                                </li>
-                                            `).join("")}
-                                        </ul>
-                                    </div>
-
-                                    <!-- VS Divider (Absolute on desktop, relative on mobile) -->
-                                    <div class="comparison-vs flex md:absolute md:left-1/2 md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 justify-center items-center my-4 md:my-0 z-10 bg-white/50 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold tracking-widest text-[#16404D]/60 border border-[#16404D]/10">VS</div>
-
-                                    <!-- Vertical Divider Line (Desktop only) -->
-                                    <div class="hidden md:block w-px bg-[#16404D]/10 absolute left-1/2 top-4 bottom-4"></div>
-
-                                    <!-- Right Side -->
-                                    <div class="comparison-side flex-1 pl-0 md:pl-4">
-                                        <h4 class="font-sans font-bold text-[#16404D] text-lg mb-4 text-center md:text-left">${item.value.right.title}</h4>
-                                        <ul class="space-y-3">
-                                            ${item.value.right.items.map(i => `
-                                                <li class="flex items-start text-[#16404D]/80 font-sans text-sm md:text-base">
-                                                    <span class="mr-2 text-[#4A7C59] mt-1">•</span>
-                                                    <span>${i}</span>
-                                                </li>
-                                            `).join("")}
-                                        </ul>
-                                    </div>
-
-                                </div>
-                            </div>
-                        `;
-                        break;
-
-                    case 'horizontal-flow':
-                        element = document.createElement('div');
-                        element.className = 'my-12 overflow-x-auto pb-4';
-                        element.innerHTML = `
-                            <div class="horizontal-flow flex items-center gap-4 min-w-max px-4">
-                                ${item.value.map((step, i) => `
-                                    <div class="hflow-step flex flex-col items-center bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-48 text-center shrinkage-0">
-                                        <div class="hflow-number w-10 h-10 flex items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full mb-3 text-lg">${i + 1}</div>
-                                        <p class="font-sans text-[#16404D]/90 font-medium text-sm leading-snug">${step}</p>
-                                    </div>
-                                    ${i < item.value.length - 1 ? '<div class="hflow-arrow text-[#16404D]/40 text-2xl font-bold px-2">→</div>' : ''}
-                                `).join("")}
-                            </div>
-                        `;
-                        break;
-
-                    case 'snake-flow':
-                        element = document.createElement('div');
-                        element.className = 'my-12 w-full flex justify-center pb-4 overflow-x-hidden';
-
-                        const snakeSteps = item.value;
-                        let sRows = [];
-                        let sChunk = 4; // number per row
-
-                        for (let i = 0; i < snakeSteps.length; i += sChunk) {
-                            sRows.push(snakeSteps.slice(i, i + sChunk));
-                        }
-
-                        element.innerHTML = `
-                            <!-- Desktop Snaking Flow -->
-                            <div class="hidden md:flex flex-col items-stretch w-max mx-auto max-w-full">
-                                ${sRows.map((row, rowIndex) => {
-                            const reverse = rowIndex % 2 !== 0;
-
-                            // Make a copy so we don't mutate the original
-                            let displayRow = [...row];
-                            if (reverse) displayRow = displayRow.reverse();
-
-                            return `
-                                    <div class="snake-row flex items-center ${reverse ? 'justify-end' : 'justify-start'} w-full">
-                                        ${displayRow.map((step, i) => {
-                                // Calculate the true original index
-                                const stepNum = reverse ? (rowIndex * sChunk) + (row.length - i) : (rowIndex * sChunk) + i + 1;
-                                return `
-                                            <div class="snake-step flex flex-col items-center bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-48 text-center shrink-0">
-                                                <span class="snake-number w-10 h-10 flex shrink-0 items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full mb-3 text-lg">${stepNum}</span>
-                                                <p class="font-sans text-[#16404D]/90 font-medium text-sm leading-snug">${step}</p>
-                                            </div>
-                                            
-                                            ${i < displayRow.length - 1 ? `
-                                                <div class="snake-arrow text-[#16404D]/40 text-2xl font-bold w-12 text-center shrink-0">
-                                                    ${reverse ? "←" : "→"}
-                                                </div>
-                                            ` : ""}
-                                            `;
-                            }).join("")}
-                                    </div>
-                                    
-                                    ${rowIndex < sRows.length - 1 ? `
-                                        <div class="snake-down-arrow w-full flex ${!reverse ? 'justify-end' : 'justify-start'} py-2">
-                                            <div class="w-48 text-center text-[#16404D]/40 text-2xl font-bold shrink-0">
-                                                ↓
-                                            </div>
-                                        </div>
-                                    ` : ""}
-                                    `;
-                        }).join("")}
-                            </div>
-
-                            <!-- Mobile Linear Flow (Fallback) -->
-                            <div class="flex flex-col md:hidden items-center w-full max-w-sm mx-auto px-4">
-                                ${snakeSteps.map((step, i) => `
-                                    <div class="snake-step flex flex-col items-center bg-[#FBF5DD] border border-[#16404D]/20 p-4 rounded-xl shadow-[4px_4px_0px_rgba(22,64,77,0.1)] w-full text-center shrink-0">
-                                        <div class="snake-number w-10 h-10 flex items-center justify-center bg-[#16404D] text-[#FBF5DD] font-serif font-bold rounded-full mb-3 text-lg">${i + 1}</div>
-                                        <p class="font-sans text-[#16404D]/90 font-medium">${step}</p>
-                                    </div>
-                                    ${i < snakeSteps.length - 1 ? '<div class="snake-arrow text-[#16404D]/40 my-2 text-xl font-bold">↓</div>' : ''}
-                                `).join("")}
-                            </div>
-                        `;
-                        break;
-                }
-
-                // Append the created element to the main container
-                if (element) {
-                    container.appendChild(element);
-                }
-            });
-        }
-
-        // 3. Footer Spacer
-        const footer = document.createElement('div');
-        // CHANGED: Reduced h-32 -> h-12
-        footer.className = 'h-12';
-        container.appendChild(footer);
-
-        // Initialize lightbox for all images in this container
-        initializeLightboxForContainer(container);
-    }
-
-    // ========================================================
-    // ================ IMAGE LIGHTBOX GALLERY ================
-    // ========================================================
-
-    function initializeLightboxForContainer(container) {
-        const images = Array.from(container.querySelectorAll('img'));
-        if (images.length === 0) return;
-
-        images.forEach((img, index) => {
-            img.style.cursor = 'pointer';
-            img.addEventListener('click', (e) => {
-                e.stopPropagation();
-                openLightbox(images, index);
-            });
-        });
-    }
-
-    let lightboxOpen = false;
-    let currentLightboxImages = [];
-    let currentLightboxIndex = 0;
-    let lightboxZoomed = false;
-    let lightboxTranslateX = 0;
-    let lightboxTranslateY = 0;
-
-    function openLightbox(images, startIndex) {
-        currentLightboxImages = images;
-        currentLightboxIndex = startIndex;
-        lightboxOpen = true;
-
-        const lightbox = document.getElementById('imageLightbox');
-        const lightboxImg = document.getElementById('lightboxImage');
-        const counter = document.getElementById('lightboxCounter');
-
-        lightboxImg.src = images[startIndex].src;
-        lightboxImg.alt = images[startIndex].alt || '';
-        counter.textContent = `${startIndex + 1} / ${images.length}`;
-
-        lightbox.classList.add('is-visible');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-        const lightbox = document.getElementById('imageLightbox');
-        lightbox.classList.remove('is-visible');
-        document.body.style.overflow = '';
-        lightboxOpen = false;
-        resetLightboxZoom();
-    }
-
-    function showLightboxImage(index) {
-        if (index < 0) index = currentLightboxImages.length - 1;
-        if (index >= currentLightboxImages.length) index = 0;
-
-        currentLightboxIndex = index;
-        const lightboxImg = document.getElementById('lightboxImage');
-        const counter = document.getElementById('lightboxCounter');
-
-        lightboxImg.src = currentLightboxImages[index].src;
-        lightboxImg.alt = currentLightboxImages[index].alt || '';
-        counter.textContent = `${index + 1} / ${currentLightboxImages.length}`;
-        resetLightboxZoom();
-    }
-
-    function nextLightboxImage() {
-        showLightboxImage(currentLightboxIndex + 1);
-    }
-
-    function prevLightboxImage() {
-        showLightboxImage(currentLightboxIndex - 1);
-    }
-
-    function toggleLightboxZoom(e) {
-        const lightboxImg = document.getElementById('lightboxImage');
-
-        if (!lightboxZoomed) {
-            const rect = lightboxImg.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const xPercent = (x / rect.width) * 100;
-            const yPercent = (y / rect.height) * 100;
-
-            lightboxImg.style.transform = 'scale(2.5)';
-            lightboxImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-            lightboxImg.classList.add('zoomed');
-            lightboxZoomed = true;
-        } else {
-            resetLightboxZoom();
-        }
-    }
-
-    function resetLightboxZoom() {
-        const lightboxImg = document.getElementById('lightboxImage');
-        lightboxImg.style.transform = 'scale(1)';
-        lightboxImg.style.transformOrigin = 'center';
-        lightboxImg.classList.remove('zoomed');
-        lightboxZoomed = false;
-        lightboxTranslateX = 0;
-        lightboxTranslateY = 0;
-    }
-
-    // Lightbox event listeners - Set up immediately
-    const closeLightboxBtn = document.getElementById('closeLightbox');
-    const nextBtn = document.getElementById('nextImage');
-    const prevBtn = document.getElementById('prevImage');
-    const lightboxImg = document.getElementById('lightboxImage');
-    const lightbox = document.getElementById('imageLightbox');
-
-    if (closeLightboxBtn) {
-        closeLightboxBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            closeLightbox();
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            nextLightboxImage();
-        });
-    }
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            prevLightboxImage();
-        });
-    }
-
-    if (lightboxImg) {
-        lightboxImg.addEventListener('click', toggleLightboxZoom);
-    }
-
-    // Close on background click
-    if (lightbox) {
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) closeLightbox();
-        });
-    }
-
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-        if (!lightboxOpen) return;
-        if (e.key === 'Escape') closeLightbox();
-        if (e.key === 'ArrowRight') nextLightboxImage();
-        if (e.key === 'ArrowLeft') prevLightboxImage();
+    /* prevent a drag from firing the card's link; open the modal on a real
+       click — uses the target captured on pointerdown, not e.target, because
+       setPointerCapture retargets the synthetic click to railTrack itself */
+    railTrack.addEventListener('click', function (e) {
+      if (moved) { e.preventDefault(); moved = false; downTarget = null; return; }
+      if (downTarget) {
+        e.preventDefault();
+        openProject(downTarget.dataset.project);
+      }
+      downTarget = null;
+    }, true);
+  }
+// === CONTACT MODAL (added / updated) ===
+document.addEventListener('DOMContentLoaded', function() {
+  var contactModal = document.getElementById('contactModal');
+  var contactBtn = document.querySelector('.cta__primary');
+  var projectModal = document.getElementById('projectModal');
+
+  // Open contact modal
+  if (contactBtn && contactModal) {
+    contactBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      contactModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    });
+  }
+
+  // Close contact modal via back button (data-modal-close)
+  if (contactModal) {
+    contactModal.querySelectorAll('[data-modal-close]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        contactModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+      });
     });
 
-    // Pan when zoomed
-    let isPanning = false;
-    let startX = 0, startY = 0;
-
-    if (lightboxImg) {
-        lightboxImg.addEventListener('mousedown', (e) => {
-            if (lightboxZoomed) {
-                isPanning = true;
-                startX = e.clientX - lightboxTranslateX;
-                startY = e.clientY - lightboxTranslateY;
-            }
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (isPanning && lightboxZoomed) {
-                lightboxTranslateX = e.clientX - startX;
-                lightboxTranslateY = e.clientY - startY;
-                lightboxImg.style.transform = `scale(2.5) translate(${lightboxTranslateX}px, ${lightboxTranslateY}px)`;
-            }
-        });
-
-        document.addEventListener('mouseup', () => {
-            isPanning = false;
-        });
-
-        // Touch support
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let isSwiping = false;
-
-        lightboxImg.addEventListener('touchstart', (e) => {
-            if (lightboxZoomed) {
-                const touch = e.touches[0];
-                touchStartX = touch.clientX - lightboxTranslateX;
-                touchStartY = touch.clientY - lightboxTranslateY;
-            } else {
-                touchStartX = e.touches[0].clientX;
-                isSwiping = true;
-            }
-        });
-
-        lightboxImg.addEventListener('touchmove', (e) => {
-            if (lightboxZoomed) {
-                const touch = e.touches[0];
-                lightboxTranslateX = touch.clientX - touchStartX;
-                lightboxTranslateY = touch.clientY - touchStartY;
-                lightboxImg.style.transform = `scale(2.5) translate(${lightboxTranslateX}px, ${lightboxTranslateY}px)`;
-            }
-        });
-
-        lightboxImg.addEventListener('touchend', (e) => {
-            if (!lightboxZoomed && isSwiping) {
-                const touchEndX = e.changedTouches[0].clientX;
-                const diff = touchStartX - touchEndX;
-
-                if (Math.abs(diff) > 50) {
-                    if (diff > 0) nextLightboxImage();
-                    else prevLightboxImage();
-                }
-            }
-            isSwiping = false;
-        });
-    }
-
-
-
-    /* ---------- Project Selector ---------- */
-    function initProjectSelector() {
-        const panels = Array.from(track.querySelectorAll('.project-panel'));
-        if (!panels.length) return null;
-
-        const existing = document.getElementById('project-selector');
-        if (existing) existing.remove();
-
-        const selector = document.createElement('nav');
-        selector.id = 'project-selector';
-        selector.className = 'project-selector';
-        selector.setAttribute('aria-label', 'Project selection');
-
-        const selectorTrack = document.createElement('div');
-        selectorTrack.className = 'project-selector-track';
-
-        const indicator = document.createElement('span');
-        indicator.className = 'project-selector-indicator is-hidden';
-        selectorTrack.appendChild(indicator);
-
-        const buttons = panels.map((panel, index) => {
-            const project = projects[index];
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'project-selector-btn';
-            btn.setAttribute('aria-label', `Go to ${project.title}`);
-            btn.innerHTML = `
-                <span>${String(index + 1).padStart(2, '0')}</span>
-                <span class="selector-label">${project.title}</span>
-            `;
-
-            btn.addEventListener('click', () => {
-                if (window.innerWidth >= 768) {
-                    targetScroll = panel.offsetLeft;
-                    scrollContainer.scrollTo({ left: targetScroll, behavior: 'smooth' });
-                } else {
-                    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-                setActive(index, true);
-            });
-
-            selectorTrack.appendChild(btn);
-            return btn;
-        });
-
-        selector.appendChild(selectorTrack);
-        document.body.appendChild(selector);
-
-        let selectedIndex = -1;
-        let lastTranslateX = 0;
-
-        function setActive(nextIndex, animate = false) {
-            if (nextIndex < 0 || nextIndex >= buttons.length) {
-                selectedIndex = -1;
-                indicator.classList.add('is-hidden');
-                buttons.forEach((button) => {
-                    button.classList.remove('is-active');
-                    button.removeAttribute('aria-current');
-                });
-                return;
-            }
-
-            const firstButtonOffset = buttons[0].offsetLeft;
-            const targetX = buttons[nextIndex].offsetLeft - firstButtonOffset;
-            const shouldAnimate = animate && selectedIndex !== -1 && selectedIndex !== nextIndex;
-
-            indicator.classList.remove('is-hidden');
-            indicator.style.transform = `translateX(${targetX}px)`;
-
-            if (shouldAnimate && typeof indicator.animate === 'function') {
-                indicator.animate(
-                    [
-                        { transform: `translateX(${lastTranslateX}px) scale(0.82, 1)` },
-                        { transform: `translateX(${targetX}px) scale(1.16, 1)` },
-                        { transform: `translateX(${targetX}px) scale(1, 1)` }
-                    ],
-                    { duration: 440, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
-                );
-            }
-
-            buttons.forEach((button, idx) => {
-                if (idx === nextIndex) {
-                    button.classList.add('is-active');
-                    button.setAttribute('aria-current', 'true');
-                } else {
-                    button.classList.remove('is-active');
-                    button.removeAttribute('aria-current');
-                }
-            });
-
-            selectedIndex = nextIndex;
-            lastTranslateX = targetX;
-        }
-
-        function closestPanelFromScroll() {
-            if (window.innerWidth < 768) return -1;
-            if (activeIndex !== -1) return activeIndex;
-
-            const introSection = scrollContainer.querySelector('section');
-            if (!introSection) return 0;
-
-            const introWidth = introSection.offsetWidth;
-            const leftEdge = scrollContainer.scrollLeft + 24;
-            if (leftEdge < introWidth) return -1;
-
-            const viewportCenter = scrollContainer.scrollLeft + (scrollContainer.clientWidth / 2);
-            let closestIndex = 0;
-            let minDistance = Number.POSITIVE_INFINITY;
-
-            panels.forEach((panel, index) => {
-                const panelCenter = panel.offsetLeft + (panel.offsetWidth / 2);
-                const distance = Math.abs(panelCenter - viewportCenter);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestIndex = index;
-                }
-            });
-
-            return closestIndex;
-        }
-
-        function sync() {
-            setActive(closestPanelFromScroll(), false);
-        }
-
-        scrollContainer.addEventListener('scroll', sync, { passive: true });
-        window.addEventListener('resize', sync);
-        requestAnimationFrame(sync);
-
-        return { setActive, sync };
-    }
-
-    selectorApi = initProjectSelector();
+    // Also allow clicking the backdrop (outside the scroll area)
+    contactModal.addEventListener('click', function (e) {
+      if (e.target === contactModal) {
+        contactModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+      }
+    });
+  }
 });
+})();
