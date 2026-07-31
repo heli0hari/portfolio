@@ -21,15 +21,36 @@
      Toggling REPLACES the URL rather than pushing history, so the back button
      leaves the site instead of stepping back through view toggles. */
   var VALID_MODES = ['look', 'read'];
+  var activeProjectId = null;
+
+  function projectIdFromHash() {
+    var h = (location.hash || '').replace('#', '').toLowerCase();
+    if (!h) return null;
+    var parts = h.split('/');
+    if (parts[0] === 'project' && parts[1]) return parts[1];
+    if (parts[0] === 'read' && parts[1] === 'project' && parts[2]) return parts[2];
+    return null;
+  }
 
   function modeFromURL() {
     var h = (location.hash || '').replace('#', '').toLowerCase();
-    return VALID_MODES.indexOf(h) !== -1 ? h : 'look';
+    if (!h) return 'look';
+    if (h === 'read' || h.indexOf('read/') === 0 || h.indexOf('project/') === 0 || h.indexOf('read/project/') === 0) return 'read';
+    return 'look';
   }
 
-  function syncURL(mode) {
-    var target = (mode === 'look') ? location.pathname + location.search
-                                   : location.pathname + location.search + '#read';
+  function syncURL(mode, projectId) {
+    var base = location.pathname + location.search;
+    var hash = '';
+
+    if (mode === 'read') {
+      hash = 'read';
+      if (projectId) hash += '/project/' + projectId;
+    } else if (projectId) {
+      hash = 'project/' + projectId;
+    }
+
+    var target = base + (hash ? '#' + hash : '');
     if (location.href !== new URL(target, location.origin).href) {
       history.replaceState(null, '', target);
     }
@@ -71,7 +92,7 @@
 
     if (mode === 'read' && layoutRail) { layoutRail(); onRailScroll(); }
 
-    syncURL(mode);
+    syncURL(mode, mode === 'read' ? activeProjectId : null);
   }
 
   buttons.forEach(function (btn) {
@@ -93,7 +114,7 @@
         btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === initial));
       });
     }
-    syncURL(initial);
+    syncURL(initial, initial === 'read' ? projectIdFromHash() : null);
 
     // start at the top regardless of what the browser remembered
     requestAnimationFrame(function () { window.scrollTo(0, 0); });
@@ -101,7 +122,16 @@
 
   /* if someone edits the hash or uses back/forward, follow it */
   window.addEventListener('hashchange', function () {
-    switchTo(modeFromURL());
+    var nextMode = modeFromURL();
+    var nextProject = projectIdFromHash();
+    if (nextProject) {
+      activeProjectId = nextProject;
+      switchTo(nextMode);
+      openProject(nextProject, { updateUrl: false });
+    } else {
+      switchTo(nextMode);
+      if (modal && modal.getAttribute('aria-hidden') === 'false') closeProject();
+    }
   });
 
   /* ---------- Forge: cars gallery + alphabet ----------
@@ -362,6 +392,25 @@
   var chromaField   = document.getElementById('chromaField');
   var chromaFilters = document.getElementById('chromaFilters');
   var chromaCaption = document.getElementById('chromaCaption');
+  var archiveActionLock = false;
+
+  function runArchiveAction(event, action) {
+    if (archiveActionLock) return;
+    archiveActionLock = true;
+    setTimeout(function () { archiveActionLock = false; }, 250);
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    action();
+  }
+
+  function bindArchiveAction(el, action) {
+    if (!el) return;
+    el.addEventListener('click', function (event) { runArchiveAction(event, action); });
+    el.addEventListener('touchend', function (event) { runArchiveAction(event, action); });
+    el.addEventListener('pointerup', function (event) { runArchiveAction(event, action); });
+  }
 
   if (chromaField) {
     fetch('photos.json')
@@ -495,9 +544,10 @@
 
     /* ---- "View all" button ---- */
     var viewAllBtn = document.getElementById('chromaViewAll');
+
     if (viewAllBtn) {
       viewAllBtn.textContent = 'View all ' + photos.length + ' photographs';
-      viewAllBtn.addEventListener('click', openArchive);
+      bindArchiveAction(viewAllBtn, openArchive);
     }
 
     /* ---- tag chips (live in the archive overlay, where they're useful) ---- */
@@ -586,7 +636,7 @@
   }
   if (archiveEl) {
     var aClose = document.getElementById('chromaArchiveClose');
-    if (aClose) aClose.addEventListener('click', closeArchive);
+    bindArchiveAction(aClose, closeArchive);
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       var lbOpen = document.getElementById('lightbox');
@@ -680,7 +730,14 @@
   var projectData = {};
   fetch('projects.json')
     .then(function (r) { return r.json(); })
-    .then(function (d) { projectData = d; })
+    .then(function (d) {
+      projectData = d;
+      var initialProject = projectIdFromHash();
+      if (initialProject && projectData[initialProject]) {
+        activeProjectId = initialProject;
+        openProject(initialProject, { updateUrl: false });
+      }
+    })
     .catch(function (e) { console.warn('[projects]', e.message); });
 
   /* ---------- Project detail modal ---------- */
@@ -1044,9 +1101,13 @@
     });
   }
 
-  function openProject(id) {
+  function openProject(id, options) {
     var data = projectData[id];
     if (!modal || !data) return;
+
+    options = options || {};
+    activeProjectId = id;
+    switchTo('read');
 
     modalLastFocused = document.activeElement;
 
@@ -1089,6 +1150,8 @@
       };
     }
 
+    if (options.updateUrl !== false) syncURL('read', id);
+
     modal.setAttribute('aria-hidden', 'false');
     body.classList.add('modal-open');
     document.addEventListener('keydown', onModalKeydown);
@@ -1098,9 +1161,11 @@
 
   function closeProject() {
     if (!modal || modal.getAttribute('aria-hidden') === 'true') return;
+    activeProjectId = null;
     modal.setAttribute('aria-hidden', 'true');
     body.classList.remove('modal-open');
     document.removeEventListener('keydown', onModalKeydown);
+    syncURL('read', null);
     if (modalLastFocused && typeof modalLastFocused.focus === 'function') modalLastFocused.focus();
   }
 

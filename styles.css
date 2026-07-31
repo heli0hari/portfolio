@@ -2008,6 +2008,8 @@ html:has(body.modal-open) { overflow: hidden; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 220ms var(--ease), box-shadow 220ms var(--ease),
               opacity 220ms var(--ease);
 }
@@ -2079,6 +2081,8 @@ html:has(body.modal-open) { overflow: hidden; }
   display: flex; align-items: center; justify-content: center;
   color: var(--ink);
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: border-color 200ms var(--ease), background-color 200ms var(--ease);
 }
 .chroma-archive__close:hover {
