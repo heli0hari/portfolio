@@ -392,25 +392,6 @@
   var chromaField   = document.getElementById('chromaField');
   var chromaFilters = document.getElementById('chromaFilters');
   var chromaCaption = document.getElementById('chromaCaption');
-  var archiveActionLock = false;
-
-  function runArchiveAction(event, action) {
-    if (archiveActionLock) return;
-    archiveActionLock = true;
-    setTimeout(function () { archiveActionLock = false; }, 250);
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    action();
-  }
-
-  function bindArchiveAction(el, action) {
-    if (!el) return;
-    el.addEventListener('click', function (event) { runArchiveAction(event, action); });
-    el.addEventListener('touchend', function (event) { runArchiveAction(event, action); });
-    el.addEventListener('pointerup', function (event) { runArchiveAction(event, action); });
-  }
 
   if (chromaField) {
     fetch('photos.json')
@@ -547,7 +528,7 @@
 
     if (viewAllBtn) {
       viewAllBtn.textContent = 'View all ' + photos.length + ' photographs';
-      bindArchiveAction(viewAllBtn, openArchive);
+      viewAllBtn.addEventListener('click', openArchive);
     }
 
     /* ---- tag chips (live in the archive overlay, where they're useful) ---- */
@@ -636,7 +617,7 @@
   }
   if (archiveEl) {
     var aClose = document.getElementById('chromaArchiveClose');
-    bindArchiveAction(aClose, closeArchive);
+    if (aClose) aClose.addEventListener('click', closeArchive);
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       var lbOpen = document.getElementById('lightbox');
