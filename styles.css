@@ -1154,7 +1154,13 @@ body[data-mode="look"] [data-hero-mode="read"] { display: none; }
   transition: opacity var(--dur) var(--ease), visibility 0s;
 }
 
-body.modal-open,
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  /* 'top' is set inline by JS to -scrollY so the page stays put and doesn't
+     jump to the top when the overlay opens (fixes the Windows scroll jump). */
+}
 html:has(body.modal-open) { overflow: hidden; }
 
 .project-modal__scroll {

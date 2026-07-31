@@ -11,6 +11,32 @@
   var stage   = document.getElementById('stage');
   var buttons = document.querySelectorAll('[data-mode-btn]');
 
+  /* ---------- Shared body scroll lock ----------
+     Any overlay (project modal, lightbox, forge lightbox, archive, contact)
+     locks the background here. Because body.modal-open is position:fixed, we
+     must remember the scroll position and restore it — otherwise the page
+     jumps to the top when the overlay opens (and again when it closes).
+     A counter lets overlays nest (e.g. a lightbox opened from the archive)
+     without one closing unlocking the other prematurely. */
+  var scrollLockCount = 0;
+  var savedScrollY = 0;
+  function lockScroll() {
+    if (scrollLockCount === 0) {
+      savedScrollY = window.scrollY || window.pageYOffset || 0;
+      body.style.top = (-savedScrollY) + 'px';
+      body.classList.add('modal-open');
+    }
+    scrollLockCount++;
+  }
+  function unlockScroll() {
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount === 0) {
+      body.classList.remove('modal-open');
+      body.style.top = '';
+      window.scrollTo(0, savedScrollY);
+    }
+  }
+
   /* Always open at the top. Browsers restore the previous scroll position on
      reload, which drops visitors into the middle of the page. */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -93,6 +119,20 @@
     if (mode === 'read' && layoutRail) { layoutRail(); onRailScroll(); }
 
     syncURL(mode, mode === 'read' ? activeProjectId : null);
+  }
+
+  /* Set the mode WITHOUT the visible blur transition. Used when opening a
+     project from Look: the modal covers the whole screen, so animating the
+     Read landing view underneath just causes a visible flash before the modal
+     appears. This sets the underlying state silently so closing the modal
+     lands correctly in Read. */
+  function setModeSilently(mode) {
+    if (mode === body.getAttribute('data-mode')) return;
+    body.setAttribute('data-mode', mode);
+    buttons.forEach(function (btn) {
+      btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === mode));
+    });
+    if (mode === 'read' && layoutRail) { layoutRail(); onRailScroll(); }
   }
 
   buttons.forEach(function (btn) {
@@ -341,7 +381,7 @@
     flbCap.textContent = item.alt || '';
     flb.classList.add('is-open');
     flb.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
+    lockScroll();
 
     if (mediaType === 'video' && flbVideo) playSafe(flbVideo);
   }
@@ -359,7 +399,7 @@
     }
     flb.classList.remove('is-open');
     flb.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
+    unlockScroll();
     // resume the ambient car loops that were playing at rest
     allCellVideos().forEach(function (v) {
       if (v.hasAttribute('data-ambient')) playSafe(v);
@@ -599,9 +639,9 @@
 
   function openArchive() {
     if (!archiveEl) return;
+    lockScroll();
     archiveEl.classList.add('is-open');
     archiveEl.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
     var closeBtn = document.getElementById('chromaArchiveClose');
     if (closeBtn) closeBtn.focus();
   }
@@ -609,11 +649,7 @@
     if (!archiveEl) return;
     archiveEl.classList.remove('is-open');
     archiveEl.setAttribute('aria-hidden', 'true');
-    // only unlock the page if the lightbox isn't also open
-    var lbOpen = document.getElementById('lightbox');
-    if (!(lbOpen && lbOpen.classList.contains('is-open'))) {
-      document.body.classList.remove('modal-open');
-    }
+    unlockScroll();
   }
   if (archiveEl) {
     var aClose = document.getElementById('chromaArchiveClose');
@@ -672,7 +708,7 @@
     showLightbox();
     lb.classList.add('is-open');
     lb.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    lockScroll();
   }
   function showLightbox() {
     var p = lbPhotos[lbList[lbPos]];
@@ -685,7 +721,7 @@
   function closeLightbox() {
     lb.classList.remove('is-open');
     lb.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
+    unlockScroll();
   }
   function lbNext() { lbPos = (lbPos + 1) % lbList.length; showLightbox(); }
   function lbPrev() { lbPos = (lbPos - 1 + lbList.length) % lbList.length; showLightbox(); }
@@ -1088,7 +1124,7 @@
 
     options = options || {};
     activeProjectId = id;
-    switchTo('read');
+    setModeSilently('read');
 
     modalLastFocused = document.activeElement;
 
@@ -1133,8 +1169,13 @@
 
     if (options.updateUrl !== false) syncURL('read', id);
 
+    // Only lock the background if the modal isn't already open. The "next
+     // project" footer calls openProject() again on top of the open modal —
+     // locking a second time would leave the counter unbalanced, so closing
+     // later wouldn't fully unlock and the page scroll would stay broken.
+    var alreadyOpen = modal.getAttribute('aria-hidden') === 'false';
     modal.setAttribute('aria-hidden', 'false');
-    body.classList.add('modal-open');
+    if (!alreadyOpen) lockScroll();
     document.addEventListener('keydown', onModalKeydown);
     if (modalScroll) modalScroll.scrollTop = 0;
     requestAnimationFrame(function () { modal.focus(); });
@@ -1144,7 +1185,7 @@
     if (!modal || modal.getAttribute('aria-hidden') === 'true') return;
     activeProjectId = null;
     modal.setAttribute('aria-hidden', 'true');
-    body.classList.remove('modal-open');
+    unlockScroll();
     document.removeEventListener('keydown', onModalKeydown);
     syncURL('read', null);
     if (modalLastFocused && typeof modalLastFocused.focus === 'function') modalLastFocused.focus();
@@ -1278,7 +1319,7 @@ document.addEventListener('DOMContentLoaded', function() {
     contactBtn.addEventListener('click', function(e) {
       e.preventDefault();
       contactModal.setAttribute('aria-hidden', 'false');
-      document.body.classList.add('modal-open');
+      lockScroll();
     });
   }
 
@@ -1287,7 +1328,7 @@ document.addEventListener('DOMContentLoaded', function() {
     contactModal.querySelectorAll('[data-modal-close]').forEach(function (el) {
       el.addEventListener('click', function () {
         contactModal.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('modal-open');
+        unlockScroll();
       });
     });
 
@@ -1295,7 +1336,7 @@ document.addEventListener('DOMContentLoaded', function() {
     contactModal.addEventListener('click', function (e) {
       if (e.target === contactModal) {
         contactModal.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('modal-open');
+        unlockScroll();
       }
     });
   }
