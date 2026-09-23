@@ -613,6 +613,25 @@ body[data-mode="look"] [data-hero-mode="read"] { display: none; }
 }
 .pcard__meta { margin-top: 2px; }
 
+/* "In progress" label on unfinished project cards */
+.pcard__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 5px 10px;
+  font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #EDE9E2;
+  background: rgba(19, 17, 16, 0.72);
+  border: 1px solid rgba(237, 233, 226, 0.2);
+  border-radius: 100px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
 /* =========================================================
    LOOK — CHROMA (justified photography field, tag-filterable)
    ========================================================= */

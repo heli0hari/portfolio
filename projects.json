@@ -1,6 +1,406 @@
 {
+  "infrared-camera": {
+    "title": "Unseen : Infrared Camera",
+    "category": "Hardware & Interaction Design",
+    "year": "2026",
+    "hue": 320,
+    "description": "A hand-built Raspberry Pi camera that shoots near-infrared photos and turns them into false colour. Work in progress.",
+    "image": "images/IRCamera/IR_Sample.jpg",
+    "tags": [
+      "In progress",
+      "Hardware",
+      "Computational Photography",
+      "Interaction Design"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/IRCamera/IR_Sample.jpg",
+          "alt": "Near-infrared photo from the hand-built camera: magenta trees under a blue sky.",
+          "caption": "First light. Leaves turn magenta while the sky stays blue."
+        }
+      },
+      {
+        "type": "quote",
+        "value": {
+          "text": "Work in progress. This page covers the project up to Milestone 2. The camera shoots, but the false-colour pipeline, physical controls and body are still being built."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "I’m building a camera that sees near-infrared light, the band just past visible red that classic infrared film like Kodak Aerochrome recorded. It isn’t a thermal camera. It captures reflected light and I process it into false colour."
+      },
+      {
+        "type": "paragraph",
+        "value": "I didn’t want it to be “a Raspberry Pi in a box”. It has a UI I designed in Figma, manual exposure on a real sensor, RAW capture, a rotary dial for control, an adjustable 550–750 nm filter, an IR flash and a power system I specced myself, all going into a 3D-printed body."
+      },
+      {
+        "type": "table",
+        "value": {
+          "title": "Status at Milestone 2",
+          "headers": [
+            "Area",
+            "Status"
+          ],
+          "rows": [
+            [
+              "Camera + compute",
+              "Working: Pi 3 A+ with Camera Module 3 NoIR, JPEG and RAW"
+            ],
+            [
+              "Software",
+              "Phone control over Wi-Fi, live UI overlay, manual controls, gallery, settings"
+            ],
+            [
+              "UI design",
+              "7 Figma screens, working browser prototype"
+            ],
+            [
+              "Power + IR flash",
+              "Designed, parts selected"
+            ],
+            [
+              "Enclosure",
+              "In progress"
+            ],
+            [
+              "Next",
+              "Frame stacking, false-colour pipeline, wiring the physical controls"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "heading",
+        "value": "First Results"
+      },
+      {
+        "type": "paragraph",
+        "value": "I shot the same scene with my phone and with the camera. Anything that reflects a lot of infrared changes completely. Everything else barely moves."
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/IRCamera/IR_Phone.jpg",
+            "alt": "The scene shot on a phone camera.",
+            "caption": "Phone camera, visible light"
+          },
+          {
+            "src": "images/IRCamera/IR_Sample.jpg",
+            "alt": "The same scene from the NoIR camera.",
+            "caption": "My camera, near-infrared"
+          }
+        ]
+      },
+      {
+        "type": "lined-list",
+        "value": [
+          {
+            "title": "Leaves turn magenta.",
+            "text": "Healthy foliage reflects a lot of infrared. With no IR-cut filter, that light lands in the red channel and pushes green toward magenta."
+          },
+          {
+            "title": "The sky stays blue.",
+            "text": "Sky reflects little infrared, so it keeps its colour. That contrast is what makes IR photos look strange."
+          },
+          {
+            "title": "It depends on material, not colour.",
+            "text": "Glass and dark cladding hardly change, and some yellow autumn leaves stay yellow."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "value": "This isn’t a controlled test. The two cameras differ in sensor, lens, framing and processing. Samples through 590 nm and 720 nm filters will be added later."
+      },
+      {
+        "type": "heading",
+        "value": "Choosing the Hardware"
+      },
+      {
+        "type": "paragraph",
+        "value": "I set image quality by the Camera Module 3 NoIR (Sony IMX708, 12 MP, no IR-cut filter, autofocus, RAW). Its driver only really works on Raspberry Pi boards, so picking the sensor meant picking the Pi. After that, the question was which Pi."
+      },
+      {
+        "type": "table",
+        "value": {
+          "headers": [
+            "Option",
+            "Outcome"
+          ],
+          "rows": [
+            [
+              "Pi Zero 2 W",
+              "Smallest and cheapest, but out of stock and scalped"
+            ],
+            [
+              "Radxa ZERO 3W",
+              "Other sensors were either 8 MP or missing colour tuning files"
+            ],
+            [
+              "Pi 4 / Pi 5",
+              "Bigger, hungrier, hotter. Wrong for a small camera"
+            ],
+            [
+              "<strong>Pi 3 A+ (chosen)</strong>",
+              "Runs the camera with no driver work, in stock, about €23. 512 MB RAM handled with swap"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "subheading",
+        "value": "Ideas I ruled out"
+      },
+      {
+        "type": "box-list",
+        "value": [
+          {
+            "title": "Salvaging a DSLR sensor",
+            "text": "Modern sensors use undocumented interfaces, and removing one usually destroys it."
+          },
+          {
+            "title": "Reusing an Android phone",
+            "text": "The IR-cut filter can’t be removed cleanly, and cheap phones lock RAW access."
+          },
+          {
+            "title": "Fitting a Fujifilm lens",
+            "text": "The module’s lens is fixed and the sensor is tiny, so the result would be blurry and heavily cropped."
+          }
+        ]
+      },
+      {
+        "type": "subheading",
+        "value": "Display"
+      },
+      {
+        "type": "paragraph",
+        "value": "E-ink fit my first idea and uses almost no power, but it refreshes too slowly for a live viewfinder. A camera whose filter changes what the sensor sees needs one, so I went with a 2.8″ LCD. Preview and capture run on separate paths so processing never blocks framing."
+      },
+      {
+        "type": "heading",
+        "value": "Power"
+      },
+      {
+        "type": "paragraph",
+        "value": "Power took more rounds than anything else. I developed on a 10,000 mAh power bank, but power banks are made to charge a phone and then sleep, and they cut out at low draw. Small banks couldn’t handle capture peaks, AA cells sag under load, and I ruled out salvaged vape cells for safety."
+      },
+      {
+        "type": "paragraph",
+        "value": "I chose a fixed 5 V, 3 A UPS board with one protected 18650 cell. I avoided boards with adjustable output, because one wrong setting would kill the Pi."
+      },
+      {
+        "type": "heading",
+        "value": "IR Flash"
+      },
+      {
+        "type": "paragraph",
+        "value": "An infrared flash gives the sensor light the eye barely sees, which helps indoors, at night and through dark filters. I picked 850 nm over 940 nm because the sensor is much less sensitive at 940. Two small 3 W LED boards are switched by a logic-level MOSFET module, since the common IRF520 module can’t be driven properly from the Pi’s 3.3 V pins."
+      },
+      {
+        "type": "heading",
+        "value": "Software"
+      },
+      {
+        "type": "paragraph",
+        "value": "All camera logic lives in one module, <code>camera_core.py</code>. The phone UI I use now and the physical screen and dial I’ll add later both call the same code. That let me build and test the whole interaction before the hardware arrived, and none of it gets thrown away."
+      },
+      {
+        "type": "architecture",
+        "value": {
+          "title": "Structure",
+          "layers": [
+            [
+              "Phone web UI (now)",
+              "LCD + rotary dial (later)"
+            ],
+            {
+              "text": "camera_core.py: preview, capture, exposure, RAW, settings"
+            },
+            [
+              "Camera Module 3 NoIR"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "table",
+        "value": {
+          "title": "Controls, matched to the real sensor",
+          "headers": [
+            "Control",
+            "Range",
+            "Why"
+          ],
+          "rows": [
+            [
+              "Aperture",
+              "Fixed f/1.8",
+              "The module has no iris"
+            ],
+            [
+              "Shutter",
+              "1/8000 s to 4 s",
+              "Clamped to the sensor’s range"
+            ],
+            [
+              "ISO",
+              "125 to 3200",
+              "The sensor’s minimum gain rules out a true ISO 100"
+            ],
+            [
+              "Focus",
+              "10 manual steps or auto",
+              "IR focuses at a different point than visible light"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "heading",
+        "value": "Interface Design"
+      },
+      {
+        "type": "paragraph",
+        "value": "I designed the UI in Figma for a 320×240 screen, tested it in a browser simulator, then ran it as a live overlay on the real camera feed."
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/IRCamera/IR_UI_Capture.png",
+            "alt": "Capture screen with exposure readouts.",
+            "caption": "Capture: readouts and active-setting marker"
+          },
+          {
+            "src": "images/IRCamera/IR_UI_Focus.png",
+            "alt": "Capture screen with the manual focus scale.",
+            "caption": "Manual focus scale"
+          }
+        ]
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/IRCamera/IR_UI_Stack.png",
+            "alt": "Multi-frame stacking in progress.",
+            "caption": "Frame stacking"
+          },
+          {
+            "src": "images/IRCamera/IR_UI_MultiExp.png",
+            "alt": "Multi-exposure, shot 1 of 2.",
+            "caption": "Multi-exposure, shot 1 of 2"
+          }
+        ]
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/IRCamera/IR_UI_Gallery.png",
+            "alt": "Gallery screen.",
+            "caption": "Gallery"
+          },
+          {
+            "src": "images/IRCamera/IR_UI_Settings.png",
+            "alt": "Settings screen.",
+            "caption": "Settings"
+          }
+        ]
+      },
+      {
+        "type": "lined-list",
+        "value": [
+          {
+            "title": "One setting at a time.",
+            "text": "A marker shows what the dial controls. Pressing moves it from shutter to ISO to focus."
+          },
+          {
+            "title": "Corner brackets",
+            "text": "frame the image without a heavy border and read instantly as a camera."
+          },
+          {
+            "title": "No filter readout.",
+            "text": "The camera can’t sense which filter is on, so showing a value would be fake data."
+          }
+        ]
+      },
+      {
+        "type": "subheading",
+        "value": "After Figma"
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/IRCamera/IR_Live_Shoot.jpg",
+            "alt": "The shoot overlay running on the camera.",
+            "caption": "Shoot overlay, now in white"
+          },
+          {
+            "src": "images/IRCamera/IR_Live_Gallery.png",
+            "alt": "The gallery in a dark theme.",
+            "caption": "Gallery switched to dark"
+          }
+        ]
+      },
+      {
+        "type": "list",
+        "value": [
+          "Figma exports text as shapes, so values couldn’t update. I moved layout and values into code and kept the icons as designed.",
+          "Black readouts vanished on dark scenes, so I switched them to white.",
+          "A white gallery was too bright on a small screen after framing a dim scene, so menus went dark.",
+          "Brightness became a 10-step bar you adjust with the dial, since pressing a button ten times doesn’t scale."
+        ]
+      },
+      {
+        "type": "heading",
+        "value": "A Debugging Detour"
+      },
+      {
+        "type": "paragraph",
+        "value": "An interrupted system update left about 50 packages broken, and every repair attempt killed my remote session. There were two causes. The 512 MB board was running out of memory, so I added swap by hand. And the first package to repair was the remote-access service I was connected through, so each attempt restarted it and cut me off. Running the repair as its own system service fixed it in one pass."
+      },
+      {
+        "type": "heading",
+        "value": "What’s Next"
+      },
+      {
+        "type": "roadmap",
+        "value": [
+          {
+            "phase": "Step 5",
+            "title": "Computational capture",
+            "items": [
+              "Stack 4 frames to cut noise",
+              "Double exposure with a ghost overlay"
+            ]
+          },
+          {
+            "phase": "Step 6",
+            "title": "False-colour pipeline",
+            "items": [
+              "Process the RAW files with channel swaps and colour maps per filter",
+              "Add the 590 nm and 720 nm filter samples"
+            ]
+          },
+          {
+            "phase": "Hardware",
+            "title": "Physical camera",
+            "items": [
+              "Wire the screen, dial, buttons, flash and battery",
+              "Start on boot and finish the 3D-printed body"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "hiro-assistant": {
-    "title": "Hiro — Task Starting Assistant",
+    "title": "Hiro: Task Starting Assistant",
     "category": "UX/UI Case Study",
     "year": "2026",
     "hue": 30,
@@ -261,7 +661,7 @@
       },
       {
         "type": "subheading",
-        "value": "Rick Austin — The Overloaded Student (20)"
+        "value": "Rick Austin, The Overloaded Student (20)"
       },
       {
         "type": "box-list",
@@ -282,7 +682,7 @@
       },
       {
         "type": "subheading",
-        "value": "Riya Jerald — Independent Planner (38)"
+        "value": "Riya Jerald, Independent Planner (38)"
       },
       {
         "type": "box-list",
@@ -302,7 +702,7 @@
       },
       {
         "type": "subheading",
-        "value": "Rahul Dev — Balancing Professional (29)"
+        "value": "Rahul Dev, Balancing Professional (29)"
       },
       {
         "type": "box-list",
@@ -321,7 +721,7 @@
       },
       {
         "type": "heading",
-        "value": "User Journey Map — The Delay Loop"
+        "value": "User Journey Map: The Delay Loop"
       },
       {
         "type": "table",
@@ -406,7 +806,7 @@
       },
       {
         "type": "heading",
-        "value": "Experience Breakdown — Cognitive States"
+        "value": "Experience Breakdown: Cognitive States"
       },
       {
         "type": "table",
@@ -439,7 +839,7 @@
       },
       {
         "type": "heading",
-        "value": "Theoretical Framework — Temporal Motivation Theory"
+        "value": "Theoretical Framework: Temporal Motivation Theory"
       },
       {
         "type": "paragraph",
@@ -538,7 +938,7 @@
       },
       {
         "type": "subheading",
-        "value": "Behavioral Model — The Procrastination Loop"
+        "value": "Behavioral Model: The Procrastination Loop"
       },
       {
         "type": "paragraph",
@@ -591,10 +991,10 @@
       {
         "type": "box-list",
         "value": [
-          "Home — Today’s suggested task",
-          "Tasks — Active tasks and task breakdown",
-          "Energy Mode — Current energy level selection",
-          "Focus Session — Active focus timer",
+          "Home: Today’s suggested task",
+          "Tasks: Active tasks and task breakdown",
+          "Energy Mode: Current energy level selection",
+          "Focus Session: Active focus timer",
           "Profile & Settings"
         ]
       },
@@ -604,7 +1004,7 @@
       },
       {
         "type": "paragraph",
-        "value": "The design system for Hiro is called <strong>The Digital Sanctuary</strong> — engineered to counteract the high-cortisol environment of task management. Most productivity tools feel like digital clipboards: rigid, cold, and demanding. Hiro aims to feel like a quiet, sun-drenched library where the architecture is organic and the atmosphere is breathable."
+        "value": "I called Hiro’s design system <strong>The Digital Sanctuary</strong>. Most productivity tools feel rigid and demanding, like a digital clipboard. I wanted Hiro to feel calmer, closer to a quiet library than a to-do list."
       },
       {
         "type": "image",
@@ -619,16 +1019,16 @@
       },
       {
         "type": "paragraph",
-        "value": "The palette is a dialogue between Sage (primary), Muted Blue (secondary), and Warm Cream (background). Colour is never used to alert — it is used to embrace."
+        "value": "The palette is a dialogue between Sage (primary), Muted Blue (secondary), and Warm Cream (background). Colour is used to make the app feel calm, not to raise alarms."
       },
       {
         "type": "box-list",
         "value": [
-          "<strong>Background</strong> — #fafaf5 (Warm Cream)",
-          "<strong>Primary</strong> — #4a6550 (Sage)",
-          "<strong>Secondary</strong> — Muted Blue",
+          "<strong>Background:</strong> #fafaf5 (Warm Cream)",
+          "<strong>Primary:</strong> #4a6550 (Sage)",
+          "<strong>Secondary:</strong> Muted Blue",
           "<strong>Surface tiers</strong> replace borders entirely",
-          "<strong>No 1px lines</strong> — boundaries are background shifts only"
+          "<strong>No 1px lines:</strong> sections are separated by background colour only"
         ]
       },
       {
@@ -646,12 +1046,12 @@
           [
             "Display & Headlines",
             "Plus Jakarta Sans",
-            "3.5rem — Welcome states, vast open space"
+            "3.5rem: welcome states, lots of open space"
           ],
           [
             "Body & Titles",
             "Be Vietnam Pro",
-            "0.875rem — Warm, humanist, never crowded"
+            "0.875rem: warm, humanist, never crowded"
           ]
         ]
       },
@@ -712,11 +1112,11 @@
       },
       {
         "type": "paragraph",
-        "value": "Users begin by uploading a task to Hiro — simply entering the task name and deadline. Rather than presenting the full scope of the work, the system immediately breaks it down into smaller, manageable steps using the <strong>Gemini API</strong>."
+        "value": "Users begin by adding a task to Hiro by entering its name and deadline. Rather than presenting the full scope of the work, the system immediately breaks it down into smaller, manageable steps using the <strong>Gemini API</strong>."
       },
       {
         "type": "paragraph",
-        "value": "Gemini analyses the task and generates a structured breakdown — splitting the work into milestones scheduled across the available time before the deadline, with built-in buffer time to reduce last-minute pressure."
+        "value": "Gemini analyses the task and generates a structured breakdown, splitting the work into milestones scheduled across the available time before the deadline, with built-in buffer time to reduce last-minute pressure."
       },
       {
         "type": "portrait-pair",
@@ -737,7 +1137,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Once the task is broken down, Hiro doesn't hand the user a flat to-do list. Instead, it surfaces different suggested steps depending on the user's current <strong>energy level</strong> — so someone running low can still make meaningful progress without feeling overwhelmed."
+        "value": "Once the task is broken down, Hiro doesn't hand the user a flat to-do list. Instead, it surfaces different suggested steps depending on the user's current <strong>energy level</strong>, so someone running low can still make meaningful progress without feeling overwhelmed."
       },
       {
         "type": "table",
@@ -837,7 +1237,7 @@
       },
       {
         "type": "paragraph",
-        "value": "A student enters the task 'Write essay — due in 7 days'. Hiro automatically creates milestones and suggests today's first action: Find three research sources (10 minutes)."
+        "value": "A student enters the task 'Write essay, due in 7 days'. Hiro automatically creates milestones and suggests today's first action: Find three research sources (10 minutes)."
       },
       {
         "type": "heading",
@@ -872,7 +1272,7 @@
       },
       {
         "type": "paragraph",
-        "value": "This avoids notification fatigue. Instead of pushing users to begin, Hiro steps back once work has started — shielding focus and nudging breaks only when beneficial. The system shifts from being a starter to being a guardian of sustained effort."
+        "value": "This avoids notification fatigue. Instead of pushing users to begin, Hiro steps back once work has started. It stays quiet during focus and only suggests breaks when they help."
       },
       {
         "type": "heading",
@@ -881,6 +1281,290 @@
       {
         "type": "paragraph",
         "value": "Hiro demonstrates that solving procrastination requires empathetic behavioural design rather than strict scheduling. By focusing on task initiation and reducing cognitive friction, the system helps users move from uncertainty to action and maintain momentum."
+      }
+    ]
+  },
+  "city-in-hand": {
+    "title": "City in Hand : 3D-Printed Dublin",
+    "category": "3D Pipeline & Making",
+    "year": "2026",
+    "hue": 45,
+    "description": "Turning a captured 3D map of Dublin into a physical, 3D-printed object, reducing 10,000 fragmented meshes to one printable model.",
+    "image": "images/CityInHand/CIH_Title.jpg",
+    "tags": [
+      "3D Pipeline",
+      "Mesh Processing",
+      "Blender",
+      "3D Printing"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/CityInHand/CIH_Title.jpg",
+          "alt": "The finished 3D-printed relief map of central Dublin.",
+          "caption": "The finished model: a printable relief map of central Dublin, assembled from five plates."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "City in Hand is a personal R&amp;D project: take a detailed 3D map of a city and turn it into an object you can hold. What began as <i>“export the map, print it”</i> became a deep dive into graphics capture, mesh repair, and the gap between geometry that renders on a screen and geometry that survives in the physical world."
+      },
+      {
+        "type": "quote",
+        "value": {
+          "text": "The file was only a few megabytes. What froze Blender was the ten thousand separate objects inside it."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "The Goal"
+      },
+      {
+        "type": "paragraph",
+        "value": "The source geometry was captured frame-by-frame from a real-time 3D map using <b>RenderDoc</b>, a graphics debugger that intercepts what an application sends to the GPU. The aim was purely technical and non-commercial: learn the capture-to-physical pipeline end to end and print the city I live in."
+      },
+      {
+        "type": "horizontal-flow",
+        "value": {
+          "title": "The pipeline",
+          "items": [
+            "Capture",
+            "Merge",
+            "Weld",
+            "Reduce",
+            "Repair",
+            "Split",
+            "Print"
+          ]
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/CityInHand/CIH_Blender.jpg",
+          "alt": "Model in Blender.",
+          "caption": "A captured frame in Blender, while the model is being optimized."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "01. Ten Thousand Fragments"
+      },
+      {
+        "type": "paragraph",
+        "value": "The capture produced roughly <b>10,000 individual mesh files</b>, with every building, road tile and prop saved as its own object. It was only a few megabytes on disk, but Blender froze on import."
+      },
+      {
+        "type": "paragraph",
+        "value": "I assumed the file was too big, but size wasn’t the issue. Blender was doing ten thousand separate imports and rebuilding its dependency graph each time. From then on, my goal was to cut the number of objects, not the file size."
+      },
+      {
+        "type": "heading",
+        "value": "02. A Custom Merge Pipeline"
+      },
+      {
+        "type": "paragraph",
+        "value": "Standard tools failed one after another, so I wrote a script to take control. Three problems had to be solved:"
+      },
+      {
+        "type": "lined-list",
+        "value": [
+          {
+            "title": "Missing textures.",
+            "text": "Absent files crashed every read, so I patched the file-read layer to return empty data so geometry loaded regardless."
+          },
+          {
+            "title": "Changed API.",
+            "text": "The merge library’s old method had been removed, so I switched to the current one."
+          },
+          {
+            "title": "Buffer limit.",
+            "text": "The format allows one data buffer; merging produced 10,000, so I collapsed them into one before writing."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "value": "Result: <b>10,007 files merged, zero failures</b>, compressed from ~380 MB to 70 MB. It still froze."
+      },
+      {
+        "type": "heading",
+        "value": "03. Compression Isn’t Consolidation"
+      },
+      {
+        "type": "paragraph",
+        "value": "The compressed file still held nearly 10,000 meshes. It was smaller, but no simpler. The standard “join” also refused to weld them, because each mesh’s position was baked into its vertices rather than stored as a transform."
+      },
+      {
+        "type": "paragraph",
+        "value": "The fix was to bypass the scene structure entirely: decompress, read the raw vertices from every mesh, and concatenate them into one. The result was <b>1 mesh with 7.5M vertices and 5.5M faces</b>. At 18 MB, it opened instantly."
+      },
+      {
+        "type": "table",
+        "value": {
+          "headers": [
+            "Stage",
+            "Object count",
+            "Result"
+          ],
+          "rows": [
+            [
+              "Raw capture",
+              "~10,000 meshes",
+              "Froze on import"
+            ],
+            [
+              "Merged + compressed",
+              "~10,000 meshes",
+              "Still froze"
+            ],
+            [
+              "Welded",
+              "1 mesh",
+              "Opened instantly"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/CityInHand/CIH_Welded.jpg",
+          "alt": "The welded single-mesh city map open in Blender.",
+          "caption": "All ~10,000 fragments welded into one mesh."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "04. Too Detailed to Print"
+      },
+      {
+        "type": "paragraph",
+        "value": "Millions of faces is more than a slicer wants, but naive simplification destroys what makes a city readable: sharp building edges. Voxel Remesh works well for organic forms, but it blurred walls and spires into blobs. <b>Planar Decimate</b> collapsed flat surfaces while keeping corners crisp."
+      },
+
+      {
+        "type": "concept-grid",
+        "value": {
+          "items": [
+            {
+              "title": "Merge by Distance",
+              "description": "Removed duplicate vertices with no visual change."
+            },
+            {
+              "title": "Decimate: Planar",
+              "description": "Simplified flat surfaces, kept building edges sharp."
+            },
+            {
+              "title": "Decimate: Collapse",
+              "description": "Handled organic tree geometry planar mode couldn’t touch."
+            },
+            {
+              "title": "Print-scale thinking",
+              "description": "Detail finer than a 0.4 mm nozzle won’t print, so there’s no point keeping it."
+            }
+          ]
+        }
+      },
+      {
+        "type": "heading",
+        "value": "05. Watertight for the Physical World"
+      },
+      {
+        "type": "paragraph",
+        "value": "Screen geometry only needs to look right. Printed geometry must be a closed solid. The mesh had hundreds of thousands of open edges and hundreds of disconnected shells. One-click “make manifold” tools mangled detail, so the fix was a sequence: clean up first, reduce, then run a patch-based repair that fixes holes without softening detail."
+      },
+      {
+        "type": "heading",
+        "value": "06. Repair First, Then Cut"
+      },
+      {
+        "type": "paragraph",
+        "value": "The map was larger than the print bed. Cutting a broken mesh just produces several broken pieces; cutting a clean solid produces clean, closed pieces. I added interlocking connectors at the seams."
+      },
+      {
+        "type": "heading",
+        "value": "07. The Print That Wouldn’t Stick"
+      },
+      {
+        "type": "paragraph",
+        "value": "Large flat prints give cooling corners maximum leverage to peel. PLA barely warps, so the problem was adhesion, not temperature. Washing the plate with soap and water made the biggest difference. I also widened the brim, re-levelled the bed and turned off first-layer cooling."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/CityInHand/CIH_Print.jpg",
+          "alt": "The city map printing on a Bambu A1 mini with a wide brim.",
+          "caption": "Printing cleanly after the adhesion fixes."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "The Result"
+      },
+      {
+        "type": "table",
+        "value": {
+          "headers": [
+            "Meshes merged",
+            "Final mesh",
+            "Print plates",
+            "Print time"
+          ],
+          "rows": [
+            [
+              "10,007",
+              "1",
+              "5",
+              "47 h"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "<b>3D Map: Dublin City</b> is published free on <a href=\"https://makerworld.com/en/models/3185139-3d-map-dublin-city\" target=\"_blank\" rel=\"noopener\">MakerWorld</a>. Print profile: 0.12 mm layers · 2 walls · 15% infill · tuned for the Bambu A1 mini."
+      },
+       {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/CityInHand/CIH_Print1.jpg",
+            "alt": "The finished Dublin city map print.",
+            "caption": ""
+          },
+          {
+            "src": "images/CityInHand/CIH_Print2.jpg",
+            "alt": "Close-up detail of the printed Dublin buildings.",
+            "caption": ""
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "value": "What I Took Away"
+      },
+      {
+        "type": "box-list",
+        "value": [
+          {
+            "title": "Diagnose the real bottleneck",
+            "text": "The number of objects mattered, not the file size."
+          },
+          {
+            "title": "Know when to leave the toolbox",
+            "text": "When every standard tool failed the same way, reading the geometry directly solved it."
+          },
+          {
+            "title": "Rendering ≠ manufacturing",
+            "text": "Geometry that looks solid on screen can be full of holes once it must become real."
+          },
+          {
+            "title": "Order of operations matters",
+            "text": "Reduce before repair, repair before cut."
+          }
+        ]
       }
     ]
   },
@@ -1190,9 +1874,9 @@
       {
         "type": "list",
         "value": [
-          "Google AI Studio — initial drafts of features & logic",
-          "DeepSeek — refining data structures, simulation logic, and route handling",
-          "ChatGPT — final refinements, debugging, API integration, UX adjustments"
+          "Google AI Studio: initial drafts of features & logic",
+          "DeepSeek: refining data structures, simulation logic, and route handling",
+          "ChatGPT: final refinements, debugging, API integration, UX adjustments"
         ]
       },
       {
@@ -1514,7 +2198,7 @@
       },
       {
         "type": "paragraph",
-        "value": "City, Beneath the Surface is a data-driven interactive installation that reframes how we perceive care-based labor in cities. It visualizes the hidden hierarchies of essential workers — bus drivers, waste collectors, maintenance crews, and others — as dynamic bubble networks, transforming public sentiment and contextual data into living, responsive visuals.  \n\nBy situating the installation in everyday public spaces (bus stops, train stations), the project brings recognition to often unseen labor, sparking reflection on the value of those who sustain urban life."
+        "value": "City, Beneath the Surface is a data-driven interactive installation that reframes how we perceive care-based labor in cities. It visualizes the hidden hierarchies of essential workers (bus drivers, waste collectors, maintenance crews and others) as dynamic bubble networks, transforming public sentiment and contextual data into living, responsive visuals.  \n\nBy situating the installation in everyday public spaces (bus stops, train stations), the project brings recognition to often unseen labor, sparking reflection on the value of those who sustain urban life."
       },
       {
         "type": "heading",
@@ -1754,7 +2438,7 @@
         "type": "list",
         "value": [
           "Exhibition Setup: Designed for public spaces where passersby can engage with the installation and explore hidden labor systems.",
-          "Message: Cities thrive because of invisible labor — this project transforms that invisibility into a visible, interactive network."
+          "Message: Cities depend on labor most people never see. This project makes that labor visible as an interactive network."
         ]
       },
       {
