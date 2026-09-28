@@ -266,8 +266,8 @@ a:hover { opacity: 0.75; }
   z-index: 1;
 }
 
-body[data-mode="look"] .switch__slider { transform: translateX(0); }
-body[data-mode="read"] .switch__slider { transform: translateX(100%); }
+body[data-mode="read"] .switch__slider { transform: translateX(0); }
+body[data-mode="look"] .switch__slider { transform: translateX(100%); }
 
 .switch__btn {
   all: unset;

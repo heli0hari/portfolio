@@ -42,8 +42,8 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
   /* ---------- Shareable mode URLs ----------
-     Look is the default landing view (harigovind.ie).
-     Read has its own shareable link (harigovind.ie/#read).
+     Read is the default landing view (harigovind.ie).
+     Look has its own shareable link (harigovind.ie/#look).
      Toggling REPLACES the URL rather than pushing history, so the back button
      leaves the site instead of stepping back through view toggles. */
   var VALID_MODES = ['look', 'read'];
@@ -60,20 +60,18 @@
 
   function modeFromURL() {
     var h = (location.hash || '').replace('#', '').toLowerCase();
-    if (!h) return 'look';
-    if (h === 'read' || h.indexOf('read/') === 0 || h.indexOf('project/') === 0 || h.indexOf('read/project/') === 0) return 'read';
-    return 'look';
+    if (h === 'look') return 'look';
+    return 'read';
   }
 
   function syncURL(mode, projectId) {
     var base = location.pathname + location.search;
     var hash = '';
 
-    if (mode === 'read') {
-      hash = 'read';
-      if (projectId) hash += '/project/' + projectId;
-    } else if (projectId) {
+    if (projectId) {
       hash = 'project/' + projectId;
+    } else if (mode === 'look') {
+      hash = 'look';
     }
 
     var target = base + (hash ? '#' + hash : '');
@@ -142,7 +140,7 @@
   });
 
   /* ---------- Initial mode from the URL ----------
-     #read opens Read directly (shareable); anything else lands on Look. */
+     #look opens Look directly (shareable); anything else lands on Read. */
   (function initMode() {
     var initial = modeFromURL();
     var current = body.getAttribute('data-mode');

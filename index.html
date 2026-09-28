@@ -39,13 +39,13 @@
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   </script>
 </head>
-<body data-mode="look">
+<body data-mode="read">
 <script>
-  /* Set the mode immediately, before the page renders, so a shared #read link
-     never flashes the Look view first. */
+  /* Set the mode immediately, before the page renders, so a shared #look link
+     never flashes the Read view first. */
   (function () {
     var h = (location.hash || '').replace('#', '').toLowerCase();
-    if (h === 'read') document.body.setAttribute('data-mode', 'read');
+    if (h === 'look') document.body.setAttribute('data-mode', 'look');
   })();
 </script>
 
@@ -107,11 +107,11 @@
         <div class="switch" role="tablist" aria-label="Choose a way through the work">
           <div class="switch__track">
             <div class="switch__slider" aria-hidden="true"></div>
-            <button class="switch__btn" role="tab" data-mode-btn="look" aria-selected="true">
-              Look<sup class="switch__sup">01</sup>
+            <button class="switch__btn" role="tab" data-mode-btn="read" aria-selected="true">
+              Read<sup class="switch__sup">01</sup>
             </button>
-            <button class="switch__btn" role="tab" data-mode-btn="read" aria-selected="false">
-              Read<sup class="switch__sup">02</sup>
+            <button class="switch__btn" role="tab" data-mode-btn="look" aria-selected="false">
+              Look<sup class="switch__sup">02</sup>
             </button>
           </div>
           <span class="switch__hint">— two ways through the work</span>
