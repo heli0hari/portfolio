@@ -399,6 +399,192 @@
       }
     ]
   },
+  "wealthx": {
+    "title": "WealthX",
+    "category": "Product & Brand Design",
+    "year": "2026",
+    "hue": 80,
+    "description": "WealthX links every account, investment, and asset into a single AI-powered intelligence layer, so your capital always knows exactly where it stands.",
+    "image": "images/WealthX/WX_Logo.jpg",
+    "tags": [
+      "Brand Identity",
+      "Product Design",
+      "iOS",
+      "Web"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_Logo.jpg",
+          "alt": "WealthX logo on a soft green gradient."
+        }
+      },
+      {
+        "type": "table",
+        "value": {
+          "headers": [
+            "Role",
+            "Platform",
+            "Year"
+          ],
+          "rows": [
+            [
+              "Product &amp; Brand Design",
+              "iOS · Web",
+              "2026"
+            ]
+          ]
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_Card.jpg",
+          "alt": "Translucent WealthX card over a pattern of feature words."
+        }
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/WealthX/WX_Balance.jpg",
+            "alt": "Glass balance widget with Add, Send, Receive and Scan actions over a dark photo."
+          },
+          {
+            "src": "images/WealthX/WX_Icons.jpg",
+            "alt": "WealthX icon set on frosted glass buttons."
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_Screens.jpg",
+          "alt": "Wex AI advisor screen and the Your Wealth home screen."
+        }
+      },
+      {
+        "type": "portrait-pair",
+        "value": [
+          {
+            "src": "images/WealthX/WX_Type.jpg",
+            "alt": "WealthX wordmark with typographic proportion guides."
+          },
+          {
+            "src": "images/WealthX/WX_Mark.jpg",
+            "alt": "Construction lines of the WealthX logo mark."
+          }
+        ]
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_Brand.jpg",
+          "alt": "WealthX app icon, App Store listing, social profile and home screen."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_App.jpg",
+          "alt": "Mobile app home screen and Wex, the AI co-pilot."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_Signals.jpg",
+          "alt": "Wex surfacing a rebalance alert from the portfolio."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/WealthX/WX_Web.jpg",
+          "alt": "WealthX landing page on a tablet."
+        }
+      }
+    ]
+  },
+  "tolstoy-farm": {
+    "title": "Tolstoy Farm",
+    "category": "Brand Identity & Packaging",
+    "year": "2026",
+    "hue": 35,
+    "description": "Identity and packaging for a coffee, tea and spice brand from Munnar, Kerala.",
+    "image": "images/Tolstoy/TF_Logo.jpg",
+    "tags": [
+      "Illustration",
+      "English & Malayalam"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Logo.jpg",
+          "alt": "Tolstoy Farm logotype on kraft paper with the wax seal mark."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "Three categories that rarely share a shelf identity. The thread isn't a motif, it's a method: uncoated kraft, one ink line, one colour per product, and a vein-textured band that wraps every pack in the same place."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Palette.jpg",
+          "alt": "Typefaces Courier Prime, Karla and Gayathri with five product colours."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Botanicals.jpg",
+          "alt": "Hand-drawn coffee, tea, cardamom, black pepper and turmeric botanicals with English and Malayalam names."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "Five botanicals drawn by hand, fruit leading, not flower, because coffee and tea blossoms look the same from two feet away."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Pack.jpg",
+          "alt": "Front and back of the coffee pack."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Range.jpg",
+          "alt": "Tea, coffee, black pepper and turmeric packs on a kitchen counter."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_GiftBox.jpg",
+          "alt": "Gift box with four packs and a cap, beside the logotype over a tea estate."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Card.jpg",
+          "alt": "Business card on a rock and a branded apron at a tea harvest."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Tolstoy/TF_Seal.jpg",
+          "alt": "Wax seal with the t mark and the line From soil to soul."
+        }
+      }
+    ]
+  },
   "hiro-assistant": {
     "title": "Hiro: Task Starting Assistant",
     "category": "UX/UI Case Study",
