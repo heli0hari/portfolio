@@ -1195,7 +1195,7 @@
       {
         "type": "image",
         "value": {
-          "src": "images/Hiro/layout.png",
+          "src": "images/Hiro/Layout.png",
           "alt": "Hiro visual layout and design system overview"
         }
       },
@@ -2711,7 +2711,7 @@
       {
         "type": "image",
         "value": {
-          "src": "images/Theyyam/Theyyam_insp.jpg",
+          "src": "images/Theyyam/Theyyam_Insp.jpg",
           "alt": "A grid of inspiration photos showing the vibrant colors and intense expressions of Theyyam performers."
         }
       },

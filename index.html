@@ -31,7 +31,13 @@
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#131110">
 
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="look.css?v=5">
+  <link rel="stylesheet" href="read.css?v=5">
+  <link rel="stylesheet" href="journal.css?v=6">
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.min.js" } }
+  </script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
   <script>
@@ -42,7 +48,7 @@
 <body data-mode="read">
 <script>
   /* Set the mode immediately, before the page renders, so a shared #look link
-     never flashes the Read view first. */
+     never flashes the Read view first. Read is page 1 (default). */
   (function () {
     var h = (location.hash || '').replace('#', '').toLowerCase();
     if (h === 'look') document.body.setAttribute('data-mode', 'look');
@@ -103,6 +109,8 @@
 
         </div>
 
+
+
         <!-- Replace your current .switch div with this -->
         <div class="switch" role="tablist" aria-label="Choose a way through the work">
           <div class="switch__track">
@@ -117,211 +125,301 @@
           <span class="switch__hint">— two ways through the work</span>
         </div>
 
+
         <div class="cta">
           <a href="#contact" class="cta__primary">Get in touch</a>
-          <a href="images\Resume\Resume_Harigovind.pdf" class="cta__secondary">Download CV</a>
+          <a href="images/Resume/Harigovind_Sajimon_CV.pdf" class="cta__secondary">Download CV</a>
         </div>
       </div>
 
       <div class="hero__scrollcue">Selected work ↓</div>
     </section>
 
-    <!-- ============ READ MOMENT ============ -->
-    <section class="read-moment" data-panel="read" aria-label="Read — case study">
-      <div class="read-moment__inner">
-        <div class="eyebrow">Read</div>
+    <!-- ============ READ — EDITORIAL INDEX ============ -->
+    <section class="ix" data-panel="read" id="index" aria-labelledby="ixTitle">
+      <header class="ix__head">
+        <div class="eyebrow">Selected work</div>
+        <h2 class="ix__title" id="ixTitle">Index</h2>
+        <p class="ix__range">10 projects &middot; 2022&ndash;2026</p>
+      </header>
 
-        <h2 class="read-moment__title">WealthX</h2>
-
-        <p class="read-moment__lede">WealthX links every account, investment, and asset into a single AI-powered intelligence layer, so your capital always knows exactly where it stands.</p>
-
-        <div class="metarow">
-          <span>2026</span>
-          <span class="metarow__dot">·</span>
-          <span>Product &amp; Brand Design</span>
-          <span class="metarow__dot">·</span>
-          <span>iOS · Web</span>
-        </div>
-
-        <div class="plate plate--wide" role="img" aria-label="WealthX">
-          <img src="images/WealthX/WX_Logo.jpg" alt="WealthX logo" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-        </div>
-
-        <a href="#project/wealthx" class="readlink" data-project="wealthx">Continue reading <span aria-hidden="true">→</span></a>
+      <div class="ix__cols" aria-hidden="true">
+        <span>No.</span><span>Project</span><span>Discipline</span><span>Year</span>
       </div>
+
+      <ol class="ix__list">
+        <li class="ix__item">
+          <a class="ix__row" href="#project/wealthx" data-project="wealthx" data-preview="images/index/wealthx.jpg" data-gallery="images/index/wealthx.jpg,images/index/wealthx/01.jpg,images/index/wealthx/02.jpg,images/index/wealthx/03.jpg,images/index/wealthx/04.jpg,images/index/wealthx/05.jpg,images/index/wealthx/06.jpg,images/index/wealthx/07.jpg">
+            <span class="ix__no">01</span>
+            <span class="ix__name"><span class="ix__name-t">WealthX</span></span>
+            <span class="ix__cat">Product &amp; Brand Design</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">WealthX links every account, investment, and asset into a single AI-powered intelligence layer, so your capital always knows exactly where it stands.</span>
+            <span class="ix__tags"><span>iOS</span><span>Web</span></span>
+            <img class="ix__thumb" src="images/index/wealthx.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/tolstoy-farm" data-project="tolstoy-farm" data-preview="images/index/tolstoy-farm.jpg" data-gallery="images/index/tolstoy-farm.jpg,images/index/tolstoy-farm/01.jpg,images/index/tolstoy-farm/02.jpg,images/index/tolstoy-farm/03.jpg,images/index/tolstoy-farm/04.jpg,images/index/tolstoy-farm/05.jpg,images/index/tolstoy-farm/06.jpg,images/index/tolstoy-farm/07.jpg">
+            <span class="ix__no">02</span>
+            <span class="ix__name"><span class="ix__name-t">Tolstoy Farm</span></span>
+            <span class="ix__cat">Brand Identity &amp; Packaging</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">Identity and packaging for a coffee, tea and spice brand from Munnar, Kerala.</span>
+            <span class="ix__tags"><span>Brand</span><span>Packaging</span></span>
+            <img class="ix__thumb" src="images/index/tolstoy-farm.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/infrared-camera" data-project="infrared-camera" data-preview="images/index/infrared-camera.jpg" data-gallery="images/index/infrared-camera.jpg,images/index/infrared-camera/01.jpg,images/index/infrared-camera/02.jpg,images/index/infrared-camera/03.jpg,images/index/infrared-camera/04.jpg,images/index/infrared-camera/05.jpg,images/index/infrared-camera/06.jpg,images/index/infrared-camera/07.jpg">
+            <span class="ix__no">03</span>
+            <span class="ix__name"><span class="ix__name-t">Unseen - Infrared Camera</span></span>
+            <span class="ix__cat">Hardware &amp; Interaction Design</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">A hand-built Raspberry Pi camera that shoots near-infrared, false-colour photos.</span>
+            <span class="ix__tags"><span class="ix__badge">In progress</span><span>Hardware</span><span>Interaction</span></span>
+            <img class="ix__thumb" src="images/index/infrared-camera.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/hiro-assistant" data-project="hiro-assistant" data-preview="images/index/hiro-assistant.jpg" data-gallery="images/index/hiro-assistant.jpg,images/index/hiro-assistant/01.jpg,images/index/hiro-assistant/02.jpg,images/index/hiro-assistant/03.jpg,images/index/hiro-assistant/04.jpg,images/index/hiro-assistant/05.jpg,images/index/hiro-assistant/06.jpg,images/index/hiro-assistant/07.jpg">
+            <span class="ix__no">04</span>
+            <span class="ix__name"><span class="ix__name-t">Hiro - Task Starting Assistant</span></span>
+            <span class="ix__cat">UX/UI Case Study</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">A behavioural assistant that reduces the friction between intention and starting work.</span>
+            <span class="ix__tags"><span>UX/UI</span><span>Behavioral</span></span>
+            <img class="ix__thumb" src="images/index/hiro-assistant.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/city-in-hand" data-project="city-in-hand" data-preview="images/index/city-in-hand.jpg" data-gallery="images/index/city-in-hand.jpg,images/index/city-in-hand/01.jpg,images/index/city-in-hand/02.jpg,images/index/city-in-hand/03.jpg,images/index/city-in-hand/04.jpg,images/index/city-in-hand/05.jpg,images/index/city-in-hand/06.jpg">
+            <span class="ix__no">05</span>
+            <span class="ix__name"><span class="ix__name-t">City in Hand - 3D-Printed Dublin</span></span>
+            <span class="ix__cat">3D Pipeline &amp; Making</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">10,000 captured map meshes turned into one 3D-printed model of Dublin.</span>
+            <span class="ix__tags"><span>3D Pipeline</span><span>Making</span></span>
+            <img class="ix__thumb" src="images/index/city-in-hand.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/city-beneaththesurface" data-project="city-beneaththesurface" data-preview="images/index/city-beneaththesurface.jpg" data-gallery="images/index/city-beneaththesurface.jpg,images/index/city-beneaththesurface/01.jpg,images/index/city-beneaththesurface/02.jpg,images/index/city-beneaththesurface/03.jpg,images/index/city-beneaththesurface/04.jpg,images/index/city-beneaththesurface/05.jpg,images/index/city-beneaththesurface/06.jpg,images/index/city-beneaththesurface/07.jpg">
+            <span class="ix__no">06</span>
+            <span class="ix__name"><span class="ix__name-t">City: Beneath the Surface</span></span>
+            <span class="ix__cat">Data Visualization</span>
+            <span class="ix__year">2025</span>
+            <span class="ix__desc">Dublin's hidden workforce rendered as a physics-based data narrative.</span>
+            <span class="ix__tags"><span>Data Viz</span><span>Three.js</span></span>
+            <img class="ix__thumb" src="images/index/city-beneaththesurface.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/dub-transit" data-project="dub-transit" data-preview="images/index/dub-transit.jpg" data-gallery="images/index/dub-transit.jpg,images/index/dub-transit/01.jpg,images/index/dub-transit/02.jpg,images/index/dub-transit/03.jpg,images/index/dub-transit/04.jpg,images/index/dub-transit/05.jpg,images/index/dub-transit/06.jpg,images/index/dub-transit/07.jpg">
+            <span class="ix__no">07</span>
+            <span class="ix__name"><span class="ix__name-t">DUB Transit</span></span>
+            <span class="ix__cat">User Experience Design</span>
+            <span class="ix__year">2025</span>
+            <span class="ix__desc">Real-time transit interface with glanceable route cards.</span>
+            <span class="ix__tags"><span>UX</span><span>Mobility</span></span>
+            <img class="ix__thumb" src="images/index/dub-transit.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/theyyam-threads" data-project="theyyam-threads" data-preview="images/index/theyyam-threads.jpg" data-gallery="images/index/theyyam-threads.jpg,images/index/theyyam-threads/01.jpg,images/index/theyyam-threads/02.jpg,images/index/theyyam-threads/03.jpg,images/index/theyyam-threads/04.jpg,images/index/theyyam-threads/05.jpg,images/index/theyyam-threads/06.jpg,images/index/theyyam-threads/07.jpg">
+            <span class="ix__no">08</span>
+            <span class="ix__name"><span class="ix__name-t">Theyyam Threads</span></span>
+            <span class="ix__cat">Visual Design</span>
+            <span class="ix__year">2023</span>
+            <span class="ix__desc">A Kerala ritual art form translated into contemporary apparel.</span>
+            <span class="ix__tags"><span>Visual</span><span>Research</span></span>
+            <img class="ix__thumb" src="images/index/theyyam-threads.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/aujus" data-project="aujus" data-preview="images/index/aujus.jpg" data-gallery="images/index/aujus.jpg,images/index/aujus/01.jpg,images/index/aujus/02.jpg,images/index/aujus/03.jpg,images/index/aujus/04.jpg,images/index/aujus/05.jpg,images/index/aujus/06.jpg,images/index/aujus/07.jpg">
+            <span class="ix__no">09</span>
+            <span class="ix__name"><span class="ix__name-t">Aujus</span></span>
+            <span class="ix__cat">System Design</span>
+            <span class="ix__year">2022</span>
+            <span class="ix__desc">A 5-week semester project to understand and design for complex, interconnected socio-economic problems.</span>
+            <span class="ix__tags"><span>Systems</span><span>Wayfinding</span></span>
+            <img class="ix__thumb" src="images/index/aujus.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/artbox" data-project="artbox" data-preview="images/index/artbox.jpg" data-gallery="images/index/artbox.jpg,images/index/artbox/01.jpg,images/index/artbox/02.jpg,images/index/artbox/03.jpg,images/index/artbox/04.jpg,images/index/artbox/05.jpg,images/index/artbox/06.jpg,images/index/artbox/07.jpg">
+            <span class="ix__no">10</span>
+            <span class="ix__name"><span class="ix__name-t">ArtBox</span></span>
+            <span class="ix__cat">Product Design</span>
+            <span class="ix__year">2022</span>
+            <span class="ix__desc">A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.</span>
+            <span class="ix__tags"><span>Brand</span><span>Packaging</span></span>
+            <img class="ix__thumb" src="images/index/artbox.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+      </ol>
     </section>
 
-    <!-- ============ READ — MORE WORK RAIL ============ -->
-    <section class="rail" data-panel="read" aria-label="More work in Read" id="railSection">
-      <div class="rail__pin">
-        <div class="rail__head">
-          <div class="eyebrow">More work</div>
-          <div class="rail__hint" aria-hidden="true" id="railHint">Scroll to explore ↓</div>
-        </div>
-
-        <ul class="rail__track" tabindex="0" aria-label="Project list, scrollable">
-        <li class="pcard">
-          <a class="pcard__link" href="#project/infrared-camera" data-project="infrared-camera">
-            <div class="plate pcard__plate" style="--phue:320;" role="img" aria-label="Infrared Camera">
-              <img src="images/IRCamera/IR_Sample.jpg" alt="Near-infrared photo with magenta trees" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-              <span class="pcard__badge">In progress</span>
-            </div>
-            <h3 class="pcard__title">Unseen - Infrared Camera</h3>
-            <p class="pcard__desc">A hand-built Raspberry Pi camera that shoots near-infrared, false-colour photos.</p>
-            <div class="metarow pcard__meta"><span>2026</span><span class="metarow__dot">·</span><span>Hardware</span><span class="metarow__dot">·</span><span>Interaction</span></div>
+    <!-- ============ READ — ELSEWHERE (secondary) ============ -->
+    <section class="ew" data-panel="read" aria-labelledby="ewTitle">
+      <header class="ew__head">
+        <div class="eyebrow">Elsewhere</div>
+        <h2 class="ew__title" id="ewTitle">Experiments in Look</h2>
+      </header>
+      <ul class="ew__list">
+        <li>
+          <a class="ew__item" href="#look" data-look-target=".chroma">
+            <span class="ew__no">A</span>
+            <span class="ew__name">Chroma</span>
+            <span class="ew__desc">A growing collection of photographs documenting people, colour, architecture and everyday moments.</span>
+            <span class="ew__go" aria-hidden="true">&rarr;</span>
           </a>
         </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/city-beneaththesurface" data-project="city-beneaththesurface">
-            <div class="plate pcard__plate" style="--phue:210;" role="img" aria-label="City: Beneath the Surface">
-              <img src="images/City/City_Main.jpg" alt="City: Beneath the Surface Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">City: Beneath the Surface</h3>
-            <p class="pcard__desc">Dublin's hidden workforce rendered as a physics-based data narrative.</p>
-            <div class="metarow pcard__meta"><span>2025</span><span class="metarow__dot">·</span><span>Data Viz</span><span class="metarow__dot">·</span><span>Three.js</span></div>
+        <li>
+          <a class="ew__item" href="#look" data-look-target=".chroma__showcase">
+            <span class="ew__no">B</span>
+            <span class="ew__name">Color Grading</span>
+            <span class="ew__desc">In the time between things</span>
+            <span class="ew__go" aria-hidden="true">&rarr;</span>
           </a>
         </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/tolstoy-farm" data-project="tolstoy-farm">
-            <div class="plate pcard__plate" style="--phue:35;" role="img" aria-label="Tolstoy Farm">
-              <img src="images/Tolstoy/TF_Range.jpg" alt="Tolstoy Farm packs" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">Tolstoy Farm</h3>
-            <p class="pcard__desc">Identity and packaging for a coffee, tea and spice brand from Munnar, Kerala.</p>
-            <div class="metarow pcard__meta"><span>2026</span><span class="metarow__dot">·</span><span>Brand</span><span class="metarow__dot">·</span><span>Packaging</span></div>
-          </a>
-        </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/hiro-assistant" data-project="hiro-assistant">
-            <div class="plate pcard__plate" style="--phue:265;" role="img" aria-label="Hiro — Task Starting Assistant">
-              <img src="images/Hiro/Title.jpg" alt="Hiro Case Study Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">Hiro - Task Starting Assistant</h3>
-            <p class="pcard__desc">A behavioural assistant that reduces the friction between intention and starting work.</p>
-            <div class="metarow pcard__meta"><span>2026</span><span class="metarow__dot">·</span><span>UX/UI</span><span class="metarow__dot">·</span><span>Behavioral</span></div>
-          </a>
-        </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/city-in-hand" data-project="city-in-hand">
-            <div class="plate pcard__plate" style="--phue:45;" role="img" aria-label="City in Hand">
-              <img src="images/CityInHand/CIH_Title.jpg" alt="City in Hand — 3D-printed Dublin map" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">City in Hand - 3D-Printed Dublin</h3>
-            <p class="pcard__desc">10,000 captured map meshes turned into one 3D-printed model of Dublin.</p>
-            <div class="metarow pcard__meta"><span>2026</span><span class="metarow__dot">·</span><span>3D Pipeline</span><span class="metarow__dot">·</span><span>Making</span></div>
-          </a>
-        </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/dub-transit" data-project="dub-transit">
-            <div class="plate pcard__plate" style="--phue:150;" role="img" aria-label="DUB Transit">
-                <img src="images/dubtransit/dubscreen.png" alt="DUB Transit Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">DUB Transit</h3>
-            <p class="pcard__desc">Real-time transit interface with glanceable route cards.</p>
-            <div class="metarow pcard__meta"><span>2024</span><span class="metarow__dot">·</span><span>UX</span><span class="metarow__dot">·</span><span>Mobility</span></div>
-          </a>
-        </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/theyyam-threads" data-project="theyyam-threads">
-            <div class="plate pcard__plate" style="--phue:12;" role="img" aria-label="Theyyam Threads">
-              <img src="images/Theyyam/Theyyam_1.jpg" alt="Theyyam Threads Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">Theyyam Threads</h3>
-            <p class="pcard__desc">A Kerala ritual art form translated into contemporary apparel.</p>
-            <div class="metarow pcard__meta"><span>2023</span><span class="metarow__dot">·</span><span>Visual</span><span class="metarow__dot">·</span><span>Research</span></div>
-          </a>
-        </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/artbox" data-project="artbox">
-            <div class="plate pcard__plate" style="--phue:280;" role="img" aria-label="ArtBox">
-              <img src="images/Artbox/Artbox.jpg" alt="ArtBox Thumbnail" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">ArtBox</h3>
-            <p class="pcard__desc">Identity, packaging and unboxing as one designed journey.</p>
-            <div class="metarow pcard__meta"><span>2023</span><span class="metarow__dot">·</span><span>Brand</span><span class="metarow__dot">·</span><span>Packaging</span></div>
-          </a>
-        </li>
-        
-        <li class="pcard">
-          <a class="pcard__link" href="#project/aujus" data-project="aujus">
-            <div class="plate pcard__plate" style="--phue:90;" role="img" aria-label="Aujus Case Study">
-              <img src="images/Aujus/Aujus.jpg" alt="Aujus Case Study Title" style="width: 100%; height: 100%; object-fit: cover; display: block;">
-            </div>
-            <h3 class="pcard__title">Aujus</h3>
-            <p class="pcard__desc">A wayfinding and service system with a unified visual identity.</p>
-            <div class="metarow pcard__meta"><span>2022</span><span class="metarow__dot">·</span><span>Systems</span><span class="metarow__dot">·</span><span>Wayfinding</span></div>
+        <li>
+          <a class="ew__item" href="#look" data-look-target=".forge-room">
+            <span class="ew__no">C</span>
+            <span class="ew__name">Motion &amp; 3D</span>
+            <span class="ew__desc">Real-time renders, animation studies and experimental motion work.</span>
+            <span class="ew__go" aria-hidden="true">&rarr;</span>
           </a>
         </li>
       </ul>
     </section>
 
-<!-- ============ LOOK MOMENT — FORGE ============ -->
-<section class="forge" data-panel="look" aria-label="Look — Forge 3D work">
-
-    <header class="forge__header">
-        <div class="eyebrow">Look</div>
-        <h2 class="forge__title">
-            Motion & 3D
-        </h2>
-        <p class="forge__intro">
-            Real-time renders, animation studies and experimental motion work.
-        </p>
-    </header>
-
-    <section class="forge__section">
-        <div class="forge__section-head">
-            <h3>Motorhead</h3>
+    <!-- ============ READ — FOOTER ============ -->
+    <footer class="colophon" data-panel="read">
+      <div class="colophon__lead">
+        <div class="eyebrow">Get in touch</div>
+        <p class="colophon__line">Let's create something together.</p>
+        <a class="colophon__mail" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a>
+      </div>
+      <nav class="colophon__cols" aria-label="Footer">
+        <div>
+          <div class="colophon__label">Contact</div>
+          <a href="#contact" data-open-contact>Write a message</a>
+          <a href="mailto:harigovind.ie@gmail.com">Email</a>
         </div>
-        <div class="forge__cars" id="forgeCars">
+        <div>
+          <div class="colophon__label">Elsewhere</div>
+          <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a>
         </div>
-    </section>
-
-    <section class="forge__section">
-        <div class="forge__section-head">
-            <h3>3D Typography</h3>
+        <div>
+          <div class="colophon__label">Index</div>
+          <a href="#index">Selected work</a>
+          <a href="#look">Look</a>
         </div>
-        <div class="forge__grid" id="glyphGrid">
-        </div>
-    </section>
-
-</section>
+      </nav>
+      <div class="colophon__base">
+        <span>Harigovind Sajimon &mdash; Designer, Dublin</span>
+        <span>Set in Bricolage Grotesque</span>
+      </div>
+    </footer>
 
 <!-- ============ LOOK MOMENT — CHROMA ============ -->
 <section class="chroma" data-panel="look" aria-label="Look — Chroma photography">
 
-    <header class="chroma__head">
-        <div class="eyebrow">Look</div>
-        <h2 class="chroma__title">Chroma</h2>
-        <p class="chroma__intro">
-            A growing collection of photographs documenting people, colour, architecture and everyday moments.
-        </p>
-    </header>
+    <div class="archive look-room" id="archive">
+      <div class="archive__sticky">
+        <div class="archive__stage" id="archiveStage" aria-label="Interactive sculpture of photographs"></div>
 
-    <div class="chroma__field" id="chromaField"></div>
+        <header class="archive__head chroma__head" id="archiveHead">
+            <div class="eyebrow">Look</div>
+            <h2 class="archive__title chroma__title">Chroma</h2>
+            <p class="chroma__intro">
+                A growing collection of photographs documenting people, colour, architecture and everyday moments.
+            </p>
+        </header>
 
-    <!-- 1. CAPTION & VIEW ALL BUTTON (Moved ABOVE the video) -->
-    <div class="chroma__caption" style="margin-bottom: 80px;">
-        <p id="chromaCaption">Sorted by hue, not by date.</p>
-        <button type="button" class="chroma__viewall" id="chromaViewAll">View all photographs</button>
-    </div>
-
-    <!-- 2. VIDEO SHOWCASE (Moved BELOW the button) -->
-    <div class="chroma__showcase">
-        <div class="eyebrow">Color Grading</div>
-        <div class="cs-frame">
-          <iframe src="https://player.vimeo.com/video/1211043548?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="In the time between things"></iframe>
+        <div class="archive__bar">
+          <div class="archive__status" aria-live="polite"><span id="archiveNow">&nbsp;</span></div>
+          <div class="archive__hint" id="archiveHint">Drag to turn &middot; Scroll to open</div>
         </div>
+        <div class="archive__rail" aria-hidden="true"><i id="archiveRail"></i></div>
+        <div class="archive__loading" id="archiveLoading"><i></i></div>
+
+        <div class="archive__fallback" id="archiveFallback" hidden>
+          <p>This view needs WebGL, which isn't available in this browser.</p>
+        </div>
+      </div>
     </div>
 
 </section>
 
+<!-- ============ LOOK MOMENT — FORGE (curved reel) ============ -->
+<section class="forge-room look-room" data-panel="look" aria-label="Look — Forge 3D work">
+  <div class="reel" id="reel">
+    <div class="reel__sticky">
+      <header class="reel__head">
+        <div class="eyebrow">Look</div>
+        <h2 class="reel__title">Motion &amp; 3D</h2>
+        <p class="reel__intro">Real-time renders, animation studies and experimental motion work.</p>
+      </header>
+
+      <div class="reel__stage" id="reelStage">
+        <div class="reel__track" id="reelTrack" role="list"></div>
+      </div>
+
+      <div class="reel__bar">
+        <div class="reel__now" id="reelNow" aria-live="polite">&nbsp;</div>
+        <div class="reel__hint">Scroll to advance &middot; Click to view</div>
+      </div>
+      <div class="reel__progress" aria-hidden="true"><i id="reelProgress"></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOOK MOMENT — COLOR GRADING ============ -->
+<section class="grade-room" data-panel="look" aria-labelledby="gradeTitle">
+  <div class="chroma__showcase">
+    <header class="grade__head">
+      <div class="eyebrow">Look</div>
+      <h2 class="grade__title" id="gradeTitle">Color Grading</h2>
+    </header>
+    <div class="cs-frame">
+          <iframe src="https://player.vimeo.com/video/1211043548?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="In the time between things"></iframe>
+        </div>
+  </div>
+</section>
+
+
+  </div>
+
+
+  <!-- ============ LOOK — 3D ROOM VIEWERS ============ -->
+  <div class="viewer" id="reelViewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Viewer">
+    <div class="viewer__count" id="reelViewerCount"></div>
+    <button type="button" class="viewer__close" id="reelViewerClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="viewer__btn viewer__btn--prev" id="reelViewerPrev" aria-label="Previous">&#8249;</button>
+    <figure class="viewer__fig">
+      <div class="viewer__media" id="reelViewerMedia"></div>
+      <figcaption class="viewer__cap" id="reelViewerCap"></figcaption>
+    </figure>
+    <button type="button" class="viewer__btn viewer__btn--next" id="reelViewerNext" aria-label="Next">&#8250;</button>
+  </div>
+
+  <div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photograph viewer">
+    <div class="viewer__count" id="viewerCount"></div>
+    <button type="button" class="viewer__close" id="viewerClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="viewer__btn viewer__btn--prev" id="viewerPrev" aria-label="Previous">&#8249;</button>
+    <figure class="viewer__fig">
+      <img class="viewer__img" id="viewerImg" alt="">
+      <figcaption class="viewer__cap" id="viewerCap"></figcaption>
+    </figure>
+    <button type="button" class="viewer__btn viewer__btn--next" id="viewerNext" aria-label="Next">&#8250;</button>
   </div>
 
   <!-- ============ FORGE LIGHTBOX (video player) ============ -->
@@ -336,32 +434,26 @@
     <div class="forge-lightbox__cap" id="forgeLightboxCap"></div>
   </div>
 
-<!-- ============ PROJECT DETAIL MODAL ============ -->
-  <div class="project-modal" id="projectModal" aria-hidden="true" tabindex="-1">
+<!-- ============ PROJECT DETAIL — JOURNAL ============ -->
+  <div class="project-modal journal" id="projectModal" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="jTitle">
     <div class="project-modal__scroll">
-      
-      <header class="project-modal__header">
-        <button type="button" class="project-modal__back" data-modal-close aria-label="Close project">
-          &larr; Harigovind Sajimon
-        </button>
-        <div class="project-modal__cat" id="projectModalTopCat">UX/UI Case Study</div>
-      </header>
-
-      <div class="project-modal__inner">
-        <div class="project-modal__eyebrow">READ &mdash; CASE STUDY</div>
-        <h1 class="project-modal__title" id="projectModalTitle"></h1>
-        <p class="project-modal__desc" id="projectModalDesc"></p>
-        
-        <div class="metarow project-modal__meta" id="projectModalMeta"></div>
-        
-        <div class="project-modal__content" id="projectModalContent"></div>
-
-        <footer class="project-modal__footer">
-          <div class="project-modal__footer-eyebrow">NEXT <span>&rarr;</span></div>
-          <button class="project-modal__footer-title" id="projectModalNextTitle"></button>
-        </footer>
-      </div>
-
+      <nav class="jn" aria-label="Project">
+        <button type="button" class="jn__back" data-modal-close>&larr; Index</button>
+        <div class="jn__where">
+          <span class="jn__proj" id="jnProj"></span>
+          <button type="button" class="jn__ch" id="jnCh" aria-expanded="false" aria-controls="jnMenu" aria-label="Chapters">
+            <span id="jnChNo"></span><span id="jnChLabel">Cover</span>
+          </button>
+          <ol class="jn__menu" id="jnMenu" hidden></ol>
+        </div>
+        <div class="jn__pn">
+          <button type="button" id="jnPrev" aria-label="Previous project">&larr;</button>
+          <button type="button" id="jnNext" aria-label="Next project">&rarr;</button>
+        </div>
+        <div class="jn__progress" aria-hidden="true"><i id="jnProgress"></i></div>
+      </nav>
+      <aside class="jtoc" aria-label="Chapters"><ol id="jToc"></ol></aside>
+      <article class="jr" id="projectModalContent"></article>
     </div>
   </div>
 
@@ -417,23 +509,14 @@
 </div>
 
 
-<!-- ============ CHROMA ARCHIVE OVERLAY ============ -->
-<div class="chroma-archive" id="chromaArchive" aria-hidden="true" role="dialog" aria-modal="true" aria-label="All photographs">
-    <div class="chroma-archive__bar">
-        <div class="chroma-archive__meta">
-            <span class="chroma-archive__title">Chroma — full archive</span>
-            <span class="chroma-archive__count" id="chromaArchiveCount"></span>
-        </div>
-        <button type="button" class="chroma-archive__close" id="chromaArchiveClose" aria-label="Close archive">
-            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-        </button>
-    </div>
-    <div class="chroma-archive__scroll">
-        <div class="chroma__filters" id="chromaFilters" role="group" aria-label="Filter photos by tag"></div>
-        <div class="chroma__field" id="chromaArchiveField"></div>
-    </div>
-</div>
 
-  <script src="script.js"></script>
+  <script src="journal-config.js?v=4"></script>
+  <script src="journal.js?v=6"></script>
+  <script src="script.js?v=4"></script>
+  <script src="reel.js?v=4"></script>
+  <script type="module" src="archive-page.js?v=4"></script>
+  <button class="totop" id="toTop" type="button" aria-label="Back to top" hidden><span aria-hidden="true">&uarr;</span> Top</button>
+  <script src="look.js?v=2"></script>
+  <script src="read.js?v=5"></script>
 </body>
 </html>

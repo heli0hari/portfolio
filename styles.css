@@ -1,22 +1,22 @@
 /* =========================================================
    Harigovind Sajimon — portfolio
-   Two modes: Read (warm dark) and Look (warm light).
+   Two modes: Look (page 1, warm dark) and Read (page 2, warm light).
    Theme is driven by CSS variables on <body data-mode>.
    ========================================================= */
 
 /* ---------- Design tokens ---------- */
 :root {
-  /* Read (default) palette — warm near-black */
+  /* Look (default, page 1) palette — warm near-black; the work carries the colour */
   --ground: #131110;
   --ink:    #EDE9E2;
-  --accent: #A8B5C4;   /* cool desaturated slate — Read only */
+  --accent: #A8B5C4;   /* cool desaturated slate */
   --meta:   #8A857D;
   --plate:  #1D1A18;
   --hair:   rgba(237, 233, 226, 0.12);
 
   /* rhythm + motion */
-  --rhythm:    8rem;
-  --plate-gap: 14px;
+  --rhythm:    11rem;
+  --plate-gap: 28px;
   --ease:      cubic-bezier(0.65, 0, 0.35, 1);
   --dur:       600ms;
   --blur-max:  4px;
@@ -24,16 +24,16 @@
   --page-pad: clamp(24px, 5vw, 72px);
 }
 
-/* Look palette — warm off-white. Work carries the colour, no accent. */
-body[data-mode="look"] {
+/* Read (page 2) palette — warm off-white, like a printed journal */
+body[data-mode="read"] {
   --ground: #F2EEE7;
   --ink:    #1A1815;
-  --accent: #1A1815;   /* neutralised in Look — interactive states darken only */
+  --accent: #4E6478;   /* the same slate, deepened to read on paper */
   --meta:   #7C756B;
   --plate:  #E6E0D5;
   --hair:   rgba(26, 24, 21, 0.14);
-  --rhythm: 11rem;
-  --plate-gap: 28px;
+  --rhythm: 8rem;
+  --plate-gap: 14px;
 }
 
 /* ---------- Base ---------- */

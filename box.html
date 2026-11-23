@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motion &amp; 3D — Harigovind Sajimon</title>
+  <meta name="theme-color" content="#131110">
+  <link rel="icon" href="icon-h.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="box.css?v=2">
+</head>
+<body>
+
+  <main class="box" id="box">
+    <div class="box__sticky">
+      <header class="box__head">
+        <a class="box__eyebrow" href="index.html#look">Look</a>
+        <h1 class="box__title">Motion &amp; 3D</h1>
+        <p class="box__intro">Real-time renders, animation studies and experimental motion work.</p>
+      </header>
+
+      <div class="box__stage" id="boxStage">
+        <div class="box__floor" aria-hidden="true"></div>
+        <div class="prism" id="prism">
+          <div class="face face--front"  data-slot="0"></div>
+          <div class="face face--right"  data-slot="1"></div>
+          <div class="face face--back"   data-slot="2"></div>
+          <div class="face face--left"   data-slot="3"></div>
+          <div class="face face--top"></div>
+          <div class="face face--bottom"></div>
+        </div>
+      </div>
+
+      <nav class="box__index" id="boxIndex" aria-label="Projects"></nav>
+
+      <div class="box__bar">
+        <div class="box__now" id="boxNow" aria-live="polite">&nbsp;</div>
+        <div class="box__hint">Scroll to turn &middot; Drag to look around &middot; Click a side to view</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- viewer -->
+  <div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Viewer">
+    <div class="viewer__count" id="viewerCount"></div>
+    <button type="button" class="viewer__close" id="viewerClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="viewer__btn viewer__btn--prev" id="viewerPrev" aria-label="Previous">&#8249;</button>
+    <figure class="viewer__fig">
+      <div class="viewer__media" id="viewerMedia"></div>
+      <figcaption class="viewer__cap" id="viewerCap"></figcaption>
+    </figure>
+    <button type="button" class="viewer__btn viewer__btn--next" id="viewerNext" aria-label="Next">&#8250;</button>
+  </div>
+
+  <script src="box.js?v=2"></script>
+</body>
+</html>

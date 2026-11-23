@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fragmented Archive — Harigovind Sajimon</title>
+  <meta name="theme-color" content="#131110">
+  <link rel="icon" href="icon-h.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="archive.css?v=1795412069">
+  <!-- start fetching the heavy bits before the module graph asks for them -->
+  <link rel="modulepreload" href="vendor/three/three.module.min.js">
+  <link rel="preload" href="photos.json" as="fetch" crossorigin>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.min.js" } }
+  </script>
+</head>
+<body>
+
+  <main class="archive" id="archive">
+    <div class="archive__sticky">
+      <div class="archive__stage" id="archiveStage" aria-label="Interactive sculpture of photographs"></div>
+
+      <header class="archive__head" id="archiveHead">
+        <a class="archive__eyebrow" href="index.html#look">Portfolio / Photography</a>
+        <h1 class="archive__title">Fragmented<br>Archive</h1>
+      </header>
+
+      <div class="archive__bar">
+        <div class="archive__status" aria-live="polite"><span id="archiveNow">&nbsp;</span></div>
+        <div class="archive__hint" id="archiveHint">Drag to turn &middot; Scroll to open</div>
+      </div>
+      <div class="archive__rail" aria-hidden="true"><i id="archiveRail"></i></div>
+      <div class="archive__loading" id="archiveLoading"><i></i></div>
+
+      <div class="archive__fallback" id="archiveFallback" hidden>
+        <p>This view needs WebGL, which isn't available in this browser.</p>
+        <a href="index.html#look">See the photographs in Chroma &rarr;</a>
+      </div>
+    </div>
+  </main>
+
+
+  <!-- viewer -->
+  <div class="viewer" id="viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Photograph viewer">
+    <div class="viewer__count" id="viewerCount"></div>
+    <button type="button" class="viewer__close" id="viewerClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button type="button" class="viewer__btn viewer__btn--prev" id="viewerPrev" aria-label="Previous">&#8249;</button>
+    <figure class="viewer__fig">
+      <img class="viewer__img" id="viewerImg" alt="">
+      <figcaption class="viewer__cap" id="viewerCap"></figcaption>
+    </figure>
+    <button type="button" class="viewer__btn viewer__btn--next" id="viewerNext" aria-label="Next">&#8250;</button>
+  </div>
+
+  <script type="module" src="archive-page.js?v=1795412069"></script>
+</body>
+</html>

@@ -42,8 +42,8 @@
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
   /* ---------- Shareable mode URLs ----------
-     Read is the default landing view (harigovind.ie).
-     Look has its own shareable link (harigovind.ie/#look).
+     Read is the default landing view (harigovind.ie) — page 1.
+     Look has its own shareable link (harigovind.ie/#look) — page 2.
      Toggling REPLACES the URL rather than pushing history, so the back button
      leaves the site instead of stepping back through view toggles. */
   var VALID_MODES = ['look', 'read'];
@@ -58,10 +58,14 @@
     return null;
   }
 
+  /* Read is page 1 (the default, no hash); Look is page 2 (#look).
+     Project links and in-page Read anchors (#index) belong to Read;
+     any other in-page anchor keeps whichever mode is showing. */
   function modeFromURL() {
     var h = (location.hash || '').replace('#', '').toLowerCase();
     if (h === 'look') return 'look';
-    return 'read';
+    if (!h || h === 'read' || h === 'index' || h.indexOf('project/') === 0 || h.indexOf('read/') === 0) return 'read';
+    return body.getAttribute('data-mode') || 'read';
   }
 
   function syncURL(mode, projectId) {
@@ -145,13 +149,12 @@
     var initial = modeFromURL();
     var current = body.getAttribute('data-mode');
 
-    if (initial !== current) {
-      // set state without the switch animation on first paint
-      body.setAttribute('data-mode', initial);
-      buttons.forEach(function (btn) {
-        btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === initial));
-      });
-    }
+    // set state without the switch animation on first paint
+    // (the inline head script may already have set data-mode, so always sync the buttons)
+    if (initial !== current) body.setAttribute('data-mode', initial);
+    buttons.forEach(function (btn) {
+      btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === initial));
+    });
     syncURL(initial, initial === 'read' ? projectIdFromHash() : null);
 
     // start at the top regardless of what the browser remembered
@@ -431,7 +434,7 @@
   var chromaFilters = document.getElementById('chromaFilters');
   var chromaCaption = document.getElementById('chromaCaption');
 
-  if (chromaField) {
+  if (chromaField || document.getElementById('chromaArchiveField')) {
     fetch('photos.json')
       .then(function (res) { return res.json(); })
       .then(function (data) { initChroma(data); })
@@ -547,7 +550,7 @@
     featured.forEach(function (p, n) {
       fFrag.appendChild(makeTile(p, featuredIndices[n], featuredIndices, true));
     });
-    chromaField.appendChild(fFrag);
+    if (chromaField) chromaField.appendChild(fFrag);   // the 3D archive replaces this grid on the Look page
 
     /* ---- archive grid (inside the overlay) ----
        No scope = pages through every photo, respecting the tag filter. */
@@ -757,7 +760,7 @@
 
   /* ---------- Project detail modal ---------- */
   var modal = document.getElementById('projectModal');
-  var modalPanel      = modal && modal.querySelector('.project-modal__panel');
+  var modalPanel      = modal && (modal.querySelector('.project-modal__panel') || modal);
   var modalScroll      = modal && modal.querySelector('.project-modal__scroll');
   var modalMeta        = document.getElementById('projectModalMeta');
   var modalTitle       = document.getElementById('projectModalTitle');
@@ -1126,6 +1129,12 @@
 
     modalLastFocused = document.activeElement;
 
+    if (window.Journal) {
+      // the journal lays out the whole project (cover, chapters, navigation)
+      window.Journal.render(id, data, projectData, {
+        renderBlock: function (block) { var d = document.createElement('div'); renderBlocks([block], d); return d; }
+      });
+    } else {
     // Update Top Navigation
     var modalTopCat = document.getElementById('projectModalTopCat');
     if (modalTopCat) modalTopCat.textContent = data.category;
@@ -1163,6 +1172,7 @@
         if (modalScroll) modalScroll.scrollTop = 0;
         openProject(nextId);
       };
+    }
     }
 
     if (options.updateUrl !== false) syncURL('read', id);
