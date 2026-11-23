@@ -140,8 +140,8 @@ body[data-mode="read"] .switch__ico--look { opacity: 0; }
 body[data-mode="look"] .switch__ico--look,
 body[data-mode="read"] .switch__ico--read { opacity: 1; transition: opacity 300ms var(--ease) 460ms; }   /* …the new one arrives as the drop settles */
 @media (max-width: 640px) {
-  .switch__track { --ball: 26px; column-gap: 14px; }
-  .switch__btn { font-size: 20px; padding: 0; }
+  .switch__track { --ball: 30px; column-gap: 14px; }
+  .switch__btn { font-size: 23px; padding: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .switch__drop, .switch__tail, .switch__face, .switch__ico { transition: none; }
@@ -327,3 +327,13 @@ html.has-custom-cursor iframe { cursor: auto !important; }
 .film__time { opacity: 0.8; white-space: nowrap; }
 .film.is-full { aspect-ratio: auto; width: 100vw; height: 100vh; background: #000; }
 @media (max-width: 640px) { .film__mute { display: none; } .film__bar { font-size: 12px; } }
+
+/* mode switch: one surface changes colour. The Look rooms let the page colour show
+   through (it eases with the body) instead of snapping dark on their own. */
+.archive__sticky, .reel__sticky { background-color: transparent !important; }
+html { background: #F2EEE7; transition: background-color var(--dur, 600ms) ease; }
+html:has(body[data-mode="look"]) { background: #131110; }
+
+/* no blue tap flash on phones — every control has its own pressed/active state */
+html { -webkit-tap-highlight-color: transparent; }
+.switch__btn:focus:not(:focus-visible), .switch__lane:focus:not(:focus-visible) { outline: none; }
