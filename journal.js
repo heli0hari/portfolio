@@ -56,6 +56,7 @@
   function cleanup() {
     observers.forEach(function (o) { o.disconnect(); });
     observers = [];
+    modal._lastTop = 0; modal.classList.remove('nav-tucked');
   }
 
   function render(id, data, all, api) {
@@ -64,6 +65,8 @@
     var theme = cfg.theme || 'system';
     var ids = order(all);
     var pos = ids.indexOf(id);
+    var countEl = document.getElementById('jnCount');
+    if (countEl) countEl.textContent = pad(pos + 1) + ' / ' + pad(ids.length);
     var blocks = data.content || [];
     var skip = {};
     (cfg.skip || []).forEach(function (i) { skip[i] = 1; });
@@ -253,7 +256,7 @@
     function endLink(pid, dir) {
       var a = el('a', 'jend__link jend__link--' + dir);
       a.href = '#project/' + pid;
-      a.appendChild(el('span', 'jend__dir', dir === 'prev' ? '← Previous' : 'Next →'));
+      a.appendChild(el('span', 'jend__dir', dir === 'prev' ? 'Previous' : 'Next'));
       a.appendChild(el('span', 'jend__no', 'No. ' + pad(ids.indexOf(pid) + 1)));
       a.appendChild(el('span', 'jend__title')).textContent = all[pid].title;
       a.appendChild(el('span', 'jend__cat')).textContent = all[pid].category || '';
@@ -261,7 +264,7 @@
     }
     end.appendChild(endLink(prevId, 'prev'));
     end.appendChild(endLink(nextId, 'next'));
-    var back = el('button', 'jend__back', '↑ Back to the index');
+    var back = el('button', 'jend__back', 'Back to the index');
     back.type = 'button';
     back.setAttribute('data-modal-close', '');
     back.addEventListener('click', function () { var b = modal.querySelector('.jn__back'); if (b) b.click(); });
@@ -326,6 +329,12 @@
       var max = scroller.scrollHeight - scroller.clientHeight;
       progress.style.transform = 'scaleX(' + (max > 0 ? scroller.scrollTop / max : 0).toFixed(4) + ')';
       modal.classList.toggle('is-scrolled', scroller.scrollTop > 40);
+      // corner marks step out of the way while reading down, and return on the way back up
+      var st = scroller.scrollTop, menuOpen = navChBtn.getAttribute('aria-expanded') === 'true';
+      if (!menuOpen && Math.abs(st - (modal._lastTop || 0)) > 6) {
+        modal.classList.toggle('nav-tucked', st > modal._lastTop && st > 120);
+        modal._lastTop = st;
+      }
       // margin chapter list steps aside whenever a picture runs under it
       var tocEl = toc.parentNode, tr = tocEl.getBoundingClientRect(), hit = false;
       if (tr.width) {

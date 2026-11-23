@@ -746,7 +746,7 @@
   /* Project case studies are loaded from projects.json (ported from the old
      portfolio). Rendered by renderBlocks() into the instrument-panel language. */
   var projectData = {};
-  fetch('projects.json')
+  fetch('projects.json?v=5')
     .then(function (r) { return r.json(); })
     .then(function (d) {
       projectData = d;

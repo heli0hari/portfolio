@@ -11,6 +11,7 @@ import { RoomEnvironment } from './vendor/three/RoomEnvironment.js';
 const DEG = Math.PI / 180;
 const ACCENT = new THREE.Color('#FF8A3D');
 const PW = 1.5, PH = 1.0;              // every photo panel is 3:2
+const DEPTH = 0.045;                   // a slight body behind each photo
 
 /* ---------- the sculpture: interlocking prisms ----------
    c: centre, r: rotation (deg), s: size [x, y, z]
@@ -75,8 +76,9 @@ function bendable(mat, curve) {
     sh.uniforms.uCurve = curve;
     sh.vertexShader = 'uniform float uCurve;\n' + sh.vertexShader
       .replace('#include <beginnormal_vertex>', `
+        // turn the normal with the bend, so the slab's edges keep their own shading
         float bendA = position.x * uCurve;
-        vec3 objectNormal = vec3(sin(bendA), 0.0, cos(bendA));
+        vec3 objectNormal = vec3(normal.x * cos(bendA) + normal.z * sin(bendA), normal.y, -normal.x * sin(bendA) + normal.z * cos(bendA));
         #ifdef USE_TANGENT
           vec3 objectTangent = vec3(tangent.xyz);
         #endif`)
@@ -90,6 +92,45 @@ function bendable(mat, curve) {
         }`);
   };
   mat.customProgramCacheKey = () => 'bend';
+  return mat;
+}
+
+/* Grid lens (after the "Canvas Grid Mouse Effect" CodePen): around the pointer the
+   photo breaks into cells that each zoom into their own patch, with a dot on each
+   grid corner. Spread comes from how fast the pointer moves; still = plain photo.
+   Works in the photo's own UV space, so it bends with the wall. */
+const LENS_FRAG = `
+#ifdef USE_MAP
+  vec2 luv = vMapUv;
+  float lensDot = 0.0;
+  if (uLensOn > 0.5 && uLensS > 0.001) {
+    vec2 cells = vec2(uCells * uAspect, uCells);
+    vec2 cell = 1.0 / cells;
+    vec2 org = floor(vLensUv / cell) * cell;
+    vec2 f = (vLensUv - org) / cell;
+    float s = 1.0 - clamp(length((org - uLens) * vec2(uAspect, 1.0)) / uLensS, 0.0, 1.0);
+    if (s > 0.001) luv = org + cell * (s * 0.5 + f * (1.0 - s));
+    vec2 cr = floor(vLensUv / cell + 0.5) * cell;
+    float sc = 1.0 - clamp(length((cr - uLens) * vec2(uAspect, 1.0)) / uLensS, 0.0, 1.0);
+    float r = 0.15 / uCells * sc;
+    float pd = length((vLensUv - cr) * vec2(uAspect, 1.0));
+    lensDot = sc > 0.001 ? 1.0 - smoothstep(r * 0.7, r, pd) : 0.0;
+  }
+  vec4 sampledDiffuseColor = texture2D( map, luv );
+  diffuseColor *= sampledDiffuseColor;
+  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0), lensDot);
+#endif
+`;
+function lensable(mat, u) {
+  const prev = mat.onBeforeCompile;
+  mat.onBeforeCompile = (sh, r) => {
+    prev(sh, r);
+    Object.assign(sh.uniforms, u);
+    sh.vertexShader = 'varying vec2 vLensUv;\n' + sh.vertexShader.replace('#include <uv_vertex>', '#include <uv_vertex>\n  vLensUv = uv;');
+    sh.fragmentShader = 'uniform vec2 uLens;\nuniform float uLensS, uAspect, uCells, uLensOn;\nvarying vec2 vLensUv;\n' +
+      sh.fragmentShader.replace('#include <map_fragment>', LENS_FRAG);
+  };
+  mat.customProgramCacheKey = () => 'bend-lens';
   return mat;
 }
 
@@ -208,7 +249,8 @@ export function mountArchive(container, photos, opts = {}) {
   const geoCache = new Map();
   function planes(w) {
     const k = w.toFixed(3);
-    if (!geoCache.has(k)) geoCache.set(k, [new THREE.PlaneGeometry(w, PH, 24, 1), new THREE.PlaneGeometry(w + 0.05, PH + 0.05, 24, 1)]);
+    // the photo on its face, and a thin slab behind it — every print has a little body
+    if (!geoCache.has(k)) geoCache.set(k, [new THREE.PlaneGeometry(w, PH, 24, 1), new THREE.BoxGeometry(w, PH, DEPTH, 24, 1, 1)]);
     return geoCache.get(k);
   }
   const panels = [];
@@ -219,30 +261,29 @@ export function mountArchive(container, photos, opts = {}) {
 
   all.forEach((p, i) => {
     const w = widthOf(p);
-    const [geo, rimGeo] = planes(w);
+    const [geo, slabGeo] = planes(w);
     const curve = { value: 0 };
     // unlit + no tone mapping: the photograph shows exactly as exported
-    const photoMat = bendable(new THREE.MeshBasicMaterial({
+    const lensU = { uLens: { value: new THREE.Vector2() }, uLensS: { value: 0 }, uAspect: { value: w / PH }, uCells: { value: 8 }, uLensOn: { value: 0 } };
+    const photoMat = lensable(bendable(new THREE.MeshBasicMaterial({
       color: new THREE.Color().setHSL((p.hue || 0) / 360, p.bw ? 0 : 0.3, 0.035),
       toneMapped: false,
-    }), curve);
-    const backMat = bendable(new THREE.MeshStandardMaterial({ color: 0x1f1c1a, metalness: 0.7, roughness: 0.45, side: THREE.BackSide }), curve);
-    const rimMat = bendable(new THREE.MeshPhysicalMaterial({
-      color: 0xd8c8b3, metalness: 0.9, roughness: 0.25, transparent: true, opacity: 0.55,
-      envMapIntensity: 1.4, depthWrite: false, emissive: 0x000000,
+    }), curve), lensU);
+    // matte board edge: lit by the scene, so the sides fall into shade and the panel reads as an object
+    const rimMat = bendable(new THREE.MeshStandardMaterial({
+      color: 0x2b2724, metalness: 0.05, roughness: 0.7, envMapIntensity: 0.6, emissive: 0x000000,
     }), curve);
 
     const holder = new THREE.Group();
-    const rimMesh = new THREE.Mesh(rimGeo, rimMat); rimMesh.position.z = -0.006; rimMesh.renderOrder = 2;
-    const photo = new THREE.Mesh(geo, photoMat); photo.position.z = 0.004;
-    const back = new THREE.Mesh(geo, backMat); back.position.z = -0.002;
-    holder.add(rimMesh, back, photo);
+    const slab = new THREE.Mesh(slabGeo, rimMat); slab.position.z = -DEPTH / 2;
+    const photo = new THREE.Mesh(geo, photoMat); photo.position.z = 0.002;
+    holder.add(slab, photo);
     const g = new THREE.Group();
     g.add(holder);
     rig.add(g);
 
     const pn = {
-      photo: p, index: i, w, g, holder, photoMat, rimMat, curve, hover: 0,
+      photo: p, index: i, w, g, holder, photoMat, rimMat, curve, lensU, hover: 0,
       sculpt: sculptSet.has(p), delay: rand() * 0.3,
       s: 0, ang: 0, angT: 0, y: 0, yT: 0, dim: 1, vis: 1, visT: 1, tex: null, loading: false,
     };
@@ -259,9 +300,9 @@ export function mountArchive(container, photos, opts = {}) {
       pn.A = d.clone().multiplyScalar(5 + rand() * 4); pn.qA = eulerQ([rand() * 360, rand() * 360, 0]);
       pn.sA = 0; pn.E = pn.A; pn.qE = pn.qA;
     }
-    photo.userData.panel = pn;
+    photo.userData.panel = pn; photo.userData.isPhoto = true; slab.userData.panel = pn;
     panels.push(pn);
-    pickables.push(photo, back);
+    pickables.push(photo, slab);
   });
 
   /* ---------- filtering + layout ---------- */
@@ -336,7 +377,8 @@ export function mountArchive(container, photos, opts = {}) {
       pn.photoMat.map = tex;
       pn.photoMat.color.set(0xffffff);
       pn.photoMat.needsUpdate = true;
-      pn.fade = 0;
+      pn.fade = pn.lq ? 1 : 0;            // already showing a soft preview: just sharpen
+      pn.lensU.uLensOn.value = 1;
       if (pn.sculpt && opts.onLoad) opts.onLoad(++loadedSculpt, nSculpt);
     };
     loader.load(mini, onTex, undefined, onErr);
@@ -344,10 +386,35 @@ export function mountArchive(container, photos, opts = {}) {
   function unload(pn) {
     if (!pn.tex) return;
     pn.tex.dispose(); pn.tex = null;
-    pn.photoMat.map = null;
-    pn.photoMat.color.setHSL((pn.photo.hue || 0) / 360, pn.photo.bw ? 0 : 0.3, 0.035);
+    pn.lensU.uLensOn.value = 0;
+    if (pn.lq) { pn.photoMat.map = pn.lq; pn.photoMat.color.set(0xffffff); }
+    else { pn.photoMat.map = null; pn.photoMat.color.setHSL((pn.photo.hue || 0) / 360, pn.photo.bw ? 0 : 0.3, 0.035); }
     pn.photoMat.needsUpdate = true;
   }
+
+  /* ---------- instant soft previews ----------
+     One small atlas (every photo at 40px) arrives first, so no face is ever an
+     empty tile — each photo then sharpens when its own image loads. */
+  const atlasUrl = opts.atlas || 'images/chroma/atlas.json';
+  fetch(atlasUrl).then(r => r.json()).then(meta => {
+    loader.load(atlasUrl.replace(/\.json$/, '.jpg'), atlas => {
+      atlas.colorSpace = THREE.SRGBColorSpace;
+      atlas.generateMipmaps = false;
+      atlas.minFilter = THREE.LinearFilter;
+      const idx = new Map(meta.src.map((s, i) => [s, i]));
+      const C = meta.cell, W = meta.cols * C, H = meta.rows * C, inset = 0.75;
+      panels.forEach(pn => {
+        const i = idx.get(pn.photo.src);
+        if (i == null) return;
+        const t = atlas.clone();                       // shares the one uploaded image
+        const cx = (i % meta.cols) * C, cy = Math.floor(i / meta.cols) * C;
+        t.repeat.set((C - 2 * inset) / W, (C - 2 * inset) / H);
+        t.offset.set((cx + inset) / W, 1 - (cy + C - inset) / H);
+        pn.lq = t;
+        if (!pn.tex) { pn.photoMat.map = t; pn.photoMat.color.set(0xffffff); pn.photoMat.needsUpdate = true; }
+      });
+    });
+  }).catch(() => {});
   let pageTimer = 0;
   function pageTextures(inCarousel, sNow) {
     // sculpture first; once the carousel forms, keep the nearest cards loaded
@@ -482,7 +549,7 @@ export function mountArchive(container, photos, opts = {}) {
   const corner = new THREE.Vector3();
   function rectOf(pn) {
     if (!pn || !pn.g.visible) return null;
-    const mesh = pn.holder.children[2];
+    const mesh = pn.holder.children[pn.holder.children.length - 1];   // the photo plane (added last)
     mesh.updateWorldMatrix(true, false);
     const cr = el.getBoundingClientRect();
     let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
@@ -496,6 +563,8 @@ export function mountArchive(container, photos, opts = {}) {
     return { left: x0, top: y0, width: x1 - x0, height: y1 - y0 };
   }
   let viewing = null;                     // the card lifted out into the viewer
+  let hitUv = null;
+  const lens = { pn: null, x: 0, y: 0, s: 0 };
   function openPanel(pn) {
     const rect = rectOf(pn);
     viewing = pn;
@@ -507,6 +576,7 @@ export function mountArchive(container, photos, opts = {}) {
     ray.setFromCamera(pointer, camera);
     const hit = ray.intersectObjects(pickables, false)[0];
     const pn = hit && hit.object.userData.panel;
+    hitUv = hit && hit.object.userData.isPhoto && hit.uv ? hit.uv : null;
     return pn && pn.g.visible && pn.g.scale.x > 0.2 ? pn : null;
   }
 
@@ -555,8 +625,22 @@ export function mountArchive(container, photos, opts = {}) {
     const hit = (pointerIn && !dragging) ? pick() : null;
     if (hit !== hovered) {
       hovered = hit;
-      el.style.cursor = hit ? 'pointer' : 'grab';
+      el.style.cursor = hit ? 'zoom-in' : 'grab';   // the cursor says what a click does (hidden when the cube cursor is on)
       if (hit) report(hit); else onHover(null);
+    }
+
+    // grid lens on the photo under the pointer
+    if (lens.pn && lens.pn !== hit) { lens.pn.lensU.uLensS.value = 0; lens.pn = null; lens.s = 0; }
+    if (hit && hitUv && hit.tex && !reduce) {
+      const asp = hit.w / PH;
+      if (lens.pn !== hit) { lens.pn = hit; lens.x = hitUv.x; lens.y = hitUv.y; lens.s = 0; }
+      const k = 1 - Math.exp(-dt * 3);
+      lens.x += (hitUv.x - lens.x) * k; lens.y += (hitUv.y - lens.y) * k;
+      const gap = Math.hypot((hitUv.x - lens.x) * asp, hitUv.y - lens.y);
+      lens.s += (Math.min(0.9, gap * 3) - lens.s) * (1 - Math.exp(-dt * 2.5));
+      hit.lensU.uLens.value.set(lens.x, lens.y);
+      hit.lensU.uLensS.value = lens.s;
+      hit.lensU.uLensOn.value = 1;
     }
 
     const lk = reduce ? 1 : 1 - Math.exp(-dt * 5);
@@ -583,7 +667,7 @@ export function mountArchive(container, photos, opts = {}) {
       pn.holder.position.z = pn.hover * (0.12 + 0.8 * uC);
       pn.holder.scale.setScalar(1 + pn.hover * 0.4 * uC);
       pn.dim += (((hovered && hovered !== pn && uC > 0.5) ? 0.55 : 1) - pn.dim) * (reduce ? 1 : 1 - Math.exp(-dt * 8));
-      pn.rimMat.emissive.copy(ACCENT).multiplyScalar(pn.hover * 1.3);
+      pn.rimMat.emissive.copy(ACCENT).multiplyScalar(pn.hover * 0.35);
       if (pn.fade !== undefined && pn.fade < 1) pn.fade = Math.min(1, pn.fade + dt * 1.5);
       // fade in after loading; faces in the sculpture are a touch dimmer so it still reads as an object
       if (pn.photoMat.map) pn.photoMat.color.setScalar((0.35 + 0.65 * (pn.fade ?? 1)) * (0.86 + 0.14 * Math.max(uC, pn.hover)) * pn.dim);

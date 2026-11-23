@@ -1,5 +1,5 @@
 // three.js + the sculpture load only when the section is about to be seen
-const ARCHIVE_URL = './archive.js?v=1795412069';
+const ARCHIVE_URL = './archive.js?v=1795459238';
 function webglAvailable() {
   try {
     const c = document.createElement('canvas');
@@ -156,13 +156,10 @@ viewer.addEventListener('touchend', e => {
 });
 
 /* ---------- sculpture ---------- */
-const hint = document.getElementById('archiveHint');
 const rail = document.getElementById('archiveRail');
-const HINTS = ['Drag to turn · Scroll to open', 'Keep scrolling', 'Scroll or drag to browse · Click a photo to view'];
 
 if (!webglAvailable()) {
   document.getElementById('archiveFallback').hidden = false;
-  hint.hidden = true;
   section.style.height = 'auto';
 } else {
   // wait until the section is near the viewport (and visible — Look mode on the main site)
@@ -179,7 +176,6 @@ if (!webglAvailable()) {
         onOpen: open,
         onHover: (p, i, n) => { nowEl.textContent = p ? pad(i + 1) + ' / ' + pad(n) + '  —  ' + label(p) : api.total + ' photographs'; },
         onStage: s => {
-          hint.textContent = HINTS[s];
           section.classList.toggle('is-open', s > 0);
           section.classList.toggle('is-carousel', s === 2);
           if (s === 0) nowEl.textContent = api.total + ' photographs';

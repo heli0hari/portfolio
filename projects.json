@@ -1,6 +1,6 @@
 {
   "infrared-camera": {
-    "title": "Unseen : Infrared Camera",
+    "title": "Unseen: Infrared Camera",
     "category": "Hardware & Interaction Design",
     "year": "2026",
     "hue": 320,
@@ -590,7 +590,7 @@
     "category": "UX/UI Case Study",
     "year": "2026",
     "hue": 30,
-    "description": "A behavioural productivity assistant designed to help people overcome procrastination by reducing the friction between intention and starting work.",
+    "description": "A behavioural productivity assistant for the hardest part of any task: getting from meaning to start to actually starting.",
     "image": "images/Hiro/Title.jpg",
     "tags": [
       "UX Design",
@@ -609,11 +609,11 @@
       },
       {
         "type": "paragraph",
-        "value": "Hiro is a productivity assistant designed to help people overcome the starting barrier of work. Instead of focusing on scheduling or task management, the system focuses on the moment users struggle most: the transition between intention and action."
+        "value": "Hiro is a productivity assistant for the hardest part of work: starting it. Most tools focus on scheduling and task lists. Hiro focuses on the moment people get stuck, between meaning to do something and actually doing it."
       },
       {
         "type": "paragraph",
-        "value": "By reducing cognitive friction, adapting to fluctuating energy levels, and encouraging small initial actions, Hiro helps users start earlier and maintain momentum throughout a task."
+        "value": "It breaks the first step down, adjusts to how much energy you have, and nudges you toward a small first action, so starting takes less effort and keeping going gets easier."
       },
       {
         "type": "heading",
@@ -1093,7 +1093,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Hiro is a productivity assistant designed to help people overcome the starting barrier of work. Instead of focusing on scheduling or task management, Hiro focuses on the moment when users struggle most; the transition between intention and action."
+        "value": "I kept the concept narrow on purpose. Hiro doesn't plan your week or manage your tasks. It only deals with the moment you get stuck between meaning to start and starting."
       },
       {
         "type": "paragraph",
@@ -1323,7 +1323,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Once the task is broken down, Hiro doesn't hand the user a flat to-do list. Instead, it surfaces different suggested steps depending on the user's current <strong>energy level</strong>, so someone running low can still make meaningful progress without feeling overwhelmed."
+        "value": "Once the task is broken down, Hiro doesn't hand the user a flat to-do list. Instead, it surfaces different suggested steps depending on the user's current <strong>energy level</strong>, so someone running low can still get something done without feeling buried."
       },
       {
         "type": "table",
@@ -1369,11 +1369,11 @@
       },
       {
         "type": "paragraph",
-        "value": "Snooze Mode allows users to temporarily pause tasks, reminders, and notifications when they need time to rest or step away. Instead of forcing continuous productivity, Hiro recognises that recovery is essential for sustained focus."
+        "value": "Snooze Mode allows users to temporarily pause tasks, reminders, and notifications when they need time to rest or step away. Hiro doesn't push you to stay productive all the time. Resting is part of keeping focus."
       },
       {
         "type": "paragraph",
-        "value": "Users can choose predefined durations or create custom schedules, ensuring that breaks are intentional rather than avoidant. All progress is preserved, and tasks are gently reintroduced once the snooze period ends."
+        "value": "Users can choose predefined durations or create custom schedules, so a break is a decision, not a way of avoiding the task. All progress is preserved, and tasks are gently reintroduced once the snooze period ends."
       },
       {
         "type": "paragraph",
@@ -1466,12 +1466,12 @@
       },
       {
         "type": "paragraph",
-        "value": "Hiro demonstrates that solving procrastination requires empathetic behavioural design rather than strict scheduling. By focusing on task initiation and reducing cognitive friction, the system helps users move from uncertainty to action and maintain momentum."
+        "value": "Working on Hiro changed how I see procrastination. It isn't a scheduling problem, so a stricter planner won't fix it. The design had to focus on the moment of starting, and make the first step small and clear enough to take."
       }
     ]
   },
   "city-in-hand": {
-    "title": "City in Hand : 3D-Printed Dublin",
+    "title": "City in Hand: 3D-Printed Dublin",
     "category": "3D Pipeline & Making",
     "year": "2026",
     "hue": 45,
@@ -1629,7 +1629,6 @@
         "type": "paragraph",
         "value": "Millions of faces is more than a slicer wants, but naive simplification destroys what makes a city readable: sharp building edges. Voxel Remesh works well for organic forms, but it blurred walls and spires into blobs. <b>Planar Decimate</b> collapsed flat surfaces while keeping corners crisp."
       },
-
       {
         "type": "concept-grid",
         "value": {
@@ -1712,7 +1711,7 @@
         "type": "paragraph",
         "value": "<b>3D Map: Dublin City</b> is published free on <a href=\"https://makerworld.com/en/models/3185139-3d-map-dublin-city\" target=\"_blank\" rel=\"noopener\">MakerWorld</a>. Print profile: 0.12 mm layers · 2 walls · 15% infill · tuned for the Bambu A1 mini."
       },
-       {
+      {
         "type": "portrait-pair",
         "value": [
           {
@@ -1755,11 +1754,11 @@
     ]
   },
   "dub-transit": {
-    "title": "Dublin Public Transport App",
+    "title": "Dub.Transit: Dublin Public Transport App",
     "category": "User Experience Design",
     "year": "2025",
     "hue": 150,
-    "description": "A real-time transit application that simplifies navigating Dublin’s transport network through intuitive route discovery, live bus tracking, service alerts, integrated weather insights, and an AI-powered journey assistant.",
+    "description": "A real-time transit application that simplifies navigating Dublin’s transport network with simple route search, live bus tracking, service alerts, weather, and an AI assistant for planning trips.",
     "image": "images/dubtransit/dubscreen.png",
     "tags": [
       "UX Design",
@@ -1773,12 +1772,12 @@
         "type": "image",
         "value": {
           "src": "images/dubtransit/dubtitlescreen.jpg",
-          "alt": "Title card showing \"transport network\" over a visualization of interconnected bubbles."
+          "alt": "The dub.transit wordmark over a map of central Dublin"
         }
       },
       {
         "type": "paragraph",
-        "value": "DubTransit is a mobile application built to unify Dublin’s fragmented public transport information into one clear, minimal, and elegant experience."
+        "value": "Dub.Transit is a mobile application built to unify Dublin’s fragmented public transport information into one clear, simple app."
       },
       {
         "type": "paragraph",
@@ -1787,7 +1786,7 @@
       {
         "type": "list",
         "value": [
-          "<span class=\"icon-wrapper\">\n                    <svg viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"8\"></circle><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"></line></svg>\n                 </span>\n                 <span><strong>Route Search & Stop Lookup</strong><br> Intuitive navigation across the network.</span>",
+          "<span class=\"icon-wrapper\">\n                    <svg viewBox=\"0 0 24 24\"><circle cx=\"11\" cy=\"11\" r=\"8\"></circle><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"></line></svg>\n                 </span>\n                 <span><strong>Route Search & Stop Lookup</strong><br> Find any route or stop across the network.</span>",
           "<span class=\"icon-wrapper\">\n                    <svg viewBox=\"0 0 24 24\"><polygon points=\"1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6\"></polygon><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"18\"></line><line x1=\"16\" y1=\"6\" x2=\"16\" y2=\"22\"></line></svg>\n                 </span>\n                 <span><strong>Live Network Map</strong><br> Real-time visuals with simulated tracking.</span>",
           "<span class=\"icon-wrapper\">\n                    <svg viewBox=\"0 0 24 24\"><path d=\"M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z\"></path><line x1=\"12\" y1=\"9\" x2=\"12\" y2=\"13\"></line><line x1=\"12\" y1=\"17\" x2=\"12.01\" y2=\"17\"></line></svg>\n                 </span>\n                 <span><strong>Service Alerts</strong><br> Live updates for events, delays, and accidents.</span>",
           "<span class=\"icon-wrapper\">\n                   <svg viewBox=\"0 0 24 24\"><path d=\"M12 2l3.09 6.26L22 12l-6.91 3.74L12 22l-3.09-6.26L2 12l6.91-3.74z\"></path></svg>\n                 </span>\n                 <span><strong>AI Journey Planning</strong><br> Smart assistance powered by Gemini.</span>",
@@ -1968,7 +1967,7 @@
         "type": "architecture",
         "value": [
           {
-            "text": "<strong>Mobile App</strong><br>DubTransit (React Native)",
+            "text": "<strong>Mobile App</strong><br>Dub.Transit (React Native)",
             "highlight": true
           },
           [
@@ -2114,7 +2113,7 @@
         "type": "image",
         "value": {
           "src": "images/dubtransit/dubweather.jpg",
-          "alt": "Screen showing weather details at the current location and destination location"
+          "alt": "Weather at your location and destination"
         }
       },
       {
@@ -2137,7 +2136,7 @@
         "type": "image",
         "value": {
           "src": "images/dubtransit/dubaiapp.jpg",
-          "alt": "Screen showing navigation details and steps"
+          "alt": "Step-by-step navigation"
         }
       },
       {
@@ -2146,7 +2145,7 @@
       },
       {
         "type": "paragraph",
-        "value": "A key innovation planned for DubTransit is a community-powered real-time bus tracking system, designed to overcome the limitations of existing transport data sources in Dublin."
+        "value": "The next big piece for Dub.Transit is community-powered bus tracking, to fill the gaps in Dublin's existing live data."
       },
       {
         "type": "subheading",
@@ -2285,7 +2284,7 @@
       },
       {
         "type": "subheading",
-        "value": "The current version of DubTransit is a functional prototype, with:"
+        "value": "The current version of Dub.Transit is a functional prototype, with:"
       },
       {
         "type": "box-list",
@@ -2338,11 +2337,11 @@
       },
       {
         "type": "paragraph",
-        "value": "Dub.Transit represents more than a transit app, it’s a vision for a more efficient, accessible, and human-centered mobility experience in Dublin. This project brought together UX design, visual storytelling, mobile engineering, geospatial logic, AI integration, and systems thinking into one unified product."
+        "value": "Dub.Transit started as a way to put Dublin's scattered transport information in one app. Along the way it pulled in UX, visual design, mobile development, map logic and AI."
       },
       {
         "type": "paragraph",
-        "value": "The process taught me that designing for transit is ultimately designing for people: their routines, their anxieties, their unpredictability, and their need for clarity in moments of stress. By blending thoughtful design with emerging technologies like Gemini AI and future crowdsourced real-time data, Dub.Transit aims to make everyday commuting smoother, smarter, and more equitable."
+        "value": "The process taught me that designing for transit is really designing for people: their routines, their worries, their unpredictability, and the clarity they need when something goes wrong. Gemini is already in the app, and crowdsourced bus positions are next. The aim stays simple: make getting around Dublin a bit easier, and fairer."
       },
       {
         "type": "quote",
@@ -2352,11 +2351,11 @@
     ]
   },
   "city-beneaththesurface": {
-    "title": "City, Beneath the Surface",
+    "title": "City: Beneath the Surface",
     "category": "Data Visualization",
     "year": "2025",
     "hue": 210,
-    "description": "An interactive data visualization and public installation that reveals the invisible labor sustaining cities by transforming public sentiment into dynamic visual form.",
+    "description": "An interactive data visualization and public installation that reveals the invisible labor sustaining cities by turning public sentiment into visuals that move and change.",
     "image": "images/City/City_Main.jpg",
     "tags": [
       "Information Design",
@@ -2370,7 +2369,7 @@
         "type": "image",
         "value": {
           "src": "images/City/City_Title.jpg",
-          "alt": "Title card showing \"City, Beneath the Surface\" over a visualization of interconnected bubbles."
+          "alt": "Title card"
         }
       },
       {
@@ -2384,7 +2383,7 @@
       },
       {
         "type": "paragraph",
-        "value": "City, Beneath the Surface is a data-driven interactive installation that reframes how we perceive care-based labor in cities. It visualizes the hidden hierarchies of essential workers (bus drivers, waste collectors, maintenance crews and others) as dynamic bubble networks, transforming public sentiment and contextual data into living, responsive visuals.  \n\nBy situating the installation in everyday public spaces (bus stops, train stations), the project brings recognition to often unseen labor, sparking reflection on the value of those who sustain urban life."
+        "value": "City: Beneath the Surface is an interactive installation about care-based labor in cities. It shows the people who keep a city running (bus drivers, waste collectors, maintenance crews and others) as bubble networks that grow and shift with public sentiment and context data.\n\nIt's meant for everyday public spaces like bus stops and train stations, so people come across this work where it actually happens."
       },
       {
         "type": "heading",
@@ -2512,7 +2511,7 @@
       },
       {
         "type": "paragraph",
-        "value": "<em>These frameworks guided the design in making invisible work visible, reframing workers not just as functional roles but as vital cultural and social contributors.</em>"
+        "value": "<em>These ideas shaped the main goal: make invisible work visible, and show workers as part of the city's culture, not only as the jobs they do.</em>"
       },
       {
         "type": "heading",
@@ -2532,7 +2531,7 @@
         "type": "image",
         "value": {
           "src": "images/City/City_Prot1.jpg",
-          "alt": "Early 3D prototype showing a map of a city with data points rendered in Blender."
+          "alt": "Early 3D prototype in Blender: a city map with data points"
         }
       },
       {
@@ -2583,7 +2582,7 @@
         "type": "image",
         "value": {
           "src": "images/City/City_User.jpg",
-          "alt": "A three-panel storyboard showing a user's journey from seeing the installation to interacting with it."
+          "alt": "Storyboard: from noticing the installation to using it"
         }
       },
       {
@@ -2600,7 +2599,7 @@
         "type": "image",
         "value": {
           "src": "images/City/City_App.jpg",
-          "alt": "UI mockups of the mobile AR app, showing the hierarchy view and the camera-based AR view."
+          "alt": "AR app: hierarchy view and camera view"
         }
       },
       {
@@ -2633,15 +2632,15 @@
       },
       {
         "type": "paragraph",
-        "value": "This project taught me how design, data, and empathy can merge into impactful public interventions. It demonstrated:"
+        "value": "This project taught me a few things:"
       },
       {
         "type": "list",
         "value": [
-          "The power of interactive visualization in making complex labor systems approachable and humanized.",
-          "How accurate datasets (not just sentiment) can ground storytelling in realism while still keeping the experience poetic and engaging.",
+          "Interactive visualization makes complex labor systems easier to approach, and puts people back into the numbers.",
+          "Real datasets, not only sentiment, keep the story grounded, and it can still feel poetic.",
           "The potential and limits of AI-assisted coding as a design partner, and the importance of taking creative control in the final refinements.",
-          "The need to balance clarity and exploration, ensuring accessibility for the general public while keeping the experience compelling for institutions and stakeholders."
+          "Clarity and exploration pull against each other. The piece has to make sense to someone walking past, and still hold up for institutions and stakeholders."
         ]
       },
       {
@@ -2658,7 +2657,7 @@
     "category": "Visual Design",
     "year": "2023",
     "hue": 12,
-    "description": "A project encapsulating Kerala's Theyyam art form into modern wearable art, blending tradition with contemporary design.",
+    "description": "T-shirt designs built on Kerala's Theyyam art form, made to appeal to a younger crowd.",
     "image": "images/Theyyam/Theyyam_1.jpg",
     "tags": [
       "T-Shirt",
@@ -2670,7 +2669,7 @@
         "type": "image",
         "value": {
           "src": "images/Theyyam/Theyyam_3.jpg",
-          "alt": "Closeup of the 'Theyyam Threads' t-shirt design, a powerful black and white graphic of a Theyyam face."
+          "alt": "Closeup of the 'Theyyam Threads' t-shirt design, a black and white graphic of a Theyyam face."
         }
       },
       {
@@ -2684,7 +2683,7 @@
       },
       {
         "type": "paragraph",
-        "value": "'Theyyam Threads' is a unique project encapsulating the essence of Kerala's vibrant Theyyam art form into modern wearable art. Inspired by the rich cultural heritage of Kerala, this project seamlessly blends tradition with contemporary design, resulting in visually stunning and culturally significant t-shirt designs."
+        "value": "Theyyam Threads turns Kerala's Theyyam art form into T-shirt designs. I wanted to keep the look and the meaning of the ritual, and put it on something people actually wear."
       },
       {
         "type": "image",
@@ -2712,7 +2711,7 @@
         "type": "image",
         "value": {
           "src": "images/Theyyam/Theyyam_Insp.jpg",
-          "alt": "A grid of inspiration photos showing the vibrant colors and intense expressions of Theyyam performers."
+          "alt": "A grid of inspiration photos of Theyyam performers, their colours and expressions."
         }
       },
       {
@@ -2765,7 +2764,7 @@
       },
       {
         "type": "paragraph",
-        "value": "Beyond mere aesthetics, this project delves deeper into the cultural significance and historical roots of Theyyam, aiming to foster a deeper appreciation and understanding of Kerala's cultural heritage. Through thoughtful artwork and design choices, 'Theyyam Threads' serves as a platform for cultural exchange and celebration, bridging the gap between tradition and modernity."
+        "value": "Working on this meant reading into where Theyyam comes from and what it stands for, not just how it looks. The shirts became a small way to carry that tradition to people who might never see a performance."
       },
       {
         "type": "image",
@@ -2974,7 +2973,7 @@
         "type": "image",
         "value": {
           "src": "images/Aujus/Aujus_Pat.jpg",
-          "alt": "Connection circle diagram showing the relationships within patient information data."
+          "alt": "Connection circle: patient information"
         }
       },
       {
@@ -2985,7 +2984,7 @@
         "type": "image",
         "value": {
           "src": "images/Aujus/Aujus_Med.jpg",
-          "alt": "Connection circle diagram showing the relationships within medical research data."
+          "alt": "Connection circle: medical research"
         }
       },
       {
@@ -2996,7 +2995,7 @@
         "type": "image",
         "value": {
           "src": "images/Aujus/Aujus_Diag.jpg",
-          "alt": "Connection circle diagram showing the relationships within patient diagnosis data."
+          "alt": "Connection circle: patient diagnosis"
         }
       },
       {

@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="look.css?v=5">
   <link rel="stylesheet" href="read.css?v=5">
   <link rel="stylesheet" href="journal.css?v=6">
+<link rel="stylesheet" href="voice.css?v=25">
   <script type="importmap">
     { "imports": { "three": "./vendor/three/three.module.min.js" } }
   </script>
@@ -68,14 +69,13 @@
       <div class="hero__body">
         <div class="hero__thesis-wrap">
 
-          <h1 class="thesis__srtitle" data-hero-mode="read">I am a dreamer and an analyzer. A designer blending bold imagination with rigorous research to build better products.</h1>
-          <h1 class="thesis__srtitle" data-hero-mode="look">Exploring the intersection of wild imagination and technical precision through 3D and motion.</h1>
+          <h1 class="thesis__srtitle" data-hero-mode="read">Harigovind Sajimon: analyst, observer and designer, working across UX, research and systems.</h1>
+          <h1 class="thesis__srtitle" data-hero-mode="look">Harigovind Sajimon: dreamer, explorer and storyteller, working in 3D, motion and film.</h1>
 
           <div class="thesis__poster" data-hero-mode="read" aria-hidden="true">
-            <span class="thesis__side">UX &middot; RESEARCH &middot; SYSTEMS</span>
+            <span class="thesis__side">UX &middot; Research &middot; Systems</span>
 
             <div class="thesis__main">
-              <p class="thesis__cap thesis__cap--top">research, strategy and digital experiences by a <span class="thesis__arrow">&rarr;</span></p>
 
               <div class="thesis__words">
                 <span class="thesis__word">Analyst.</span>
@@ -83,17 +83,15 @@
                 <span class="thesis__word">Designer.</span>
               </div>
 
-              <p class="thesis__cap thesis__cap--bottom"><span class="thesis__arrow">&rarr;</span> turning insights into impact</p>
             </div>
 
             
           </div>
 
           <div class="thesis__poster" data-hero-mode="look" aria-hidden="true">
-            <span class="thesis__side">3D &middot; MOTION &middot; FILM</span>
+            <span class="thesis__side">3D &middot; Motion &middot; Film</span>
 
             <div class="thesis__main">
-              <p class="thesis__cap thesis__cap--top">creative concepts and visual explorations by a <span class="thesis__arrow">&rarr;</span></p>
 
               <div class="thesis__words">
                 <span class="thesis__word">Dreamer.</span>
@@ -101,7 +99,6 @@
                 <span class="thesis__word">Storyteller.</span>
               </div>
 
-              <p class="thesis__cap thesis__cap--bottom"><span class="thesis__arrow">&rarr;</span> executing wild ideas, precisely</p>
             </div>
 
             
@@ -111,18 +108,23 @@
 
 
 
-        <!-- Replace your current .switch div with this -->
         <div class="switch" role="tablist" aria-label="Choose a way through the work">
           <div class="switch__track">
-            <div class="switch__slider" aria-hidden="true"></div>
             <button class="switch__btn" role="tab" data-mode-btn="read" aria-selected="true">
               Read<sup class="switch__sup">01</sup>
             </button>
+            <span class="switch__lane" aria-hidden="true">
+              <span class="switch__goo"><i class="switch__drop"></i><i class="switch__tail"></i></span>
+              <span class="switch__face">
+                <svg class="switch__ico switch__ico--read" viewBox="0 0 24 24"><path d="M5 7h14M5 11h14M5 15h14M5 19h8"/></svg>
+                <svg class="switch__ico switch__ico--look" viewBox="0 0 24 24"><path d="M2.5 12s3.6-6.5 9.5-6.5S21.5 12 21.5 12s-3.6 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3.2"/></svg>
+              </span>
+              <svg class="switch__defs" width="0" height="0" focusable="false"><filter id="switchGoo"><feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="b"/><feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/></filter></svg>
+            </span>
             <button class="switch__btn" role="tab" data-mode-btn="look" aria-selected="false">
               Look<sup class="switch__sup">02</sup>
             </button>
           </div>
-          <span class="switch__hint">— two ways through the work</span>
         </div>
 
 
@@ -132,13 +134,11 @@
         </div>
       </div>
 
-      <div class="hero__scrollcue">Selected work ↓</div>
     </section>
 
     <!-- ============ READ — EDITORIAL INDEX ============ -->
     <section class="ix" data-panel="read" id="index" aria-labelledby="ixTitle">
       <header class="ix__head">
-        <div class="eyebrow">Selected work</div>
         <h2 class="ix__title" id="ixTitle">Index</h2>
         <p class="ix__range">10 projects &middot; 2022&ndash;2026</p>
       </header>
@@ -173,18 +173,18 @@
         <li class="ix__item">
           <a class="ix__row" href="#project/infrared-camera" data-project="infrared-camera" data-preview="images/index/infrared-camera.jpg" data-gallery="images/index/infrared-camera.jpg,images/index/infrared-camera/01.jpg,images/index/infrared-camera/02.jpg,images/index/infrared-camera/03.jpg,images/index/infrared-camera/04.jpg,images/index/infrared-camera/05.jpg,images/index/infrared-camera/06.jpg,images/index/infrared-camera/07.jpg">
             <span class="ix__no">03</span>
-            <span class="ix__name"><span class="ix__name-t">Unseen - Infrared Camera</span></span>
+            <span class="ix__name"><span class="ix__name-t">Unseen: Infrared Camera</span><span class="ix__badge">In progress</span></span>
             <span class="ix__cat">Hardware &amp; Interaction Design</span>
             <span class="ix__year">2026</span>
             <span class="ix__desc">A hand-built Raspberry Pi camera that shoots near-infrared, false-colour photos.</span>
-            <span class="ix__tags"><span class="ix__badge">In progress</span><span>Hardware</span><span>Interaction</span></span>
+            <span class="ix__tags"><span>Hardware</span><span>Interaction</span></span>
             <img class="ix__thumb" src="images/index/infrared-camera.jpg" alt="" loading="lazy" decoding="async">
           </a>
         </li>
         <li class="ix__item">
           <a class="ix__row" href="#project/hiro-assistant" data-project="hiro-assistant" data-preview="images/index/hiro-assistant.jpg" data-gallery="images/index/hiro-assistant.jpg,images/index/hiro-assistant/01.jpg,images/index/hiro-assistant/02.jpg,images/index/hiro-assistant/03.jpg,images/index/hiro-assistant/04.jpg,images/index/hiro-assistant/05.jpg,images/index/hiro-assistant/06.jpg,images/index/hiro-assistant/07.jpg">
             <span class="ix__no">04</span>
-            <span class="ix__name"><span class="ix__name-t">Hiro - Task Starting Assistant</span></span>
+            <span class="ix__name"><span class="ix__name-t">Hiro: Task Starting Assistant</span></span>
             <span class="ix__cat">UX/UI Case Study</span>
             <span class="ix__year">2026</span>
             <span class="ix__desc">A behavioural assistant that reduces the friction between intention and starting work.</span>
@@ -195,7 +195,7 @@
         <li class="ix__item">
           <a class="ix__row" href="#project/city-in-hand" data-project="city-in-hand" data-preview="images/index/city-in-hand.jpg" data-gallery="images/index/city-in-hand.jpg,images/index/city-in-hand/01.jpg,images/index/city-in-hand/02.jpg,images/index/city-in-hand/03.jpg,images/index/city-in-hand/04.jpg,images/index/city-in-hand/05.jpg,images/index/city-in-hand/06.jpg">
             <span class="ix__no">05</span>
-            <span class="ix__name"><span class="ix__name-t">City in Hand - 3D-Printed Dublin</span></span>
+            <span class="ix__name"><span class="ix__name-t">City in Hand: 3D-Printed Dublin</span></span>
             <span class="ix__cat">3D Pipeline &amp; Making</span>
             <span class="ix__year">2026</span>
             <span class="ix__desc">10,000 captured map meshes turned into one 3D-printed model of Dublin.</span>
@@ -217,7 +217,7 @@
         <li class="ix__item">
           <a class="ix__row" href="#project/dub-transit" data-project="dub-transit" data-preview="images/index/dub-transit.jpg" data-gallery="images/index/dub-transit.jpg,images/index/dub-transit/01.jpg,images/index/dub-transit/02.jpg,images/index/dub-transit/03.jpg,images/index/dub-transit/04.jpg,images/index/dub-transit/05.jpg,images/index/dub-transit/06.jpg,images/index/dub-transit/07.jpg">
             <span class="ix__no">07</span>
-            <span class="ix__name"><span class="ix__name-t">DUB Transit</span></span>
+            <span class="ix__name"><span class="ix__name-t">Dub.Transit: Dublin Public Transport App</span></span>
             <span class="ix__cat">User Experience Design</span>
             <span class="ix__year">2025</span>
             <span class="ix__desc">Real-time transit interface with glanceable route cards.</span>
@@ -264,32 +264,22 @@
     <!-- ============ READ — ELSEWHERE (secondary) ============ -->
     <section class="ew" data-panel="read" aria-labelledby="ewTitle">
       <header class="ew__head">
-        <div class="eyebrow">Elsewhere</div>
         <h2 class="ew__title" id="ewTitle">Experiments in Look</h2>
       </header>
       <ul class="ew__list">
         <li>
           <a class="ew__item" href="#look" data-look-target=".chroma">
-            <span class="ew__no">A</span>
             <span class="ew__name">Chroma</span>
-            <span class="ew__desc">A growing collection of photographs documenting people, colour, architecture and everyday moments.</span>
-            <span class="ew__go" aria-hidden="true">&rarr;</span>
           </a>
         </li>
         <li>
           <a class="ew__item" href="#look" data-look-target=".chroma__showcase">
-            <span class="ew__no">B</span>
             <span class="ew__name">Color Grading</span>
-            <span class="ew__desc">In the time between things</span>
-            <span class="ew__go" aria-hidden="true">&rarr;</span>
           </a>
         </li>
         <li>
           <a class="ew__item" href="#look" data-look-target=".forge-room">
-            <span class="ew__no">C</span>
             <span class="ew__name">Motion &amp; 3D</span>
-            <span class="ew__desc">Real-time renders, animation studies and experimental motion work.</span>
-            <span class="ew__go" aria-hidden="true">&rarr;</span>
           </a>
         </li>
       </ul>
@@ -298,30 +288,15 @@
     <!-- ============ READ — FOOTER ============ -->
     <footer class="colophon" data-panel="read">
       <div class="colophon__lead">
-        <div class="eyebrow">Get in touch</div>
-        <p class="colophon__line">Let's create something together.</p>
         <a class="colophon__mail" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a>
       </div>
-      <nav class="colophon__cols" aria-label="Footer">
-        <div>
-          <div class="colophon__label">Contact</div>
-          <a href="#contact" data-open-contact>Write a message</a>
-          <a href="mailto:harigovind.ie@gmail.com">Email</a>
-        </div>
-        <div>
-          <div class="colophon__label">Elsewhere</div>
-          <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a>
-        </div>
-        <div>
-          <div class="colophon__label">Index</div>
-          <a href="#index">Selected work</a>
-          <a href="#look">Look</a>
-        </div>
+      <nav class="colophon__links" aria-label="Footer">
+        <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a>
+        <a href="#look">Look</a>
       </nav>
       <div class="colophon__base">
         <span>Harigovind Sajimon &mdash; Designer, Dublin</span>
-        <span>Set in Bricolage Grotesque</span>
       </div>
     </footer>
 
@@ -333,7 +308,7 @@
         <div class="archive__stage" id="archiveStage" aria-label="Interactive sculpture of photographs"></div>
 
         <header class="archive__head chroma__head" id="archiveHead">
-            <div class="eyebrow">Look</div>
+            <span class="lk__no" aria-hidden="true">01</span>
             <h2 class="archive__title chroma__title">Chroma</h2>
             <p class="chroma__intro">
                 A growing collection of photographs documenting people, colour, architecture and everyday moments.
@@ -342,7 +317,7 @@
 
         <div class="archive__bar">
           <div class="archive__status" aria-live="polite"><span id="archiveNow">&nbsp;</span></div>
-          <div class="archive__hint" id="archiveHint">Drag to turn &middot; Scroll to open</div>
+          <button type="button" class="bar__top" data-totop>Back to top</button>
         </div>
         <div class="archive__rail" aria-hidden="true"><i id="archiveRail"></i></div>
         <div class="archive__loading" id="archiveLoading"><i></i></div>
@@ -360,7 +335,7 @@
   <div class="reel" id="reel">
     <div class="reel__sticky">
       <header class="reel__head">
-        <div class="eyebrow">Look</div>
+        <span class="lk__no" aria-hidden="true">02</span>
         <h2 class="reel__title">Motion &amp; 3D</h2>
         <p class="reel__intro">Real-time renders, animation studies and experimental motion work.</p>
       </header>
@@ -371,7 +346,7 @@
 
       <div class="reel__bar">
         <div class="reel__now" id="reelNow" aria-live="polite">&nbsp;</div>
-        <div class="reel__hint">Scroll to advance &middot; Click to view</div>
+        <button type="button" class="bar__top" data-totop>Back to top</button>
       </div>
       <div class="reel__progress" aria-hidden="true"><i id="reelProgress"></i></div>
     </div>
@@ -382,12 +357,23 @@
 <section class="grade-room" data-panel="look" aria-labelledby="gradeTitle">
   <div class="chroma__showcase">
     <header class="grade__head">
-      <div class="eyebrow">Look</div>
+      <span class="lk__no" aria-hidden="true">03</span>
       <h2 class="grade__title" id="gradeTitle">Color Grading</h2>
     </header>
-    <div class="cs-frame">
-          <iframe src="https://player.vimeo.com/video/1211043548?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" title="In the time between things"></iframe>
+    <div class="cs-frame film" id="gradeFilm">
+          <iframe src="https://player.vimeo.com/video/1211043548?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;controls=0&amp;dnt=1&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="In the time between things" tabindex="-1"></iframe>
+          <button type="button" class="film__hit" aria-label="Play">
+            <span class="film__play">Play</span>
+          </button>
+          <div class="film__bar">
+            <button type="button" class="film__btn film__toggle">Play</button>
+            <div class="film__track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i class="film__fill"></i></div>
+            <span class="film__time">00:00</span>
+            <button type="button" class="film__btn film__mute">Sound off</button>
+            <button type="button" class="film__btn film__fs">Full screen</button>
+          </div>
         </div>
+    <div class="grade__foot"><button type="button" class="bar__top" data-totop>Back to top</button></div>
   </div>
 </section>
 
@@ -438,7 +424,7 @@
   <div class="project-modal journal" id="projectModal" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="jTitle">
     <div class="project-modal__scroll">
       <nav class="jn" aria-label="Project">
-        <button type="button" class="jn__back" data-modal-close>&larr; Index</button>
+        <button type="button" class="jn__back" data-modal-close>Index</button>
         <div class="jn__where">
           <span class="jn__proj" id="jnProj"></span>
           <button type="button" class="jn__ch" id="jnCh" aria-expanded="false" aria-controls="jnMenu" aria-label="Chapters">
@@ -451,6 +437,7 @@
           <button type="button" id="jnNext" aria-label="Next project">&rarr;</button>
         </div>
         <div class="jn__progress" aria-hidden="true"><i id="jnProgress"></i></div>
+        <span class="jn__count" id="jnCount"></span>
       </nav>
       <aside class="jtoc" aria-label="Chapters"><ol id="jToc"></ol></aside>
       <article class="jr" id="projectModalContent"></article>
@@ -469,41 +456,17 @@
     <div class="lightbox__cap" id="lightboxCap"></div>
   </div>
 
-<!-- ============ CONTACT MODAL ============ -->
-<div class="project-modal" id="contactModal" aria-hidden="true" tabindex="-1">
-  <div class="project-modal__scroll">
-    <header class="project-modal__header">
-      <button type="button" class="project-modal__back" data-modal-close aria-label="Close contact">
-        &larr; Harigovind Sajimon
-      </button>
-    </header>
-
-    <div class="project-modal__inner">
-      <div class="project-modal__eyebrow">GET IN TOUCH</div>
-      <h1 class="project-modal__title">Let's create something together.</h1>
-      
-      <p class="project-modal__desc">
-        I’m currently open to new opportunities for UX design, behavioral research, or 3D/motion projects. If you have an idea, a complex problem that needs analysis, or just want to chat, I'd love to hear from you.
-      </p>
-
-      <div class="cs-card">
-        <div class="cs-label">Email me directly</div>
-        <p><a href="mailto:harigovind.ie@gmail.com" class="contact-email">harigovind.ie@gmail.com</a></p>
-      </div>
-
-      <form action="https://formspree.io/f/xrenqprp" method="POST" class="cs-contact-form">
-  <div class="cs-card">
-    <input type="text" name="name" placeholder="Your Name" required>
-  </div>
-  <div class="cs-card">
-    <input type="email" name="email" placeholder="Your Email" required>
-  </div>
-  <div class="cs-card">
-    <textarea name="message" placeholder="Your Message" required></textarea>
-  </div>
-  
-  <button type="submit" class="cta__primary">Send Message</button>
-</form>
+<!-- ============ CONTACT ============ -->
+<div class="project-modal contact" id="contactModal" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-label="Contact">
+  <div class="project-modal__scroll contact__scroll">
+    <button type="button" class="contact__close" data-modal-close>Close</button>
+    <div class="contact__body">
+      <a class="contact__mail" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a>
+      <button type="button" class="contact__copy" data-copy="harigovind.ie@gmail.com">Copy</button>
+      <ul class="contact__links">
+        <li><a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a></li>
+      </ul>
     </div>
   </div>
 </div>
@@ -511,12 +474,14 @@
 
 
   <script src="journal-config.js?v=4"></script>
-  <script src="journal.js?v=6"></script>
-  <script src="script.js?v=4"></script>
+  <script src="journal.js?v=10"></script>
+  <script src="script.js?v=8"></script>
   <script src="reel.js?v=4"></script>
-  <script type="module" src="archive-page.js?v=4"></script>
-  <button class="totop" id="toTop" type="button" aria-label="Back to top" hidden><span aria-hidden="true">&uarr;</span> Top</button>
-  <script src="look.js?v=2"></script>
+  <script type="module" src="archive-page.js?v=8"></script>
+    <script src="look.js?v=10"></script>
   <script src="read.js?v=5"></script>
+  <script src="cursor.js?v=7" defer></script>
+  <script src="photo-grid.js?v=3" defer></script>
+  <script src="film.js?v=1" defer></script>
 </body>
 </html>
