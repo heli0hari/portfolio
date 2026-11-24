@@ -238,10 +238,10 @@
 .jx--wide { max-width: none; }
 .jx .cs { gap: 0; }
 .journal .cs-figure img, .journal .cs-video, .journal .cs-frame { border-radius: 2px; }
-.journal .cs-boxes li, .journal .cs-node, .journal .cs-compare, .journal .cs-road__item,
+.journal .cs-boxes li, .journal .cs-compare, .journal .cs-road__item,
 .journal .cs-card, .journal .cs-table-wrap { border-radius: 3px; }
 .journal .cs-boxes li { background: transparent; }
-.journal .cs-node__t, .journal .cs-compare__col h4, .journal .cs-road__phase { color: var(--pj); }
+ .journal .cs-compare__col h4, .journal .cs-road__phase { color: var(--pj); }
 .journal .cs-list li, .journal .cs-lined li { font-size: 16px; }
 
 /* ---------- end of the publication ---------- */

@@ -31,16 +31,15 @@
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#131110">
 
-  <link rel="stylesheet" href="styles.css?v=3">
-  <link rel="stylesheet" href="look.css?v=5">
-  <link rel="stylesheet" href="read.css?v=5">
-  <link rel="stylesheet" href="journal.css?v=6">
-<link rel="stylesheet" href="voice.css?v=35">
+  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="look.css?v=6">
+  <link rel="stylesheet" href="read.css?v=6">
+  <link rel="stylesheet" href="journal.css?v=7">
+<link rel="stylesheet" href="voice.css?v=36">
   <script type="importmap">
     { "imports": { "three": "./vendor/three/three.module.min.js" } }
   </script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
+  
   <script>
     /* Stop the browser restoring the previous scroll position on reload. */
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -408,18 +407,6 @@
     <button type="button" class="viewer__btn viewer__btn--next" id="viewerNext" aria-label="Next">&#8250;</button>
   </div>
 
-  <!-- ============ FORGE LIGHTBOX (video player) ============ -->
-  <div class="forge-lightbox" id="forgeLightbox" aria-hidden="true">
-    <button type="button" class="forge-lightbox__close" id="forgeLightboxClose" aria-label="Close">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
-    <button type="button" class="lightbox__btn lightbox__btn--prev" id="forgeLightboxPrev" aria-label="Previous">‹</button>
-    <button type="button" class="lightbox__btn lightbox__btn--next" id="forgeLightboxNext" aria-label="Next">›</button>
-    <video class="forge-lightbox__video" id="forgeLightboxVideo" controls loop playsinline></video>
-    <img class="forge-lightbox__img" id="forgeLightboxImg" alt="" />
-    <div class="forge-lightbox__cap" id="forgeLightboxCap"></div>
-  </div>
-
 <!-- ============ PROJECT DETAIL — JOURNAL ============ -->
   <div class="project-modal journal" id="projectModal" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="jTitle">
     <div class="project-modal__scroll">
@@ -444,17 +431,6 @@
     </div>
   </div>
 
-  <!-- ============ CHROMA LIGHTBOX (full-size popup) ============ -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <div class="lightbox__count" id="lightboxCount"></div>
-    <button type="button" class="lightbox__close" id="lightboxClose" aria-label="Close">
-      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 5L19 19M19 5L5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>
-    <button type="button" class="lightbox__btn lightbox__btn--prev" id="lightboxPrev" aria-label="Previous">&#8249;</button>
-    <img class="lightbox__img" id="lightboxImg" alt="">
-    <button type="button" class="lightbox__btn lightbox__btn--next" id="lightboxNext" aria-label="Next">&#8250;</button>
-    <div class="lightbox__cap" id="lightboxCap"></div>
-  </div>
 
 <!-- ============ CONTACT ============ -->
 <div class="project-modal contact" id="contactModal" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-label="Contact">
@@ -475,12 +451,12 @@
 
   <script src="journal-config.js?v=4"></script>
   <script src="journal.js?v=10"></script>
-  <script src="script.js?v=8"></script>
+  <script src="script.js?v=9"></script>
   <script src="reel.js?v=4"></script>
-  <script type="module" src="archive-page.js?v=8"></script>
+  <script type="module" src="archive-page.js?v=9"></script>
     <script src="look.js?v=10"></script>
   <script src="read.js?v=5"></script>
-  <script src="cursor.js?v=8" defer></script>
+  <script src="cursor.js?v=9" defer></script>
   <script src="photo-grid.js?v=3" defer></script>
   <script src="film.js?v=1" defer></script>
 </body>

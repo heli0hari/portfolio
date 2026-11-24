@@ -37,16 +37,21 @@ function show() {
   vCount.textContent = pad(vPos + 1) + ' / ' + pad(vList.length);
   // load the original off-screen and swap only once it's decoded and nothing is
   // animating — swapping mid-flight blanks the image for a frame
+  // screen-sized copy (2000px long edge, images/chroma/2k/); the camera original only if that's missing
+  const big = p.src.replace(/^(.*\/)([^/]+?)\.[^.]+$/, '$12k/$2.jpg');
   const full = new Image();
-  full.src = p.src;
-  full.decode().then(() => {
-    const swap = () => {
-      if (vList[vPos] !== p || !viewer.classList.contains('is-open')) return;
-      if (animating) return setTimeout(swap, 120);
-      vImg.src = p.src; vImg.classList.add('is-sharp');
-    };
-    swap();
-  }).catch(() => {});
+  const load = (url, fallback) => {
+    full.src = url;
+    full.decode().then(() => {
+      const swap = () => {
+        if (vList[vPos] !== p || !viewer.classList.contains('is-open')) return;
+        if (animating) return setTimeout(swap, 120);
+        vImg.src = url; vImg.classList.add('is-sharp');
+      };
+      swap();
+    }).catch(() => { if (fallback) load(fallback, null); });
+  };
+  load(big, p.src);
   return vImg.decode().catch(() => {});
 }
 

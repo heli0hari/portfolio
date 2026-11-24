@@ -1,0 +1,34 @@
+# Caching for harigovind.ie (Netlify). Headers only — the build/publish settings
+# stay as set in the Netlify dashboard. GitHub Pages ignores this file.
+
+# Pages: always check for a new version, so updates show up straight away.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Code and data: cheap to re-check (Netlify answers "not modified" when unchanged).
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Photos, renders, video and the CV: kept for a week, refreshed quietly in the background.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+# The 3D engine never changes between deploys.
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"

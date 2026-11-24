@@ -11,8 +11,15 @@
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-  // these companions replace the system pointer (see .has-custom-cursor in voice.css)
-  document.documentElement.classList.add('has-custom-cursor');
+  // these companions replace the system pointer (see .has-custom-cursor in voice.css).
+  // The system pointer is only hidden once the dot has actually been drawn, and it
+  // comes back if any script on the page fails — so nobody is ever left without one.
+  var root = document.documentElement;
+  var failed = false;
+  function hidePointer() { if (!failed) root.classList.add('has-custom-cursor'); }
+  function restorePointer() { failed = true; root.classList.remove('has-custom-cursor'); }
+  addEventListener('error', restorePointer);
+  addEventListener('unhandledrejection', restorePointer);
 
   var cv = document.createElement('canvas');
   cv.className = 'cube-cursor';
@@ -134,6 +141,7 @@
     hEl.style.transform = 'translate3d(' + (cx - ARM) + 'px,' + (cy - 20) + 'px,0)';
     vEl.style.transform = 'translate3d(' + (cx - 20) + 'px,' + (cy - ARM) + 'px,0)';
     dEl.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0)';     // the dot is exact; the lines trail a touch
+    if (tx >= 0 && !root.classList.contains('has-custom-cursor')) hidePointer();
     wrap.style.opacity = xOn.toFixed(3);
     // ripple: rises fast, then eases out while hovering, and dies away when leaving
     warp += ((warpT ? 1 : 0) - warp) * (1 - Math.exp(-dt * (warpT ? 9 : 5)));

@@ -9,12 +9,9 @@
    ========================================================================== */
 
 /* ---------- 1. labels in sentence case ---------- */
-.eyebrow { text-transform: none; letter-spacing: 0.005em; font-size: 13.5px; }
+
 .thesis__side { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
-.back-to-top a span { text-transform: none; letter-spacing: 0.005em; }
-.rail__hint { text-transform: none; letter-spacing: 0.005em; font-size: 13.5px; }
-.pcard__badge { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
-.project-modal__eyebrow { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
+
 .cs-label { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .cs-compare__title { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .cs-table th { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
@@ -23,10 +20,10 @@
 .cs-compare__col h4 { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .cs-table th { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .cs-road__phase { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
-.archive__eyebrow { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
-.archive__status, .archive__hint { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
+
+.archive__status{ text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .viewer__cap, .viewer__count { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
-.reel__eyebrow { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
+
 .cell__cap { text-transform: none; letter-spacing: 0.005em; font-size: 12px; }
 .slate__count { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .reel__bar { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
@@ -36,7 +33,7 @@
 .ix__cols { text-transform: none; letter-spacing: 0.005em; font-size: 12.5px; }
 .ix__badge { text-transform: none; letter-spacing: 0.005em; font-size: 12px; }
 .ix__tags { text-transform: none; letter-spacing: 0.005em; font-size: 12.5px; }
-.colophon__label { text-transform: none; letter-spacing: 0.005em; font-size: 12.5px; }
+
 .colophon__base { text-transform: none; letter-spacing: 0.005em; font-size: 12.5px; }
 .jn__back { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
 .jn__ch { text-transform: none; letter-spacing: 0.005em; font-size: 13px; }
@@ -92,7 +89,7 @@
   column-gap: clamp(16px, 1.3vw, 24px); row-gap: 0; align-items: center; justify-content: start;
   background: none; border-radius: 0; padding: 0;
 }
-.switch__slider { display: none; }
+
 .switch__lane { grid-column: 1; grid-row: 1 / span 2; }
 .switch__btn[data-mode-btn="read"] { grid-column: 2; grid-row: 1; }
 .switch__btn[data-mode-btn="look"] { grid-column: 2; grid-row: 2; }

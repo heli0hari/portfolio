@@ -30,7 +30,6 @@ body[data-mode="look"].in-room {
   --hair: rgba(237, 233, 226, 0.12);
 }
 /* the rooms' own headings use the site's existing type scale */
-.reel__head .eyebrow, .archive__head .eyebrow { display: block; margin-bottom: 14px; color: var(--meta); }
 
 .archive {
   position: relative;
@@ -60,18 +59,7 @@ body[data-mode="look"].in-room {
   z-index: 2;
   pointer-events: none;
 }
-.archive__eyebrow {
-  pointer-events: auto;
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--meta);
-  text-decoration: none;
-  margin-bottom: 18px;
-  transition: color 250ms var(--ease);
-}
-.archive__eyebrow:hover { color: var(--ink); }
+
 .archive__title {
   margin: 0;
   font-weight: 600;
@@ -91,7 +79,7 @@ body[data-mode="look"].in-room {
   gap: 10px 24px;
   pointer-events: none;
 }
-.archive__status, .archive__hint {
+.archive__status{
   font-size: 11px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -100,15 +88,14 @@ body[data-mode="look"].in-room {
   min-width: 0;
 }
 .archive__status { color: var(--ink); white-space: pre; overflow: hidden; text-overflow: ellipsis; }
-.archive__hint { text-align: right; }
+
 @media (max-width: 700px) {
   /* stack on phones so the caption and the hint never collide */
   .archive__bar { flex-direction: column-reverse; align-items: flex-start; }
-  .archive__hint { text-align: left; font-size: 10px; }
+  
 }
 
 .archive.is-open .archive__head { opacity: 0; translate: 0 -12px; }
-.archive__hint { transition: opacity 300ms var(--ease); }
 
 .archive__rail {
   position: absolute;
@@ -126,13 +113,6 @@ body[data-mode="look"].in-room {
   transform-origin: top;
   transform: scaleY(0);
 }
-.archive__foot {
-  padding: 64px var(--pad);
-  border-top: 1px solid var(--hair);
-  font-size: 13px;
-}
-.archive__foot a { color: var(--meta); text-decoration: none; }
-.archive__foot a:hover { color: var(--ink); }
 
 .archive__loading {
   position: absolute;
@@ -233,7 +213,6 @@ body[data-mode="look"].in-room {
 }
 .viewer.is-flipping .viewer__close, .viewer.is-flipping .viewer__btn { transition-delay: 0ms; }
 
-
 /* ---------- reel ---------- */
 .reel { position: relative; height: 600vh; }      /* set from script to the strip's length */
 .reel__sticky {
@@ -250,12 +229,7 @@ body[data-mode="look"].in-room {
   position: absolute; top: var(--pad); left: var(--pad); z-index: 3;
   max-width: 420px;
 }
-.reel__eyebrow {
-  display: inline-block; margin-bottom: 14px;
-  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--meta); text-decoration: none;
-}
-.reel__eyebrow:hover { color: var(--ink); }
+
 .reel__title {
   margin: 0 0 10px;
   font-weight: 600; font-size: clamp(30px, 3.6vw, 52px);
@@ -358,7 +332,7 @@ body[data-mode="look"].in-room {
   font-variant-numeric: tabular-nums;
 }
 .reel__now { color: var(--ink); white-space: pre; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.reel__hint { color: var(--meta); text-align: right; }
+
 .reel__progress { position: absolute; left: var(--pad); right: var(--pad); bottom: calc(var(--pad) - 18px); height: 1px; background: var(--hair); z-index: 2; }
 .reel__progress i { position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(0); }
 
@@ -367,7 +341,7 @@ body[data-mode="look"].in-room {
   .reel__head { right: var(--pad); }
   .reel__intro { display: none; }
   .reel__bar { flex-direction: column-reverse; align-items: flex-start; }
-  .reel__hint { text-align: left; font-size: 10px; }
+  
 }
 
 /* ---------- viewer ---------- */
@@ -410,7 +384,7 @@ body[data-mode="look"].in-room {
 /* Color Grading — its own room, after Motion & 3D */
 .grade-room { padding: 96px 0 var(--rhythm); border-top: 1px solid var(--hair); }
 .grade-room .chroma__showcase { margin: 0 auto; gap: 28px; }
-.grade__head .eyebrow { display: block; margin-bottom: 14px; color: var(--meta); }
+
 .grade__title { margin: 0; font-weight: 600; font-size: clamp(30px, 3.6vw, 52px); line-height: 0.95; letter-spacing: -0.03em; color: var(--ink); }
 
 /* ---------- back to top (Look only — it's a long scroll) ---------- */
