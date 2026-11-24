@@ -36,7 +36,7 @@
   var rx = 0.6, ry = 0.8, rz = 0, s = 10, sT = 10, alpha = 0, alphaT = 0;
   var trail = [], tick = 0, last = 0, idle = 0;
   var OFFSET = 0;                               // the cube is the pointer
-  function isLook() { return document.body.getAttribute('data-mode') === 'look'; }
+  function isLook() { return false; }   // Look now uses the plain centre dot (see crosshair below); the disc + trail is kept but off
   new MutationObserver(function () { alphaT = isLook() && mx > 0 ? 1 : 0; if (!running) { running = true; requestAnimationFrame(frame); } })
     .observe(document.body, { attributes: true, attributeFilter: ['data-mode', 'class'] });
 
@@ -109,7 +109,11 @@
   var turb = wrap.querySelector('feTurbulence'), disp = wrap.querySelector('feDisplacementMap');
   var cx = -100, cy = -100, tx = -100, ty = -100, warp = 0, warpT = 0, xOn = 0, xLast = 0, xRun = false;
   var ARM = 70;                                   // half-length of each line
-  function xActive() { return document.body.getAttribute('data-mode') === 'read'; }
+  // Read: crosshair + centre dot. Look: the centre dot alone.
+  function xActive() { return true; }
+  function syncDotOnly() { wrap.classList.toggle('is-dot', document.body.getAttribute('data-mode') === 'look'); }
+  syncDotOnly();
+  new MutationObserver(syncDotOnly).observe(document.body, { attributes: true, attributeFilter: ['data-mode'] });
   addEventListener('pointermove', function (e) {
     if (overFrame(e)) { tx = -100; return; }
     tx = e.clientX; ty = e.clientY;
