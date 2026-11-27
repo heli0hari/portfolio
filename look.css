@@ -33,7 +33,7 @@ body[data-mode="look"].in-room {
 
 .archive {
   position: relative;
-  height: 600vh;               /* set from script: intro + one full turn through every photo */
+  height: 380vh;               /* set from script: short intro + one turn (about 4 screens) */
 }
 .archive__sticky {
   position: sticky;

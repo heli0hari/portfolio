@@ -195,8 +195,8 @@ if (!webglAvailable()) {
 
       // Scroll length: two screens for the explode + form, then enough to turn
       // the carousel once through every photo (~7% of a screen per photo).
-      const INTRO = 2;
-      function sizeSection() { section.style.height = ((1 + INTRO + api.spinScreens()) * 100) + 'vh'; }
+      const INTRO = 0.8;               // kept short: the whole room is about 4 screens
+      function sizeSection() { section.style.height = ((1 + INTRO + Math.min(2, api.spinScreens())) * 100) + 'vh'; }
       sizeSection();
       function onScroll() {
         const vh = window.innerHeight;

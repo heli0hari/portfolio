@@ -9,11 +9,11 @@
    the project modal on click — nothing here is needed for that to work.
    ========================================================= */
 (function () {
-  var list = document.querySelector('.ix__list');
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   /* ---------- preview ---------- */
+  var list = document.querySelector('.ix__list');
   if (list && fine) {
     var pv = document.createElement('div');
     pv.className = 'ix-preview';
@@ -145,22 +145,6 @@
     list.addEventListener('click', hide);
   }
 
-  /* ---------- Elsewhere → Look, landing on the right section ---------- */
-  document.querySelectorAll('[data-look-target]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var lookBtn = document.querySelector('[data-mode-btn="look"]');
-      if (!lookBtn) return;                           // no switch: let the #look link do its thing
-      e.preventDefault();
-      lookBtn.click();
-      var sel = a.getAttribute('data-look-target');
-      // wait for the mode switch to show the Look panels, then scroll there
-      setTimeout(function () {
-        var t = document.querySelector(sel);
-        if (t) t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-      }, 120);
-    });
-  });
-
   /* ---------- footer links ---------- */
   document.querySelectorAll('[data-open-contact]').forEach(function (a) {
     a.addEventListener('click', function (e) {
@@ -170,13 +154,89 @@
       cta.click();
     });
   });
-  document.querySelectorAll('.colophon a[href="#look"]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var lookBtn = document.querySelector('[data-mode-btn="look"]');
-      if (!lookBtn) return;
-      e.preventDefault();
-      lookBtn.click();
-      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+})();
+
+/* Creative cards with a clip: play it while the card is hovered (mouse only, loads on first hover) */
+(function () {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.querySelectorAll('.cw__card').forEach(function (card) {
+    var v = card.querySelector('video[data-src]');
+    if (!v) return;
+    card.addEventListener('pointerenter', function () {
+      if (!v.src) v.src = v.dataset.src;
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+      card.classList.add('is-playing');
     });
+    card.addEventListener('pointerleave', function () { v.pause(); card.classList.remove('is-playing'); });
   });
+})();
+
+/* Selected work: the cards slide sideways as you scroll down (the section pins while they pass),
+   like the Motion & 3D reel, only when there are more cards than fit. A sideways swipe on the cards
+   moves the page with them, and on phones the row settles on the nearest card when scrolling stops. */
+(function () {
+  var sec = document.querySelector('.cw'), pin = sec && sec.querySelector('.cw__pin'), list = sec && sec.querySelector('.cw__list');
+  if (!list) return;
+  var phone = window.matchMedia('(max-width: 760px)');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var travel = 0, hold = 0, on = false, lastSet = -1, idle = 0;
+  function secTop() { return sec.getBoundingClientRect().top + window.scrollY; }
+  function layout() {
+    sec.classList.remove('is-pinned'); list.scrollLeft = 0; sec.style.height = '';
+    travel = Math.max(0, list.scrollWidth - list.clientWidth);
+    on = travel > 8 && !reduce.matches;
+    sec.classList.toggle('is-pinned', on);
+    if (!on) return;
+    travel = Math.max(0, list.scrollWidth - list.clientWidth);
+    hold = Math.round(window.innerHeight * 0.35);      // the row rests a moment before it starts sliding
+    sec.style.height = (pin.offsetHeight + travel + hold) + 'px';
+    update();
+  }
+  function update() {
+    if (!on) return;
+    var y = Math.min(travel, Math.max(0, -sec.getBoundingClientRect().top - hold));
+    lastSet = Math.round(y);
+    list.scrollLeft = y;              // scrolled (not moved), so the edge fade stays put
+    edges();
+  }
+  // fade an edge only when there are more cards beyond it
+  function edges() {
+    var x = list.scrollLeft;
+    list.classList.toggle('more-left', x > 4);
+    list.classList.toggle('more-right', x < travel - 4);
+  }
+  // nearest card start, in the list's scroll coordinates
+  function nearest(x) {
+    var pad = parseFloat(getComputedStyle(list).paddingLeft) || 0, best = 0, d = 1e9;
+    Array.prototype.forEach.call(list.children, function (li) {
+      var s = Math.min(travel, Math.max(0, li.offsetLeft - pad));
+      if (Math.abs(s - x) < d) { d = Math.abs(s - x); best = s; }
+    });
+    return best;
+  }
+  function settle() {
+    if (!on || !phone.matches) return;
+    var y = -sec.getBoundingClientRect().top - hold;
+    if (y <= 2 || y >= travel - 2) return;            // only while the row is mid-way
+    var t = nearest(y);
+    if (Math.abs(t - y) > 2) window.scrollTo({ top: secTop() + hold + t, behavior: 'smooth' });
+  }
+  var raf = 0;
+  window.addEventListener('scroll', function () {
+    if (!raf) raf = requestAnimationFrame(function () { raf = 0; update(); });
+    clearTimeout(idle); idle = setTimeout(settle, 160);
+  }, { passive: true });
+  // a sideways swipe on the cards: move the page to match, so both stay in step
+  list.addEventListener('scroll', function () {
+    if (!on || Math.abs(list.scrollLeft - lastSet) < 2) return;
+    lastSet = Math.round(list.scrollLeft);
+    window.scrollTo(0, secTop() + hold + list.scrollLeft);
+    edges();
+  }, { passive: true });
+  window.addEventListener('resize', layout);
+  window.addEventListener('load', layout);
+  if (phone.addEventListener) phone.addEventListener('change', layout);
+  layout();
 })();

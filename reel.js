@@ -101,6 +101,7 @@
 
   /* ---------- layout ---------- */
   var vw = 0, vh = 0, cellH = 0, first = 0, travel = 0;
+  var RATE = 0.38;                 // page scroll per pixel of film: the room holds for about 3–4 screens
   function layout() {
     vw = stage.clientWidth; vh = stage.clientHeight;
     cellH = track.clientHeight;
@@ -116,15 +117,14 @@
     });
     first = cells.length ? cells[0].cx : 0;
     travel = cells.length ? cells[cells.length - 1].cx - first : 0;
-    // one pixel of scroll moves the film one pixel
-    section.style.height = (vh + travel) + 'px';
+    section.style.height = (vh + travel * RATE) + 'px';
   }
 
   /* ---------- scroll + drag ---------- */
   var target = 0, cur = 0;
   function readScroll() {
     var y = -section.getBoundingClientRect().top;
-    target = Math.min(travel, Math.max(0, y));
+    target = Math.min(travel, Math.max(0, y / RATE));
   }
   window.addEventListener('scroll', readScroll, { passive: true });
 
@@ -137,7 +137,7 @@
     if (!dragging) return;
     var dx = e.clientX - lastX; lastX = e.clientX;
     if (Math.abs(e.clientX - downX) > 6) dragMoved = true;
-    if (dragMoved) window.scrollBy(0, -dx);          // dragging the film = scrolling the page
+    if (dragMoved) window.scrollBy(0, -dx * RATE);   // dragging the film = scrolling the page
   });
   window.addEventListener('pointerup', function () {
     dragging = false;
@@ -145,7 +145,7 @@
   });
 
   function scrollToCell(c) {
-    var top = section.getBoundingClientRect().top + window.scrollY + (c.cx - first);
+    var top = section.getBoundingClientRect().top + window.scrollY + (c.cx - first) * RATE;
     window.scrollTo({ top: top, behavior: reduce ? 'auto' : 'smooth' });
   }
   document.addEventListener('keydown', function (e) {

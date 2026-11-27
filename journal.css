@@ -319,3 +319,67 @@
 @media (prefers-reduced-motion: reduce) {
   .journal * { transition: none !important; }
 }
+
+/* video blocks: portrait clips stay within the screen; rows sit side by side */
+.journal .cs-vfig { margin: 0; }
+.journal .cs-vfig__cell { position: relative; }
+.journal .cs-vfig .cs-video { width: auto; max-width: 100%; max-height: 82vh; margin: 0 auto; background: #000; display: block; }
+.journal .cs-vfig--row { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 16px; align-items: start; }
+.journal .cs-vfig--row .cs-video { aspect-ratio: var(--ar, 3 / 4); object-fit: cover; display: block; }
+.journal .cs-vfig--row figcaption { grid-column: 1 / -1; margin-top: 0; }
+@media (max-width: 600px) { .journal .cs-vfig--row { grid-template-columns: 1fr; } }
+.journal .cs-vfig--row .cs-video { width: 100%; max-height: none; }
+.journal .cs-vfig__label { display: block; margin-bottom: 8px; font-size: 13px; color: var(--meta); }
+.journal .cs-vfig figcaption { margin-top: 12px; font-size: 13px; color: var(--meta); }
+/* a single portrait image (layout: "portrait" in projects.json) stays within one screen */
+.jf--portrait { text-align: center; }
+.jf--portrait img { width: auto; max-width: 100%; max-height: 72vh; margin: 0 auto; }
+.jf--portrait figcaption { justify-content: center; margin-left: auto; margin-right: auto; }
+
+/* step sequences (horizontal-flow): the journal's own language — outlined numerals on a hairline,
+   no pills, no arrows */
+.journal .cs-flow { gap: 20px; }
+.journal .cs-flow .cs-label { font-size: 13px; color: var(--meta); text-transform: none; letter-spacing: 0.005em; }
+.journal .cs-flow__track {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 0;
+  border-top: 1px solid var(--hair); overflow: visible; padding: 0;
+}
+.journal .cs-flow__step {
+  all: unset; display: flex; flex-direction: column; gap: 14px; padding: 18px 16px 0 0;
+  position: relative; transform: none;
+}
+.journal .cs-flow__step::before {           /* tick on the line where each step starts */
+  content: ''; position: absolute; left: 0; top: -4px; width: 1px; height: 8px; background: var(--ink);
+}
+.journal .cs-flow__step:hover { transform: none; }
+.journal .cs-flow__num {
+  all: unset; display: block;
+  font-size: clamp(40px, 4.4vw, 64px); line-height: 0.8; letter-spacing: -0.05em; font-weight: 500;
+  font-variant-numeric: tabular-nums; color: transparent; -webkit-text-stroke: 1px var(--pj);
+}
+.journal .cs-flow__txt { font-size: 15px; line-height: 1.3; color: var(--ink); }
+.journal .cs-flow__arrow { display: none; }
+@media (max-width: 600px) { .journal .cs-flow__track { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 28px; } }
+
+/* every image fits one screen: framed images shrink to fit (nothing cropped),
+   edge-to-edge images keep the full width and trim top and bottom */
+.journal .jf img, .journal .cs-figure img { width: auto; max-width: 100%; max-height: 84vh; margin-left: auto; margin-right: auto; }
+.journal .jf--bleed img, .jc--bleed .jc__media img { width: 100%; max-height: 84vh; object-fit: cover; }
+.journal .jseq .jf img { width: 100%; max-height: 84vh; object-fit: cover; }
+.journal .cs-vfig .cs-video { max-height: 84vh; }
+
+/* project-page clips use the site's film controls */
+.journal .film--video { position: relative; width: fit-content; max-width: 100%; margin: 0 auto; line-height: 0; }
+.journal .cs-vfig--row .film--video { width: 100%; }
+.journal .film--video .cs-video { display: block; }
+.journal .film--video .film__bar { line-height: 1.2; }
+.journal .film--loop .film__play { opacity: 0; transform: scale(0.6); }        /* loops start on their own */
+.journal .film--video.is-full { width: 100vw; height: 100vh; background: #000; display: flex; align-items: center; justify-content: center; }
+.journal .film--video.is-full .cs-video { width: 100%; height: 100%; max-height: none; object-fit: contain; aspect-ratio: auto; border: 0; }
+/* narrow tiles: the seek line gets its own row so the buttons fit */
+.journal .cs-vfig--row .film__bar { flex-wrap: wrap; row-gap: 4px; column-gap: 12px; font-size: 12px; padding: 18px 12px 10px; }
+.journal .cs-vfig--row .film__track { order: -1; flex-basis: 100%; }
+.journal .cs-vfig--row .film__time { margin-right: auto; }
+
+/* drawings: shown whole on white, never cropped */
+.journal .cs-vfig--contain .cs-video { object-fit: contain; background: #fff; }

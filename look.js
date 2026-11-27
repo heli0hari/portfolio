@@ -102,3 +102,47 @@
     }
   });
 })();
+
+/* Long rooms: "Skip to …" jumps past the room, and a small section index on the right
+   jumps anywhere, so nobody has to scroll through every photo to reach the end. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function jump(el) {
+    if (!el) return;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: reduce.matches ? 'auto' : 'smooth' });
+  }
+  document.querySelectorAll('[data-skip]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var next = b.closest('section');
+      do { next = next && next.nextElementSibling; } while (next && next.tagName !== 'SECTION');
+      jump(next);
+    });
+  });
+
+  // section index: one numeral per numbered section
+  var secs = [].slice.call(document.querySelectorAll('#stage > section')).filter(function (s) { return s.querySelector('.lk__no'); });
+  if (secs.length < 2) return;
+  var nav = document.createElement('nav');
+  nav.className = 'sx'; nav.setAttribute('aria-label', 'Jump to section');
+  var btns = secs.map(function (s) {
+    var b = document.createElement('button');
+    var t = s.querySelector('h2');
+    b.type = 'button'; b.className = 'sx__btn';
+    b.innerHTML = '<span class="sx__no">' + s.querySelector('.lk__no').textContent + '</span><span class="sx__name">' + (t ? t.textContent : '') + '</span>';
+    b.addEventListener('click', function () { if (window.goToSection) window.goToSection(s); else jump(s); });
+    nav.appendChild(b);
+    return b;
+  });
+  document.body.appendChild(nav);
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var line = window.innerHeight * 0.4, cur = -1;
+    secs.forEach(function (s, i) { if (s.getBoundingClientRect().top <= line) cur = i; });
+    nav.classList.toggle('is-on', cur >= 0);
+    btns.forEach(function (b, i) { if (i === cur) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
+})();

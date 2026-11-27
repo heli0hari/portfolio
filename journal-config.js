@@ -15,8 +15,54 @@
    coverImage  optional replacement for the cover image ({ src, alt })
    ========================================================= */
 window.JOURNAL = {
+  'illustrations': {
+    facts: { Role: 'Illustrator', Context: 'Coursework, IIT Bombay', Team: 'Solo', Tools: 'Micron pen, sketchbook' },
+    theme: 'material', cover: 'split',
+    chapters: [
+      { at: 1, label: 'Overview' },
+      { at: 2, label: 'Outdoors' },
+      { at: 5, label: 'Indoors' }
+    ]
+  },
+  'diskfield': {
+    facts: { Role: '3D & Motion Designer', Context: 'Client project', Team: 'Solo', Tools: 'Blender, Geometry Nodes, Cycles' },
+    theme: 'material', cover: 'split',
+    chapters: [
+      { at: 1, label: 'Overview' },
+      { at: 3, label: 'Effect' },
+      { at: 6, label: 'Layouts' },
+      { at: 10, label: 'System' },
+      { at: 14, label: 'Compositions' },
+      { at: 17, label: 'Reflection' }
+    ]
+  },
+  'lithophane-lamp': {
+    facts: { Role: 'Designer & Maker', Context: 'Birthday gift, now made on demand', Team: 'Solo', Duration: '1 day per lamp · 6.5-hour print', Tools: 'Blender, Bambu Studio, Bambu Lab A1 mini' },
+    theme: 'material', cover: 'split',
+    chapters: [
+      { at: 1, label: 'Overview' },
+      { at: 2, label: 'Lithophane' },
+      { at: 5, label: 'Case' },
+      { at: 9, label: 'Light' },
+      { at: 12, label: 'Printing' },
+      { at: 15, label: 'Workflow' },
+      { at: 18, label: 'Outcome' }
+    ]
+  },
+  'alley-creature': {
+    facts: { Role: '3D Artist', Context: 'Personal project · experiment', Team: 'Solo', Duration: '1 day · 12-hour render', Tools: 'Blender, Geometry Nodes, DaVinci Resolve' },
+    theme: 'material', cover: 'split',
+    chapters: [
+      { at: 1, label: 'Overview' },
+      { at: 3, label: 'Environment' },
+      { at: 6, label: 'Lighting' },
+      { at: 9, label: 'Creature' },
+      { at: 13, label: 'Edit' },
+      { at: 16, label: 'Reflection' }
+    ]
+  },
   'wealthx': {
-    facts: { Role: 'Product & Brand Design', Context: 'Personal project', Team: 'Solo', Duration: '3 days', Tools: 'Figma, Photoshop, Illustrator', Platform: 'iOS · Web' },
+    facts: { Role: 'Sole designer', Context: 'Personal project', Team: 'Solo', Duration: '3 days', Tools: 'Figma, Photoshop, Illustrator', Platform: 'iOS · Web' },
     theme: 'visual', cover: 'bleed',
     skip: [1],
     chapters: [{ at: 2, label: 'Outcome' }]
@@ -28,9 +74,10 @@ window.JOURNAL = {
       { at: 1, label: 'Overview' },
       { at: 5, label: 'First results' },
       { at: 10, label: 'Hardware' },
-      { at: 22, label: 'Software' },
-      { at: 26, label: 'Interface' },
-      { at: 35, label: 'Reflection' }
+      { at: 23, label: 'Case' },
+      { at: 26, label: 'Software' },
+      { at: 30, label: 'Interface' },
+      { at: 39, label: 'Reflection' }
     ]
   },
   'city-beneaththesurface': {
@@ -49,7 +96,7 @@ window.JOURNAL = {
     ]
   },
   'tolstoy-farm': {
-    facts: { Role: 'Product & Brand Design', Context: 'Client project · branding help', Team: 'Solo', Duration: '4 days', Tools: 'Figma, Photoshop, Illustrator' },
+    facts: { Role: 'Brand & Packaging Designer', Context: 'Client project · branding help', Team: 'Solo', Duration: '4 days', Tools: 'Figma, Photoshop, Illustrator' },
     theme: 'visual', cover: 'bleed',
     chapters: [{ at: 1, label: 'Identity' }]
   },

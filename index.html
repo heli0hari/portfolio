@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Harigovind Sajimon - Designer, Dublin</title>
-  <meta name="description" content="Product, visual, interactive and 3D design. Research to real-time 3D — Harigovind Sajimon, Dublin.">
+  <title>Harigovind Sajimon - Creative Designer, Dublin</title>
+  <meta name="description" content="Harigovind Sajimon, creative designer in Dublin: 3D, motion, making and brand, from case studies to things he builds and prints.">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,15 +13,15 @@
   <!-- link preview (Open Graph + Twitter) -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://harigovind.ie/">
-  <meta property="og:title" content="Harigovind Sajimon - Designer, Dublin">
-  <meta property="og:description" content="Product, visual, interactive and 3D design. Research to real-time 3D.">
+  <meta property="og:title" content="Harigovind Sajimon - Creative Designer, Dublin">
+  <meta property="og:description" content="Creative designer in Dublin: 3D, motion, making and brand."> 
   <meta property="og:image" content="https://harigovind.ie/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Harigovind Sajimon">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Harigovind Sajimon - Designer, Dublin">
-  <meta name="twitter:description" content="Product, visual, interactive and 3D design. Research to real-time 3D.">
+  <meta name="twitter:title" content="Harigovind Sajimon - Creative Designer, Dublin">
+  <meta name="twitter:description" content="Creative designer in Dublin: 3D, motion, making and brand.">
   <meta name="twitter:image" content="https://harigovind.ie/og-image.png">
 
   <!-- favicons -->
@@ -32,10 +32,10 @@
   <meta name="theme-color" content="#131110">
 
   <link rel="stylesheet" href="styles.css?v=4">
-  <link rel="stylesheet" href="look.css?v=6">
-  <link rel="stylesheet" href="read.css?v=6">
-  <link rel="stylesheet" href="journal.css?v=7">
-<link rel="stylesheet" href="voice.css?v=36">
+  <link rel="stylesheet" href="look.css?v=7">
+  <link rel="stylesheet" href="read.css?v=9">
+  <link rel="stylesheet" href="journal.css?v=17">
+<link rel="stylesheet" href="voice.css?v=58">
   <script type="importmap">
     { "imports": { "three": "./vendor/three/three.module.min.js" } }
   </script>
@@ -45,15 +45,7 @@
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   </script>
 </head>
-<body data-mode="read">
-<script>
-  /* Set the mode immediately, before the page renders, so a shared #look link
-     never flashes the Read view first. Read is page 1 (default). */
-  (function () {
-    var h = (location.hash || '').replace('#', '').toLowerCase();
-    if (h === 'look') document.body.setAttribute('data-mode', 'look');
-  })();
-</script>
+<body data-mode="look">
 
   <!-- content wrapper receives the mid-transition blur -->
   <div class="stage" id="stage">
@@ -61,34 +53,21 @@
     <!-- ============ HERO ============ -->
     <section class="hero" aria-label="Intro">
       <header class="hero__bar">
-        <div class="hero__mark">Harigovind Sajimon</div>
-        <div class="hero__meta">Designer — Dublin</div>
+        <div class="hero__mark hero__status"><i class="hero__dot" aria-hidden="true"></i>Open to new roles<span class="hero__loc">&nbsp;&middot; Dublin &amp; remote</span></div>
+        <nav class="hero__nav" aria-label="Sections">
+          <a href="#work" data-goto="work">Work</a>
+          <a href="#about" data-goto="about">About</a>
+          <a href="#contact" data-goto="contact">Contact</a>
+        </nav>
       </header>
 
       <div class="hero__body">
         <div class="hero__thesis-wrap">
 
-          <h1 class="thesis__srtitle" data-hero-mode="read">Harigovind Sajimon: analyst, observer and designer, working across UX, research and systems.</h1>
-          <h1 class="thesis__srtitle" data-hero-mode="look">Harigovind Sajimon: dreamer, explorer and storyteller, working in 3D, motion and film.</h1>
+                    <h1 class="thesis__srtitle">Harigovind Sajimon: dreamer, explorer and storyteller, working in 3D, motion and film.</h1>
 
-          <div class="thesis__poster" data-hero-mode="read" aria-hidden="true">
-            <span class="thesis__side">UX &middot; Research &middot; Systems</span>
-
-            <div class="thesis__main">
-
-              <div class="thesis__words">
-                <span class="thesis__word">Analyst.</span>
-                <span class="thesis__word">Observer &amp;</span>
-                <span class="thesis__word">Designer.</span>
-              </div>
-
-            </div>
-
-            
-          </div>
-
-          <div class="thesis__poster" data-hero-mode="look" aria-hidden="true">
-            <span class="thesis__side">3D &middot; Motion &middot; Film</span>
+          <div class="thesis__poster" aria-hidden="true">
+            <span class="thesis__side">Design &middot; Technology &middot; Storytelling</span>
 
             <div class="thesis__main">
 
@@ -103,29 +82,16 @@
             
           </div>
 
+          <p class="hero__role">
+            <span class="hero__role-t">Harigovind Sajimon &ndash;<br class="br-m"> Creative Designer</span>
+            <span class="hero__role-s">3D, motion, making and brand &middot;<br class="br-m"> Senior Designer at Studio Paperheads</span>
+          </p>
+
         </div>
 
 
 
-        <div class="switch" role="tablist" aria-label="Choose a way through the work">
-          <div class="switch__track">
-            <button class="switch__btn" role="tab" data-mode-btn="read" aria-selected="true">
-              Read<sup class="switch__sup">01</sup>
-            </button>
-            <span class="switch__lane" aria-hidden="true">
-              <span class="switch__goo"><i class="switch__drop"></i><i class="switch__tail"></i></span>
-              <span class="switch__face">
-                <svg class="switch__ico switch__ico--read" viewBox="0 0 24 24"><path d="M5 7h14M5 11h14M5 15h14M5 19h8"/></svg>
-                <svg class="switch__ico switch__ico--look" viewBox="0 0 24 24"><path d="M2.5 12s3.6-6.5 9.5-6.5S21.5 12 21.5 12s-3.6 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3.2"/></svg>
-              </span>
-              <svg class="switch__defs" width="0" height="0" focusable="false"><filter id="switchGoo"><feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="b"/><feColorMatrix in="b" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/></filter></svg>
-            </span>
-            <button class="switch__btn" role="tab" data-mode-btn="look" aria-selected="false">
-              Look<sup class="switch__sup">02</sup>
-            </button>
-          </div>
-        </div>
-
+        
 
         <div class="cta">
           <a href="#contact" class="cta__primary">Get in touch</a>
@@ -135,202 +101,74 @@
 
     </section>
 
-    <!-- ============ READ — EDITORIAL INDEX ============ -->
-    <section class="ix" data-panel="read" id="index" aria-labelledby="ixTitle">
-      <header class="ix__head">
-        <h2 class="ix__title" id="ixTitle">Index</h2>
-        <p class="ix__range">10 projects &middot; 2022&ndash;2026</p>
+    <!-- ============ SELECTED WORK (pinned) ============ -->
+    <section class="cw" id="work" aria-labelledby="cwTitle">
+      <div class="cw__pin">
+      <header class="cw__head">
+        <span class="lk__no" aria-hidden="true">01</span>
+        <h2 class="cw__title" id="cwTitle">Selected work</h2>
       </header>
-
-      <div class="ix__cols" aria-hidden="true">
-        <span>No.</span><span>Project</span><span>Discipline</span><span>Year</span>
-      </div>
-
-      <ol class="ix__list">
-        <li class="ix__item">
-          <a class="ix__row" href="#project/wealthx" data-project="wealthx" data-preview="images/index/wealthx.jpg" data-gallery="images/index/wealthx.jpg,images/index/wealthx/01.jpg,images/index/wealthx/02.jpg,images/index/wealthx/03.jpg,images/index/wealthx/04.jpg,images/index/wealthx/05.jpg,images/index/wealthx/06.jpg,images/index/wealthx/07.jpg">
-            <span class="ix__no">01</span>
-            <span class="ix__name"><span class="ix__name-t">WealthX</span></span>
-            <span class="ix__cat">Product &amp; Brand Design</span>
-            <span class="ix__year">2026</span>
-            <span class="ix__desc">WealthX links every account, investment, and asset into a single AI-powered intelligence layer, so your capital always knows exactly where it stands.</span>
-            <span class="ix__tags"><span>iOS</span><span>Web</span></span>
-            <img class="ix__thumb" src="images/index/wealthx.jpg" alt="" loading="lazy" decoding="async">
+      <ol class="cw__list">
+        <li class="cw__item">
+          <a class="cw__card" href="#project/alley-creature" data-project="alley-creature">
+            <span class="cw__media"><img src="images/index/alley-creature.jpg" alt="2:14 AM: A Creature in the Alley" loading="lazy" decoding="async"><video data-src="images/Alley/Alley_Loop.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></span>
+            <span class="cw__no">01</span>
+            <span class="cw__name">2:14 AM: A Creature in the Alley</span>
+            <span class="cw__cat">3D, Geometry Nodes &amp; Compositing &middot; 2026</span>
+            <span class="cw__desc">A Gaussian-splat alley, relit in Blender, with a creature built entirely in Geometry Nodes crawling through it.</span>
           </a>
         </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/tolstoy-farm" data-project="tolstoy-farm" data-preview="images/index/tolstoy-farm.jpg" data-gallery="images/index/tolstoy-farm.jpg,images/index/tolstoy-farm/01.jpg,images/index/tolstoy-farm/02.jpg,images/index/tolstoy-farm/03.jpg,images/index/tolstoy-farm/04.jpg,images/index/tolstoy-farm/05.jpg,images/index/tolstoy-farm/06.jpg,images/index/tolstoy-farm/07.jpg">
-            <span class="ix__no">02</span>
-            <span class="ix__name"><span class="ix__name-t">Tolstoy Farm</span></span>
-            <span class="ix__cat">Brand Identity &amp; Packaging</span>
-            <span class="ix__year">2026</span>
-            <span class="ix__desc">Identity and packaging for a coffee, tea and spice brand from Munnar, Kerala.</span>
-            <span class="ix__tags"><span>Brand</span><span>Packaging</span></span>
-            <img class="ix__thumb" src="images/index/tolstoy-farm.jpg" alt="" loading="lazy" decoding="async">
+        <li class="cw__item">
+          <a class="cw__card" href="#project/diskfield" data-project="diskfield">
+            <span class="cw__media"><img src="images/index/diskfield.jpg" alt="DiskField: Procedural Glass Disks" loading="lazy" decoding="async"><video data-src="images/DiskField/DF_Loop.mp4" muted loop playsinline preload="none" aria-hidden="true"></video></span>
+            <span class="cw__no">02</span>
+            <span class="cw__name">DiskField: Procedural Glass Disks <span class="ix__badge">Client</span></span>
+            <span class="cw__cat">Motion Design &amp; Geometry Nodes &middot; 2026</span>
+            <span class="cw__desc">A procedural Geometry Nodes system for a client project: a field of glass disks that turn, grow and glow orange as an effector passes through them.</span>
           </a>
         </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/infrared-camera" data-project="infrared-camera" data-preview="images/index/infrared-camera.jpg" data-gallery="images/index/infrared-camera.jpg,images/index/infrared-camera/01.jpg,images/index/infrared-camera/02.jpg,images/index/infrared-camera/03.jpg,images/index/infrared-camera/04.jpg,images/index/infrared-camera/05.jpg,images/index/infrared-camera/06.jpg,images/index/infrared-camera/07.jpg">
-            <span class="ix__no">03</span>
-            <span class="ix__name"><span class="ix__name-t">Unseen: Infrared Camera</span><span class="ix__badge">In progress</span></span>
-            <span class="ix__cat">Hardware &amp; Interaction Design</span>
-            <span class="ix__year">2026</span>
-            <span class="ix__desc">A hand-built Raspberry Pi camera that shoots near-infrared, false-colour photos.</span>
-            <span class="ix__tags"><span>Hardware</span><span>Interaction</span></span>
-            <img class="ix__thumb" src="images/index/infrared-camera.jpg" alt="" loading="lazy" decoding="async">
+        <li class="cw__item">
+          <a class="cw__card" href="#project/city-in-hand" data-project="city-in-hand" data-gallery="images/index/city-in-hand.jpg,images/index/city-in-hand/01.jpg,images/index/city-in-hand/02.jpg,images/index/city-in-hand/03.jpg,images/index/city-in-hand/04.jpg,images/index/city-in-hand/05.jpg,images/index/city-in-hand/06.jpg">
+            <span class="cw__media"><img src="images/index/city-in-hand.jpg" alt="City in Hand: 3D-Printed Dublin" loading="lazy" decoding="async"></span>
+            <span class="cw__no">03</span>
+            <span class="cw__name">City in Hand: 3D-Printed Dublin</span>
+            <span class="cw__cat">3D Pipeline &amp; Making &middot; 2026</span>
+            <span class="cw__desc">10,000 captured map meshes turned into one 3D-printed model of Dublin.</span>
           </a>
         </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/hiro-assistant" data-project="hiro-assistant" data-preview="images/index/hiro-assistant.jpg" data-gallery="images/index/hiro-assistant.jpg,images/index/hiro-assistant/01.jpg,images/index/hiro-assistant/02.jpg,images/index/hiro-assistant/03.jpg,images/index/hiro-assistant/04.jpg,images/index/hiro-assistant/05.jpg,images/index/hiro-assistant/06.jpg,images/index/hiro-assistant/07.jpg">
-            <span class="ix__no">04</span>
-            <span class="ix__name"><span class="ix__name-t">Hiro: Task Starting Assistant</span></span>
-            <span class="ix__cat">UX/UI Case Study</span>
-            <span class="ix__year">2026</span>
-            <span class="ix__desc">A behavioural assistant that reduces the friction between intention and starting work.</span>
-            <span class="ix__tags"><span>UX/UI</span><span>Behavioral</span></span>
-            <img class="ix__thumb" src="images/index/hiro-assistant.jpg" alt="" loading="lazy" decoding="async">
+        <li class="cw__item">
+          <a class="cw__card" href="#project/infrared-camera" data-project="infrared-camera" data-gallery="images/index/infrared-camera.jpg,images/index/infrared-camera/01.jpg,images/index/infrared-camera/02.jpg,images/index/infrared-camera/03.jpg,images/index/infrared-camera/04.jpg,images/index/infrared-camera/05.jpg,images/index/infrared-camera/06.jpg,images/index/infrared-camera/07.jpg">
+            <span class="cw__media"><img src="images/index/infrared-camera.jpg" alt="Unseen: Infrared Camera" loading="lazy" decoding="async"></span>
+            <span class="cw__no">04</span>
+            <span class="cw__name">Unseen: Infrared Camera <span class="ix__badge">In progress</span></span>
+            <span class="cw__cat">Hardware &amp; Interaction Design &middot; 2026</span>
+            <span class="cw__desc">A hand-built Raspberry Pi camera that shoots near-infrared, false-colour photos.</span>
           </a>
         </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/city-in-hand" data-project="city-in-hand" data-preview="images/index/city-in-hand.jpg" data-gallery="images/index/city-in-hand.jpg,images/index/city-in-hand/01.jpg,images/index/city-in-hand/02.jpg,images/index/city-in-hand/03.jpg,images/index/city-in-hand/04.jpg,images/index/city-in-hand/05.jpg,images/index/city-in-hand/06.jpg">
-            <span class="ix__no">05</span>
-            <span class="ix__name"><span class="ix__name-t">City in Hand: 3D-Printed Dublin</span></span>
-            <span class="ix__cat">3D Pipeline &amp; Making</span>
-            <span class="ix__year">2026</span>
-            <span class="ix__desc">10,000 captured map meshes turned into one 3D-printed model of Dublin.</span>
-            <span class="ix__tags"><span>3D Pipeline</span><span>Making</span></span>
-            <img class="ix__thumb" src="images/index/city-in-hand.jpg" alt="" loading="lazy" decoding="async">
+        <li class="cw__item">
+          <a class="cw__card" href="#project/lithophane-lamp" data-project="lithophane-lamp">
+            <span class="cw__media"><img src="images/index/lithophane-lamp.jpg?v=4" alt="Lithophane Lamp" loading="lazy" decoding="async"></span>
+            <span class="cw__no">05</span>
+            <span class="cw__name">Lithophane Lamp</span>
+            <span class="cw__cat">3D Printing &amp; Product Design &middot; 2026</span>
+            <span class="cw__desc">A photograph turned into a lithophane lamp: made first as a birthday gift, then turned into a standard workflow I now use to make them on demand.</span>
           </a>
         </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/city-beneaththesurface" data-project="city-beneaththesurface" data-preview="images/index/city-beneaththesurface.jpg" data-gallery="images/index/city-beneaththesurface.jpg,images/index/city-beneaththesurface/01.jpg,images/index/city-beneaththesurface/02.jpg,images/index/city-beneaththesurface/03.jpg,images/index/city-beneaththesurface/04.jpg,images/index/city-beneaththesurface/05.jpg,images/index/city-beneaththesurface/06.jpg,images/index/city-beneaththesurface/07.jpg">
-            <span class="ix__no">06</span>
-            <span class="ix__name"><span class="ix__name-t">City: Beneath the Surface</span></span>
-            <span class="ix__cat">Data Visualization</span>
-            <span class="ix__year">2025</span>
-            <span class="ix__desc">Dublin's hidden workforce rendered as a physics-based data narrative.</span>
-            <span class="ix__tags"><span>Data Viz</span><span>Three.js</span></span>
-            <img class="ix__thumb" src="images/index/city-beneaththesurface.jpg" alt="" loading="lazy" decoding="async">
-          </a>
-        </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/dub-transit" data-project="dub-transit" data-preview="images/index/dub-transit.jpg" data-gallery="images/index/dub-transit.jpg,images/index/dub-transit/01.jpg,images/index/dub-transit/02.jpg,images/index/dub-transit/03.jpg,images/index/dub-transit/04.jpg,images/index/dub-transit/05.jpg,images/index/dub-transit/06.jpg,images/index/dub-transit/07.jpg">
-            <span class="ix__no">07</span>
-            <span class="ix__name"><span class="ix__name-t">Dub.Transit: Dublin Public Transport App</span></span>
-            <span class="ix__cat">User Experience Design</span>
-            <span class="ix__year">2025</span>
-            <span class="ix__desc">Real-time transit interface with glanceable route cards.</span>
-            <span class="ix__tags"><span>UX</span><span>Mobility</span></span>
-            <img class="ix__thumb" src="images/index/dub-transit.jpg" alt="" loading="lazy" decoding="async">
-          </a>
-        </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/theyyam-threads" data-project="theyyam-threads" data-preview="images/index/theyyam-threads.jpg" data-gallery="images/index/theyyam-threads.jpg,images/index/theyyam-threads/01.jpg,images/index/theyyam-threads/02.jpg,images/index/theyyam-threads/03.jpg,images/index/theyyam-threads/04.jpg,images/index/theyyam-threads/05.jpg,images/index/theyyam-threads/06.jpg,images/index/theyyam-threads/07.jpg">
-            <span class="ix__no">08</span>
-            <span class="ix__name"><span class="ix__name-t">Theyyam Threads</span></span>
-            <span class="ix__cat">Visual Design</span>
-            <span class="ix__year">2023</span>
-            <span class="ix__desc">A Kerala ritual art form translated into contemporary apparel.</span>
-            <span class="ix__tags"><span>Visual</span><span>Research</span></span>
-            <img class="ix__thumb" src="images/index/theyyam-threads.jpg" alt="" loading="lazy" decoding="async">
-          </a>
-        </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/aujus" data-project="aujus" data-preview="images/index/aujus.jpg" data-gallery="images/index/aujus.jpg,images/index/aujus/01.jpg,images/index/aujus/02.jpg,images/index/aujus/03.jpg,images/index/aujus/04.jpg,images/index/aujus/05.jpg,images/index/aujus/06.jpg,images/index/aujus/07.jpg">
-            <span class="ix__no">09</span>
-            <span class="ix__name"><span class="ix__name-t">Aujus</span></span>
-            <span class="ix__cat">System Design</span>
-            <span class="ix__year">2022</span>
-            <span class="ix__desc">A 5-week semester project to understand and design for complex, interconnected socio-economic problems.</span>
-            <span class="ix__tags"><span>Systems</span><span>Wayfinding</span></span>
-            <img class="ix__thumb" src="images/index/aujus.jpg" alt="" loading="lazy" decoding="async">
-          </a>
-        </li>
-        <li class="ix__item">
-          <a class="ix__row" href="#project/artbox" data-project="artbox" data-preview="images/index/artbox.jpg" data-gallery="images/index/artbox.jpg,images/index/artbox/01.jpg,images/index/artbox/02.jpg,images/index/artbox/03.jpg,images/index/artbox/04.jpg,images/index/artbox/05.jpg,images/index/artbox/06.jpg,images/index/artbox/07.jpg">
-            <span class="ix__no">10</span>
-            <span class="ix__name"><span class="ix__name-t">ArtBox</span></span>
-            <span class="ix__cat">Product Design</span>
-            <span class="ix__year">2022</span>
-            <span class="ix__desc">A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.</span>
-            <span class="ix__tags"><span>Brand</span><span>Packaging</span></span>
-            <img class="ix__thumb" src="images/index/artbox.jpg" alt="" loading="lazy" decoding="async">
+        <li class="cw__item">
+          <a class="cw__card" href="#project/tolstoy-farm" data-project="tolstoy-farm">
+            <span class="cw__media"><img src="images/index/tolstoy-card.jpg" alt="Tolstoy Farm packaging: coffee, tea, black pepper and turmeric bags" loading="lazy" decoding="async"></span>
+            <span class="cw__no">06</span>
+            <span class="cw__name">Tolstoy Farm <span class="ix__badge">Client</span></span>
+            <span class="cw__cat">Brand Identity &amp; Packaging &middot; 2026</span>
+            <span class="cw__desc">Identity and packaging for a coffee, tea and spice brand from Munnar, Kerala.</span>
           </a>
         </li>
       </ol>
+      </div>
     </section>
-
-    <!-- ============ READ — ELSEWHERE (secondary) ============ -->
-    <section class="ew" data-panel="read" aria-labelledby="ewTitle">
-      <header class="ew__head">
-        <h2 class="ew__title" id="ewTitle">Experiments in Look</h2>
-      </header>
-      <ul class="ew__list">
-        <li>
-          <a class="ew__item" href="#look" data-look-target=".chroma">
-            <span class="ew__name">Chroma</span>
-          </a>
-        </li>
-        <li>
-          <a class="ew__item" href="#look" data-look-target=".chroma__showcase">
-            <span class="ew__name">Color Grading</span>
-          </a>
-        </li>
-        <li>
-          <a class="ew__item" href="#look" data-look-target=".forge-room">
-            <span class="ew__name">Motion &amp; 3D</span>
-          </a>
-        </li>
-      </ul>
-    </section>
-
-    <!-- ============ READ — FOOTER ============ -->
-    <footer class="colophon" data-panel="read">
-      <div class="colophon__lead">
-        <a class="colophon__mail" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a>
-      </div>
-      <nav class="colophon__links" aria-label="Footer">
-        <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a>
-        <a href="#look">Look</a>
-      </nav>
-      <div class="colophon__base">
-        <span>Harigovind Sajimon &mdash; Designer, Dublin</span>
-      </div>
-    </footer>
-
-<!-- ============ LOOK MOMENT — CHROMA ============ -->
-<section class="chroma" data-panel="look" aria-label="Look — Chroma photography">
-
-    <div class="archive look-room" id="archive">
-      <div class="archive__sticky">
-        <div class="archive__stage" id="archiveStage" aria-label="Interactive sculpture of photographs"></div>
-
-        <header class="archive__head chroma__head" id="archiveHead">
-            <span class="lk__no" aria-hidden="true">01</span>
-            <h2 class="archive__title chroma__title">Chroma</h2>
-            <p class="chroma__intro">
-                A growing collection of photographs documenting people, colour, architecture and everyday moments.
-            </p>
-        </header>
-
-        <div class="archive__bar">
-          <div class="archive__status" aria-live="polite"><span id="archiveNow">&nbsp;</span></div>
-          <button type="button" class="bar__top" data-totop>Back to top</button>
-        </div>
-        <div class="archive__rail" aria-hidden="true"><i id="archiveRail"></i></div>
-        <div class="archive__loading" id="archiveLoading"><i></i></div>
-
-        <div class="archive__fallback" id="archiveFallback" hidden>
-          <p>This view needs WebGL, which isn't available in this browser.</p>
-        </div>
-      </div>
-    </div>
-
-</section>
 
 <!-- ============ LOOK MOMENT — FORGE (curved reel) ============ -->
-<section class="forge-room look-room" data-panel="look" aria-label="Look — Forge 3D work">
+<section class="forge-room look-room" id="motion" aria-label="Motion and 3D work">
   <div class="reel" id="reel">
     <div class="reel__sticky">
       <header class="reel__head">
@@ -345,20 +183,54 @@
 
       <div class="reel__bar">
         <div class="reel__now" id="reelNow" aria-live="polite">&nbsp;</div>
-        <button type="button" class="bar__top" data-totop>Back to top</button>
+        <div class="bar__acts"><button type="button" class="bar__top" data-totop>Back to top</button><button type="button" class="bar__top bar__skip" data-skip>Skip to Chroma</button></div>
       </div>
       <div class="reel__progress" aria-hidden="true"><i id="reelProgress"></i></div>
     </div>
   </div>
 </section>
 
+ 
+
+    
+<!-- ============ LOOK MOMENT — CHROMA ============ -->
+<section class="chroma" id="chroma" aria-label="Chroma photography">
+
+    <div class="archive look-room" id="archive">
+      <div class="archive__sticky">
+        <div class="archive__stage" id="archiveStage" aria-label="Interactive sculpture of photographs"></div>
+
+        <header class="archive__head chroma__head" id="archiveHead">
+            <span class="lk__no" aria-hidden="true">03</span>
+            <h2 class="archive__title chroma__title">Chroma</h2>
+            <p class="chroma__intro">
+                A growing collection of photographs documenting people, colour, architecture and everyday moments.
+            </p>
+        </header>
+
+        <div class="archive__bar">
+          <div class="archive__status" aria-live="polite"><span id="archiveNow">&nbsp;</span></div>
+          <div class="bar__acts"><button type="button" class="bar__top" data-totop>Back to top</button><button type="button" class="bar__top bar__skip" data-skip>Skip to Color Grading</button></div>
+        </div>
+        <div class="archive__rail" aria-hidden="true"><i id="archiveRail"></i></div>
+        <div class="archive__loading" id="archiveLoading"><i></i></div>
+
+        <div class="archive__fallback" id="archiveFallback" hidden>
+          <p>This view needs WebGL, which isn't available in this browser.</p>
+        </div>
+      </div>
+    </div>
+
+</section>
+
 <!-- ============ LOOK MOMENT — COLOR GRADING ============ -->
-<section class="grade-room" data-panel="look" aria-labelledby="gradeTitle">
+<section class="grade-room" id="color-grading" aria-labelledby="gradeTitle">
   <div class="chroma__showcase">
     <header class="grade__head">
-      <span class="lk__no" aria-hidden="true">03</span>
+      <span class="lk__no" aria-hidden="true">04</span>
       <h2 class="grade__title" id="gradeTitle">Color Grading</h2>
     </header>
+    <div class="grade__films">
     <div class="cs-frame film" id="gradeFilm">
           <iframe src="https://player.vimeo.com/video/1211043548?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;controls=0&amp;dnt=1&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="In the time between things" tabindex="-1"></iframe>
           <button type="button" class="film__hit" aria-label="Play">
@@ -371,10 +243,233 @@
             <button type="button" class="film__btn film__mute">Sound off</button>
             <button type="button" class="film__btn film__fs">Full screen</button>
           </div>
-        </div>
+    </div>
+    <div class="cs-frame film film--tall" id="gradeFilm2">
+          <iframe src="https://player.vimeo.com/video/1250696100?title=0&amp;byline=0&amp;portrait=0&amp;badge=0&amp;autopause=0&amp;controls=0&amp;dnt=1&amp;player_id=0&amp;app_id=58479" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" referrerpolicy="strict-origin-when-cross-origin" title="Colour grading, vertical film" tabindex="-1"></iframe>
+          <button type="button" class="film__hit" aria-label="Play">
+            <span class="film__play">Play</span>
+          </button>
+          <div class="film__bar">
+            <button type="button" class="film__btn film__toggle">Play</button>
+            <div class="film__track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i class="film__fill"></i></div>
+            <span class="film__time">00:00</span>
+            <button type="button" class="film__btn film__mute">Sound off</button>
+            <button type="button" class="film__btn film__fs">Full screen</button>
+          </div>
+    </div>
+    </div>
     <div class="grade__foot"><button type="button" class="bar__top" data-totop>Back to top</button></div>
   </div>
 </section>
+
+    <!-- ============ READ — EDITORIAL INDEX ============ -->
+    <section class="ix" id="more-work" aria-labelledby="ixTitle">
+      <header class="ix__head">
+        <span class="lk__no" aria-hidden="true">05</span>
+        <h2 class="ix__title" id="ixTitle">More work</h2>
+        <p class="ix__range">8 projects &middot; 2019&ndash;2026</p>
+      </header>
+
+      <div class="ix__cols" aria-hidden="true">
+        <span>No.</span><span>Project</span><span>Discipline</span><span>Year</span>
+      </div>
+
+      <ol class="ix__list">
+        <li class="ix__item">
+          <a class="ix__row" href="#project/wealthx" data-project="wealthx" data-preview="images/index/wealthx.jpg" data-gallery="images/index/wealthx.jpg,images/index/wealthx/01.jpg,images/index/wealthx/02.jpg,images/index/wealthx/03.jpg,images/index/wealthx/04.jpg,images/index/wealthx/05.jpg,images/index/wealthx/06.jpg,images/index/wealthx/07.jpg">
+            <span class="ix__no">01</span>
+            <span class="ix__name"><span class="ix__name-t">WealthX</span></span>
+            <span class="ix__meta"><span><i>Role</i> Sole designer</span><span><i>Context</i> Personal project</span></span>
+            <span class="ix__cat">Product &amp; Brand Design</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">WealthX links every account, investment, and asset into a single AI-powered intelligence layer, so your capital always knows exactly where it stands.</span>
+            <span class="ix__tags"><span>iOS</span><span>Web</span></span>
+            <img class="ix__thumb" src="images/index/wealthx.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/hiro-assistant" data-project="hiro-assistant" data-preview="images/index/hiro-assistant.jpg" data-gallery="images/index/hiro-assistant.jpg,images/index/hiro-assistant/01.jpg,images/index/hiro-assistant/02.jpg,images/index/hiro-assistant/03.jpg,images/index/hiro-assistant/04.jpg,images/index/hiro-assistant/05.jpg,images/index/hiro-assistant/06.jpg,images/index/hiro-assistant/07.jpg">
+            <span class="ix__no">02</span>
+            <span class="ix__name"><span class="ix__name-t">Hiro: Task Starting Assistant</span></span>
+            <span class="ix__meta"><span><i>Role</i> UX Designer</span><span><i>Context</i> Personal project</span></span>
+            <span class="ix__cat">Behavioural Design</span>
+            <span class="ix__year">2026</span>
+            <span class="ix__desc">A behavioural assistant that reduces the friction between intention and starting work.</span>
+            <span class="ix__tags"><span>UX/UI</span><span>Behavioral</span></span>
+            <img class="ix__thumb" src="images/index/hiro-assistant.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/city-beneaththesurface" data-project="city-beneaththesurface" data-preview="images/index/city-beneaththesurface.jpg" data-gallery="images/index/city-beneaththesurface.jpg,images/index/city-beneaththesurface/01.jpg,images/index/city-beneaththesurface/02.jpg,images/index/city-beneaththesurface/03.jpg,images/index/city-beneaththesurface/04.jpg,images/index/city-beneaththesurface/05.jpg,images/index/city-beneaththesurface/06.jpg,images/index/city-beneaththesurface/07.jpg">
+            <span class="ix__no">03</span>
+            <span class="ix__name"><span class="ix__name-t">City: Beneath the Surface</span></span>
+            <span class="ix__meta"><span><i>Role</i> Visual &amp; Systems Designer</span><span><i>Context</i> Master&rsquo;s coursework, TU Dublin</span></span>
+            <span class="ix__cat">Data Visualization</span>
+            <span class="ix__year">2025</span>
+            <span class="ix__desc">Dublin's hidden workforce rendered as a physics-based data narrative.</span>
+            <span class="ix__tags"><span>Data Viz</span><span>Three.js</span></span>
+            <img class="ix__thumb" src="images/index/city-beneaththesurface.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/dub-transit" data-project="dub-transit" data-preview="images/index/dub-transit.jpg" data-gallery="images/index/dub-transit.jpg,images/index/dub-transit/01.jpg,images/index/dub-transit/02.jpg,images/index/dub-transit/03.jpg,images/index/dub-transit/04.jpg,images/index/dub-transit/05.jpg,images/index/dub-transit/06.jpg,images/index/dub-transit/07.jpg">
+            <span class="ix__no">04</span>
+            <span class="ix__name"><span class="ix__name-t">Dub.Transit: Dublin Public Transport App</span></span>
+            <span class="ix__meta"><span><i>Role</i> UI/UX Designer</span><span><i>Context</i> Personal project</span></span>
+            <span class="ix__cat">User Experience Design</span>
+            <span class="ix__year">2025</span>
+            <span class="ix__desc">Real-time transit interface with glanceable route cards.</span>
+            <span class="ix__tags"><span>UX</span><span>Mobility</span></span>
+            <img class="ix__thumb" src="images/index/dub-transit.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/theyyam-threads" data-project="theyyam-threads" data-preview="images/index/theyyam-threads.jpg" data-gallery="images/index/theyyam-threads.jpg,images/index/theyyam-threads/01.jpg,images/index/theyyam-threads/02.jpg,images/index/theyyam-threads/03.jpg,images/index/theyyam-threads/04.jpg,images/index/theyyam-threads/05.jpg,images/index/theyyam-threads/06.jpg,images/index/theyyam-threads/07.jpg">
+            <span class="ix__no">05</span>
+            <span class="ix__name"><span class="ix__name-t">Theyyam Threads</span></span>
+            <span class="ix__meta"><span><i>Role</i> Visual Designer</span><span><i>Context</i> Personal project &middot; team of three</span></span>
+            <span class="ix__cat">Visual Design</span>
+            <span class="ix__year">2023</span>
+            <span class="ix__desc">A Kerala ritual art form translated into contemporary apparel.</span>
+            <span class="ix__tags"><span>Visual</span><span>Research</span></span>
+            <img class="ix__thumb" src="images/index/theyyam-threads.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/aujus" data-project="aujus" data-preview="images/index/aujus.jpg" data-gallery="images/index/aujus.jpg,images/index/aujus/01.jpg,images/index/aujus/02.jpg,images/index/aujus/03.jpg,images/index/aujus/04.jpg,images/index/aujus/05.jpg,images/index/aujus/06.jpg,images/index/aujus/07.jpg">
+            <span class="ix__no">06</span>
+            <span class="ix__name"><span class="ix__name-t">Aujus</span></span>
+            <span class="ix__meta"><span><i>Role</i> UX Designer</span><span><i>Context</i> Bachelor&rsquo;s coursework, IIT Bombay &middot; team of four</span></span>
+            <span class="ix__cat">System Design</span>
+            <span class="ix__year">2022</span>
+            <span class="ix__desc">A 5-week semester project to understand and design for complex, interconnected socio-economic problems.</span>
+            <span class="ix__tags"><span>Systems</span><span>Wayfinding</span></span>
+            <img class="ix__thumb" src="images/index/aujus.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/artbox" data-project="artbox" data-preview="images/index/artbox.jpg" data-gallery="images/index/artbox.jpg,images/index/artbox/01.jpg,images/index/artbox/02.jpg,images/index/artbox/03.jpg,images/index/artbox/04.jpg,images/index/artbox/05.jpg,images/index/artbox/06.jpg,images/index/artbox/07.jpg">
+            <span class="ix__no">07</span>
+            <span class="ix__name"><span class="ix__name-t">ArtBox</span></span>
+            <span class="ix__meta"><span><i>Role</i> Visual Designer</span><span><i>Context</i> Bachelor&rsquo;s coursework, IIT Bombay &middot; team of four</span></span>
+            <span class="ix__cat">Product Design</span>
+            <span class="ix__year">2022</span>
+            <span class="ix__desc">A mediatory system for artisans to sell their knowledge and craft, helping customers get hands-on experience.</span>
+            <span class="ix__tags"><span>Brand</span><span>Packaging</span></span>
+            <img class="ix__thumb" src="images/index/artbox.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+        <li class="ix__item">
+          <a class="ix__row" href="#project/illustrations" data-project="illustrations" data-preview="images/index/illustrations.jpg" data-gallery="images/index/illustrations.jpg,images/index/illustrations/01.jpg,images/index/illustrations/02.jpg,images/index/illustrations/03.jpg,images/index/illustrations/04.jpg,images/index/illustrations/05.jpg,images/index/illustrations/06.jpg,images/index/illustrations/07.jpg,images/index/illustrations/08.jpg">
+            <span class="ix__no">08</span>
+            <span class="ix__name"><span class="ix__name-t">Lights and Lamps: Pen Illustrations</span></span>
+            <span class="ix__meta"><span><i>Role</i> Illustrator</span><span><i>Context</i> Coursework, IIT Bombay</span></span>
+            <span class="ix__cat">Illustration</span>
+            <span class="ix__year">2019</span>
+            <span class="ix__desc">Hand-drawn illustrations of the lights and lamps around IIT Bombay, with a Micron pen in a sketchbook.</span>
+            <span class="ix__tags"><span>Illustration</span><span>Pen &amp; Ink</span></span>
+            <img class="ix__thumb" src="images/index/illustrations.jpg" alt="" loading="lazy" decoding="async">
+          </a>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ READ — ABOUT ============ -->
+    <section class="ab" id="about" aria-labelledby="abTitle">
+      <header class="ab__head">
+        <span class="lk__no" aria-hidden="true">06</span>
+        <h2 class="ab__title" id="abTitle">About</h2>
+        <p class="ab__range">Kerala &middot; Mumbai &middot; Dublin</p>
+      </header>
+
+      <div class="ab__grid">
+        <div class="ab__lead">
+          <p class="ab__intro">I&rsquo;m a creative designer from Kerala, now based in Dublin. 3D is where I start: renders, motion and procedural systems, carried into brand, print and things I make by hand.</p>
+          <div>
+          <p class="ab__body">I build scenes in Blender, design the systems behind them, and take the work off the screen when it needs to be held, from 3D-printed objects to packaging. Brand, UI and layout sit alongside, so I can carry a project from first idea to finished piece.</p>
+          <a class="ab__cv" href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a>
+          </div>
+        </div>
+
+        <ol class="ab__line">
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">01</span>
+            <span class="ab__when">Early years</span>
+            <span class="ab__where">Kerala, India</span>
+            <span class="ab__what">Started out preparing for architecture, then wrote the national design entrance exams, got into all of them, and chose IIT Bombay.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">02</span>
+            <span class="ab__when">2019&ndash;2023</span>
+            <span class="ab__where">IIT Bombay</span>
+            <span class="ab__what">Bachelor of Design. Human-centred design, visual storytelling, interactive and immersive media. Graduation project: a VR experience in Unity.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">03</span>
+            <span class="ab__when">2020&ndash;2022</span>
+            <span class="ab__where">YoZu, IIT Bombay campus</span>
+            <span class="ab__what">Visual Designer at a startup founded by IIT Bombay alumni, working mostly from campus alongside the degree. 3D assets and UI for an educational mobile product, and mentoring a team of five junior designers.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">04</span>
+            <span class="ab__when">2022</span>
+            <span class="ab__where">Tata Consultancy Services, Mumbai</span>
+            <span class="ab__what">Design intern. 3D environment and asset concepts for TCS&rsquo;s metaverse project.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">05</span>
+            <span class="ab__when">2023&ndash;2024</span>
+            <span class="ab__where">A year between degrees</span>
+            <span class="ab__what">Creative Director at Wesualize Studios, Kochi, on VFX campaigns for brands including Birla Group and P.F. Chang&rsquo;s, alongside freelance branding, UI and 3D work.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">06</span>
+            <span class="ab__when">2024&ndash;2025</span>
+            <span class="ab__where">TU Dublin</span>
+            <span class="ab__what">MA Creative Arts, Visual Communication. Graduation project: <a class="readlink" href="#project/city-beneaththesurface" data-project="city-beneaththesurface">City: Beneath the Surface</a>, exhibited to 500+ attendees.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">07</span>
+            <span class="ab__when">2025&ndash;2026</span>
+            <span class="ab__where">Grido, Munich (remote)</span>
+            <span class="ab__what">Visual Designer. UI and 3D visuals for an AI health-assistant product.</span>
+          </li>
+          <li class="ab__step">
+            <span class="ab__node" aria-hidden="true">08</span>
+            <span class="ab__when">2026</span>
+            <span class="ab__where">Ireland India Council, Dublin</span>
+            <span class="ab__what">Posters, banners and event ID cards for India Day 2026.</span>
+          </li>
+          <li class="ab__step ab__step--now">
+            <span class="ab__node" aria-hidden="true">09</span>
+            <span class="ab__when">Now</span>
+            <span class="ab__where">Studio Paperheads, Mumbai (remote)</span>
+            <span class="ab__what">Senior Designer. Leading the visual direction for a university convocation, with a team of four junior designers.</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ READ — FOOTER ============ -->
+    <footer class="colophon">
+      <div class="colophon__lead">
+        <a class="colophon__mail" href="mailto:harigovind.ie@gmail.com">harigovind.ie@gmail.com</a>
+      </div>
+      <nav class="colophon__links" aria-label="Footer">
+        <a href="https://www.linkedin.com/in/harigovind-s/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="images/Resume/Harigovind_Sajimon_CV.pdf">Download CV</a>
+        <button type="button" class="colophon__top" data-totop>Back to top</button>
+      </nav>
+      <div class="colophon__base">
+        <span>Harigovind Sajimon &mdash; Creative Designer, Dublin</span>
+      </div>
+    </footer>
+   
+    
+    
+    
+
+
 
 
   </div>
@@ -411,7 +506,7 @@
   <div class="project-modal journal" id="projectModal" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="jTitle">
     <div class="project-modal__scroll">
       <nav class="jn" aria-label="Project">
-        <button type="button" class="jn__back" data-modal-close>Index</button>
+        <button type="button" class="jn__back" data-modal-close>Back</button>
         <div class="jn__where">
           <span class="jn__proj" id="jnProj"></span>
           <button type="button" class="jn__ch" id="jnCh" aria-expanded="false" aria-controls="jnMenu" aria-label="Chapters">
@@ -449,15 +544,15 @@
 
 
 
-  <script src="journal-config.js?v=4"></script>
-  <script src="journal.js?v=10"></script>
-  <script src="script.js?v=9"></script>
-  <script src="reel.js?v=4"></script>
-  <script type="module" src="archive-page.js?v=9"></script>
-    <script src="look.js?v=10"></script>
-  <script src="read.js?v=5"></script>
+  <script src="journal-config.js?v=16"></script>
+  <script src="journal.js?v=14"></script>
+  <script src="script.js?v=23"></script>
+  <script src="reel.js?v=5"></script>
+  <script type="module" src="archive-page.js?v=10"></script>
+    <script src="look.js?v=12"></script>
+  <script src="read.js?v=14"></script>
   <script src="cursor.js?v=9" defer></script>
   <script src="photo-grid.js?v=3" defer></script>
-  <script src="film.js?v=1" defer></script>
+  <script src="film.js?v=4" defer></script>
 </body>
 </html>

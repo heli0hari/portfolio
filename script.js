@@ -62,11 +62,26 @@
      Project links and in-page Read anchors (#index) belong to Read;
      any other in-page anchor keeps whichever mode is showing. */
   function modeFromURL() {
-    var h = (location.hash || '').replace('#', '').toLowerCase();
-    if (h === 'look') return 'look';
-    if (!h || h === 'read' || h === 'index' || h.indexOf('project/') === 0 || h.indexOf('read/') === 0) return 'read';
-    return body.getAttribute('data-mode') || 'read';
+    return 'look';   // single page: always the dark theme
   }
+
+  /* shareable section links: harigovind.ie/#chroma scrolls straight to Chroma */
+  var SECTION_ALIASES = { index: 'more-work', more: 'more-work', grading: 'color-grading', 'colour-grading': 'color-grading', selected: 'work', '3d': 'motion' };
+  function sectionFromHash() {
+    var h = (location.hash || '').replace('#', '').toLowerCase();
+    if (!h || h.indexOf('project/') === 0) return null;
+    h = SECTION_ALIASES[h] || h;
+    var el = document.getElementById(h);
+    return el && el.closest('#stage') ? el : null;
+  }
+  function goToSection(el, smooth) {
+    if (!el) return;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY, behavior: smooth ? 'smooth' : 'auto' });
+  }
+  window.goToSection = function (el) {             // used by the section index and the top bar
+    goToSection(el, !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    if (el.id) history.replaceState(null, '', location.pathname + location.search + '#' + el.id);
+  };
 
   function syncURL(mode, projectId) {
     var base = location.pathname + location.search;
@@ -74,8 +89,6 @@
 
     if (projectId) {
       hash = 'project/' + projectId;
-    } else if (mode === 'look') {
-      hash = 'look';
     }
 
     var target = base + (hash ? '#' + hash : '');
@@ -117,7 +130,7 @@
     }, transitionMs() + 60);
 
 
-    syncURL(mode, mode === 'read' ? activeProjectId : null);
+    syncURL(mode, activeProjectId);
   }
 
   /* Set the mode WITHOUT the visible blur transition. Used when opening a
@@ -139,6 +152,21 @@
     });
   });
 
+  /* top bar: Work / About jump to their sections; Contact opens the contact sheet */
+  document.querySelectorAll('.hero__nav [data-goto]').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      var target = link.dataset.goto;
+      if (target === 'contact') {
+        var cta = document.querySelector('.cta__primary');
+        if (cta) cta.click();
+        return;
+      }
+      var el = document.getElementById(target);
+      if (el) window.goToSection(el);
+    });
+  });
+
   /* ---------- Initial mode from the URL ----------
      #look opens Look directly (shareable); anything else lands on Read. */
   (function initMode() {
@@ -151,7 +179,16 @@
     buttons.forEach(function (btn) {
       btn.setAttribute('aria-selected', String(btn.dataset.modeBtn === initial));
     });
-    syncURL(initial, initial === 'read' ? projectIdFromHash() : null);
+    var section = sectionFromHash();
+    if (section) {
+      // a shared section link (#chroma, #color-grading …): land on that section once the page has laid out
+      var land = function () { goToSection(section, false); };
+      if (document.readyState === 'complete') setTimeout(land, 60);
+      else window.addEventListener('load', function () { setTimeout(land, 60); });
+      setTimeout(land, 900);                          // again, after the scroll rooms have sized themselves
+      return;
+    }
+    syncURL(initial, projectIdFromHash());
 
     // start at the top regardless of what the browser remembered
     requestAnimationFrame(function () { window.scrollTo(0, 0); });
@@ -168,6 +205,8 @@
     } else {
       switchTo(nextMode);
       if (modal && modal.getAttribute('aria-hidden') === 'false') closeProject();
+      var sec = sectionFromHash();
+      if (sec) goToSection(sec, true);
     }
   });
 
@@ -177,7 +216,7 @@
   /* Project case studies are loaded from projects.json (ported from the old
      portfolio). Rendered by renderBlocks() into the instrument-panel language. */
   var projectData = {};
-  fetch('projects.json?v=5')
+  fetch('projects.json?v=19')
     .then(function (r) { return r.json(); })
     .then(function (d) {
       projectData = d;
@@ -504,11 +543,44 @@
         }
 
         case 'video': {
-          node = mk('video', 'cs-video');
-          node.src = v.src || v;
-          node.controls = true; node.muted = true; node.loop = true;
-          node.setAttribute('playsinline', '');
-          if (v.poster) node.poster = v.poster;
+          /* one clip, or several side by side ({ items: [...] }); loop: true plays silently on repeat
+             like a moving image, otherwise the clip gets controls and sound */
+          var clips = (v && v.items) || [v];
+          node = mk('figure', 'cs-vfig' + (clips.length > 1 ? ' cs-vfig--row' : ''));
+          if (clips.length > 1) node.style.setProperty('--n', clips.length);
+          if (v.aspect) node.style.setProperty('--ar', v.aspect);
+          if (v.cols) node.style.setProperty('--n', v.cols);
+          if (v.fit === 'contain') node.classList.add('cs-vfig--contain');
+          clips.forEach(function (c) {
+            var cell = mk('div', 'cs-vfig__cell');
+            if (c.label) cell.appendChild(mk('span', 'cs-vfig__label', c.label));
+            if (c.image) {                                   // a still can sit in the same row
+              var still = mk('img', 'cs-video');
+              still.src = c.image; still.alt = c.alt || ''; still.loading = 'lazy'; still.decoding = 'async';
+              cell.appendChild(still);
+            } else {
+              // the site's own player (same controls as the Color Grading films, see film.js)
+              var wrap = mk('div', 'film film--video');
+              var vid = mk('video', 'cs-video');
+              vid.src = c.src || c;
+              vid.setAttribute('playsinline', '');
+              vid.preload = 'metadata';
+              if (c.poster) vid.poster = c.poster;
+              if (c.loop) { vid.muted = true; vid.loop = true; vid.autoplay = true; vid.setAttribute('muted', ''); wrap.classList.add('film--loop'); }
+              wrap.appendChild(vid);
+              wrap.insertAdjacentHTML('beforeend',
+                '<button type="button" class="film__hit" aria-label="Play"><span class="film__play">Play</span></button>' +
+                '<div class="film__bar"><button type="button" class="film__btn film__toggle">Play</button>' +
+                '<div class="film__track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i class="film__fill"></i></div>' +
+                '<span class="film__time">00:00</span>' +
+                '<button type="button" class="film__btn film__mute">' + (c.loop ? 'Sound on' : 'Sound off') + '</button>' +
+                '<button type="button" class="film__btn film__fs">Full screen</button></div>');
+              cell.appendChild(wrap);
+              if (window.attachFilm) window.attachFilm(wrap);   // (film.js also picks up any it missed)
+            }
+            node.appendChild(cell);
+          });
+          if (v.caption) node.appendChild(mk('figcaption', null, v.caption));
           break;
         }
 
@@ -556,7 +628,6 @@
 
     options = options || {};
     activeProjectId = id;
-    setModeSilently('read');
 
     modalLastFocused = document.activeElement;
 

@@ -1,4 +1,514 @@
 {
+  "alley-creature": {
+    "title": "2:14 AM: A Creature in the Alley",
+    "category": "3D, Geometry Nodes & Compositing",
+    "year": "2026",
+    "hue": 95,
+    "description": "A Gaussian-splat alley, relit in Blender, with a creature built entirely in Geometry Nodes crawling through it.",
+    "image": "images/Alley/Alley_Title.jpg",
+    "tags": [
+      "Gaussian Splatting",
+      "Geometry Nodes",
+      "Blender",
+      "DaVinci Resolve"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Alley/Alley_Title.jpg",
+          "alt": "The creature lunging down the alley in a grainy camcorder frame.",
+          "caption": "A frame from the final cut."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "This started as a one-day test. I wanted to see how far a <b>Gaussian splat</b> could go inside Blender: could I relight it, put something in it, and make the two feel like they share the same space? It turned into a short piece of found footage: a creature made entirely in <b>Geometry Nodes</b>, crawling through an alley at 2:14 in the morning."
+      },
+      {
+        "type": "quote",
+        "value": {
+          "text": "A splat looks real from the right angle. The hard part is making anything else look like it belongs there."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "01. The Splat"
+      },
+      {
+        "type": "paragraph",
+        "value": "The environment is <b>Artillery Passage</b>, a Gaussian splat I found on <a href=\"https://superspl.at/scene/f4897475\" target=\"_blank\" rel=\"noopener\">SuperSplat</a>. It isn’t a mesh; it’s a cloud of soft, coloured points. From the right angle it looks like a photograph, but there’s no surface to light, nothing to cast a shadow on, and it falls apart as soon as the camera drifts too far."
+      },
+      {
+        "type": "video",
+        "value": {
+          "src": "images/Alley/Alley_Splat.mp4",
+          "poster": "images/Alley/Alley_Splat_poster.jpg",
+          "loop": true,
+          "caption": "Moving through the raw splat. Push the camera too far and it breaks into points."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "02. Relighting"
+      },
+      {
+        "type": "paragraph",
+        "value": "I relit the splat to pull it away from the flat daylight it came with, and added a simple collision plane underneath, with a post in the middle, so the creature had real surfaces to walk on and grab."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Alley/Alley_Relit.jpg",
+          "alt": "The alley splat after relighting in Blender.",
+          "caption": "The relit alley.",
+          "layout": "portrait"
+        }
+      },
+      {
+        "type": "heading",
+        "value": "03. A Creature Made of Nodes"
+      },
+      {
+        "type": "paragraph",
+        "value": "Nothing in the creature is modelled by hand. The body, the legs and the feet all come from one node tree, so changing a single value changes the whole creature."
+      },
+      {
+        "type": "lined-list",
+        "value": [
+          {
+            "title": "Body.",
+            "text": "A soft central mass that every leg grows out of."
+          },
+          {
+            "title": "Legs.",
+            "text": "Curves that reach out, bend and thicken into tar-like strands."
+          },
+          {
+            "title": "Feet.",
+            "text": "Flat pads at each tip, so every leg looks stuck to whatever it lands on."
+          },
+          {
+            "title": "Material.",
+            "text": "Dark and glossy, like wet tar or chewed gum, so it picks up the light of the alley."
+          }
+        ]
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/Alley/Alley_Wire_Side.jpg",
+              "alt": "The creature in the Blender viewport, seen from the side.",
+              "label": "Side"
+            },
+            {
+              "image": "images/Alley/Alley_Wire_Front.jpg",
+              "alt": "The creature in the Blender viewport, legs spread across the alley walls.",
+              "label": "Front"
+            },
+            {
+              "src": "images/Alley/Alley_Clay.mp4",
+              "poster": "images/Alley/Alley_Clay_poster.jpg",
+              "loop": true,
+              "label": "Clay, in motion"
+            }
+          ],
+          "caption": "The creature in the viewport, and a clay render of its movement before any material."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "04. Found Footage"
+      },
+      {
+        "type": "paragraph",
+        "value": "The render took around <b>12 hours</b>, and straight out of Blender the creature still looked too clean against the splat. I finished it in <b>DaVinci Resolve</b>: camera effects, grain, a green cast and a camcorder timestamp. The noise hides the soft edges of the splat, and the creature stops looking placed on top of the scene and starts looking recorded."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "src": "images/Alley/Alley_Raw.mp4",
+              "poster": "images/Alley/Alley_Raw_poster.jpg",
+              "loop": true,
+              "label": "Out of Blender"
+            },
+            {
+              "src": "images/Alley/Alley_Final.mp4",
+              "poster": "images/Alley/Alley_Wide.jpg",
+              "label": "After the edit (with sound)"
+            }
+          ],
+          "caption": "The same shot, before and after DaVinci Resolve."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "05. Reflection"
+      },
+      {
+        "type": "paragraph",
+        "value": "Splats are very good at looking real and not much good at anything else: light, contact and shadow all have to be built around them. Treating the final as found footage worked because it turns those weaknesses into part of the look."
+      }
+    ]
+  },
+  "diskfield": {
+    "title": "DiskField: Procedural Glass Disks",
+    "category": "Motion Design & Geometry Nodes",
+    "year": "2026",
+    "hue": 18,
+    "description": "A procedural Geometry Nodes system for a client project: a field of glass disks that turn, grow and glow orange as an effector passes through them.",
+    "image": "images/DiskField/DF_Title.jpg",
+    "tags": [
+      "Geometry Nodes",
+      "Blender",
+      "Motion Design",
+      "Cycles"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/DiskField/DF_Title.jpg",
+          "alt": "A diagonal line of glass disks, the ones nearest the effector turning orange.",
+          "caption": "A frame from the line layout."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "DiskField is a procedural <b>Geometry Nodes</b> system I built for a client project. It’s a field of thin glass disks that react to a moving effector: the disks closest to it turn, grow and glow orange, and the rest stay clear glass. Nothing is animated disk by disk. I move one effector, and the whole field responds."
+      },
+      {
+        "type": "quote",
+        "value": {
+          "text": "One node tree, and the same idea becomes a line, a ring, a grid or any curve I draw."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "01. The Effect"
+      },
+      {
+        "type": "paragraph",
+        "value": "Every disk measures its distance to the effector with <b>Geometry Proximity</b>. That one distance drives everything else: how far the disk turns, how big it gets and how much of the orange it takes on. A falloff keeps the change soft, so the colour travels through the field instead of switching on and off."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "src": "images/DiskField/DF_Line.mp4",
+              "poster": "images/DiskField/DF_Title.jpg",
+              "loop": true,
+              "label": "Final render"
+            },
+            {
+              "image": "images/DiskField/DF_Line_Wire.jpg",
+              "alt": "The line layout in the Blender viewport, with the effector sphere among the disks.",
+              "label": "In the viewport"
+            }
+          ],
+          "aspect": "1 / 1",
+          "caption": "The effector passing along the line, and the same setup in the viewport."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "02. One System, Many Layouts"
+      },
+      {
+        "type": "paragraph",
+        "value": "The layout is just a setting. The same node tree can place the disks along a line, around a ring, on a grid or along any path curve, and the effect behaves the same way in each."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/DiskField/DF_Ring.jpg",
+              "alt": "Disks arranged in a ring, the ones near the effector turned orange.",
+              "label": "Ring"
+            },
+            {
+              "image": "images/DiskField/DF_Grid_View.jpg",
+              "alt": "A flat grid of small disks with an orange cluster around the effector.",
+              "label": "Grid"
+            },
+            {
+              "image": "images/DiskField/DF_Curve.jpg",
+              "alt": "Disks following a curved path.",
+              "label": "Curve"
+            }
+          ],
+          "aspect": "6 / 5",
+          "caption": "Three layouts from the same setup."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/DiskField/DF_Grid.jpg",
+          "alt": "Rendered grid of glass disks with a soft orange cluster.",
+          "caption": "The grid layout, rendered."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "03. Built to Be Changed"
+      },
+      {
+        "type": "paragraph",
+        "value": "I built it as a set of controls rather than a single shot, so the look could change without rebuilding anything. Layout, shape and motion all sit on one modifier panel."
+      },
+      {
+        "type": "lined-list",
+        "value": [
+          {
+            "title": "Layout.",
+            "text": "Line, ring, grid or a path curve, with count, gap, jitter, seed and an option to stop disks overlapping."
+          },
+          {
+            "title": "Shape.",
+            "text": "Radius, thickness, aspect, sides and bevel, each with its own randomness."
+          },
+          {
+            "title": "Effector.",
+            "text": "An object that moves or orbits through the field, with a falloff that sets how far its influence reaches."
+          },
+          {
+            "title": "Look.",
+            "text": "Lighting, backdrop and background text or image, so the same setup can sit in different compositions."
+          }
+        ]
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/DiskField/DF_Panel.jpg",
+              "alt": "The DiskField modifier panel with layout and shape controls.",
+              "label": "Controls"
+            },
+            {
+              "image": "images/DiskField/DF_Nodes.jpg",
+              "alt": "Part of the Geometry Nodes tree behind the setup.",
+              "label": "Node tree"
+            }
+          ],
+          "aspect": "3 / 4",
+          "caption": "The modifier panel, and part of the node tree behind it."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "04. Compositions"
+      },
+      {
+        "type": "paragraph",
+        "value": "With the system in place, new compositions were a few settings away rather than a new scene each time."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "src": "images/DiskField/DF_Stack.mp4",
+              "poster": "images/DiskField/DF_Stack_poster.jpg",
+              "loop": true,
+              "label": "Abstract stack"
+            },
+            {
+              "image": "images/DiskField/DF_Wall.jpg",
+              "alt": "A wall of glass disks in rows with an orange cluster in the lower half.",
+              "label": "Wall"
+            },
+            {
+              "image": "images/DiskField/DF_Soft.jpg?v=2",
+              "alt": "A soft, close render of the diagonal line.",
+              "label": "Close up"
+            }
+          ],
+          "caption": "More looks from the same setup."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "05. Reflection"
+      },
+      {
+        "type": "paragraph",
+        "value": "The time went into the system, not the shots. Once the proximity effect worked, every new layout, look or composition was a change of settings rather than a rebuild."
+      }
+    ]
+  },
+  "lithophane-lamp": {
+    "title": "Lithophane Lamp",
+    "category": "3D Printing & Product Design",
+    "year": "2026",
+    "hue": 42,
+    "description": "A photograph turned into a lithophane lamp: made first as a birthday gift, then turned into a standard workflow I now use to make them on demand.",
+    "image": "images/LithophaneLamp/Lamp_Cover.jpg?v=2",
+    "tags": [
+      "3D Printing",
+      "Blender",
+      "Product Design",
+      "Bambu Studio"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/LithophaneLamp/Lamp_Cover.jpg?v=2",
+          "alt": "The lithophane lamp switched on, lying on a wooden floor.",
+          "caption": "The finished lamp, switched on."
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "It started as a test for a birthday gift. I wanted to turn a photograph into something physical, so I converted it into a <b>lithophane</b> and designed a lamp around the print. The photograph is still there when the lamp is off, but it is the light passing through the print that brings out the detail. Once the first one worked, I turned the process into a standard workflow, and now I make them on demand."
+      },
+      {
+        "type": "heading",
+        "value": "01. From Photograph to Lithophane"
+      },
+      {
+        "type": "paragraph",
+        "value": "A lithophane stores the tones of a photograph in the thickness of the material. Thinner areas let more light through and thicker areas let less through. There is no ink on the panel; the image comes from the geometry of the print itself."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/LithophaneLamp/Lamp_Unlit.jpg",
+              "alt": "Unlit white portrait panel inside its frame.",
+              "label": "Light off."
+            },
+            {
+              "image": "images/LithophaneLamp/Lamp_Lit.jpg",
+              "alt": "The same portrait glowing in warm light.",
+              "label": "Light on."
+            },
+            {
+              "image": "images/LithophaneLamp/Lamp_Alternate_Portrait.jpg",
+              "alt": "A hand holding a lit lithophane lamp showing a different portrait.",
+              "label": "Another portrait"
+            }
+          ],
+          "caption": "One lithophane with the light off and on, and another photograph made the same way."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "02. Building the Case"
+      },
+      {
+        "type": "paragraph",
+        "value": "I modelled the enclosure in <b>Blender</b> around the dimensions of the lithophane. The body has grooves for the front panel, a separate cap and space inside for the lighting components. I kept the outside simple so the photograph remains the focus."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/LithophaneLamp/Lamp_Blender_Assembly.jpg",
+          "alt": "Blender viewport of the enclosure with the portrait panel fitted.",
+          "caption": "The lithophane fitted into the enclosure in Blender."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/LithophaneLamp/Lamp_Blender_Interior.jpg",
+          "alt": "Open enclosure showing the grooves and internal reflector disc.",
+          "caption": "Inside the case, with the cap and front panel hidden."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "03. Spreading the Light"
+      },
+      {
+        "type": "paragraph",
+        "value": "The light source is a small circular LED board. Lighting a lithophane directly from a small source can leave a bright spot in the middle and darker areas around it. I added a <b>diffuser</b> to scatter the light across the panel. The enclosure model also includes a reflector disc and space between the lighting components and the image."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/LithophaneLamp/Lamp_LED.jpg",
+          "alt": "Circular LED board with several surface-mounted LEDs.",
+          "caption": "The LED board used for the lamp.",
+          "layout": "portrait"
+        }
+      },
+      {
+        "type": "heading",
+        "value": "04. Printing and Assembly"
+      },
+      {
+        "type": "paragraph",
+        "value": "I prepared the parts in <b>Bambu Studio</b> and printed them on my <b>Bambu Lab A1 mini</b>. The body, cap and internal disc were modelled as separate parts so they could be printed and assembled afterwards. The slicing setup shown here uses PLA, a 0.4 mm nozzle and a 0.2 mm layer height."
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/LithophaneLamp/Lamp_Slicing.jpg",
+          "alt": "Bambu Studio preview of the body, cap and circular disc on the print plate.",
+          "caption": "The enclosure parts sliced in Bambu Studio.",
+          "layout": "offset-r"
+        }
+      },
+      {
+        "type": "heading",
+        "value": "05. From One Gift to a Workflow"
+      },
+      {
+        "type": "paragraph",
+        "value": "The first lamp was a one-off gift. After it worked, I standardised the process so the case, the light and the print settings stay the same, and only the photograph changes. Each new lamp no longer starts from scratch, which is what made it possible to start making them on demand."
+      },
+      {
+        "type": "horizontal-flow",
+        "value": {
+          "title": "The workflow",
+          "items": [
+            "Photograph",
+            "Lithophane",
+            "Print panel",
+            "Print case",
+            "Light",
+            "Assemble"
+          ]
+        }
+      },
+      {
+        "type": "heading",
+        "value": "06. The Finished Lamp"
+      },
+      {
+        "type": "paragraph",
+        "value": "What I like about lithophanes is that the same object changes depending on how it is lit. With the light off, the photograph is a textured white surface. With the light on, the depth of the print becomes the contrast of the image. The case and diffuser are there to make that transition work as a lamp, rather than just a backlit print."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/LithophaneLamp/Lamp_Unlit_Angle.jpg",
+              "alt": "Unlit lamp photographed from above at a slight angle.",
+              "label": "The surface of the print in daylight."
+            },
+            {
+              "image": "images/LithophaneLamp/Lamp_Lit_Dark.jpg",
+              "alt": "Illuminated portrait lamp against a dark background.",
+              "label": "The portrait with the surrounding light reduced."
+            }
+          ]
+        }
+      }
+    ]
+  },
   "infrared-camera": {
     "title": "Unseen: Infrared Camera",
     "category": "Hardware & Interaction Design",
@@ -151,6 +661,24 @@
         }
       },
       {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/IRCamera/IR_Hardware.jpg",
+              "alt": "Raspberry Pi 3 Model A+ next to the 2.8-inch ST7789 TFT display board.",
+              "label": "Pi 3 A+ and the 2.8″ display"
+            },
+            {
+              "image": "images/IRCamera/IR_Filter.jpg?v=2",
+              "alt": "A 37 mm variable infrared filter marked 550–750 nm.",
+              "label": "37 mm IR filter, 550–750 nm"
+            }
+          ],
+          "caption": "The core hardware, and the filter that sets which wavelengths reach the sensor."
+        }
+      },
+      {
         "type": "subheading",
         "value": "Ideas I ruled out"
       },
@@ -198,6 +726,43 @@
       {
         "type": "paragraph",
         "value": "An infrared flash gives the sensor light the eye barely sees, which helps indoors, at night and through dark filters. I picked 850 nm over 940 nm because the sensor is much less sensitive at 940. Two small 3 W LED boards are switched by a logic-level MOSFET module, since the common IRF520 module can’t be driven properly from the Pi’s 3.3 V pins."
+      },
+      {
+        "type": "heading",
+        "value": "The Case"
+      },
+      {
+        "type": "paragraph",
+        "value": "I modelled the case in <b>Blender</b> around the Pi, the camera module and the screen, and printed early versions to test the fit. Each print checks that the boards sit on their screw posts and that the ports and the lens line up with their openings."
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/IRCamera/IR_Case_Back.jpg",
+              "alt": "3D-printed back plate with a raised camera mount and screw holes.",
+              "label": "Back plate with camera mount"
+            },
+            {
+              "image": "images/IRCamera/IR_Case_Mount.jpg",
+              "alt": "3D-printed panel with a round recess and a mount for the camera board.",
+              "label": "Lens side"
+            },
+            {
+              "image": "images/IRCamera/IR_Case_Front.jpg",
+              "alt": "Inside of a 3D-printed shell with screw posts and port cut-outs.",
+              "label": "Shell with port cut-outs"
+            },
+            {
+              "image": "images/IRCamera/IR_Case_Shell.jpg",
+              "alt": "An earlier, simpler 3D-printed shell.",
+              "label": "Earlier shell"
+            }
+          ],
+          "cols": 2,
+          "caption": "Early test prints of the case."
+        }
       },
       {
         "type": "heading",
@@ -587,7 +1152,7 @@
   },
   "hiro-assistant": {
     "title": "Hiro: Task Starting Assistant",
-    "category": "UX/UI Case Study",
+    "category": "Behavioural Design",
     "year": "2026",
     "hue": 30,
     "description": "A behavioural productivity assistant for the hardest part of any task: getting from meaning to start to actually starting.",
@@ -3044,6 +3609,120 @@
         "value": {
           "src": "images/Aujus/Aujus_Screen.jpg",
           "alt": "Mockup of the Aujus user interface on a screen, displaying patient medical data."
+        }
+      }
+    ]
+  },
+  "illustrations": {
+    "title": "Lights and Lamps: Pen Illustrations",
+    "category": "Illustration",
+    "year": "2019",
+    "hue": 30,
+    "description": "A set of hand-drawn illustrations of the lights and lamps around IIT Bombay, drawn with a Micron pen in a sketchbook.",
+    "image": "images/Illustrations/Lamp_Decorative.jpg",
+    "tags": [
+      "Illustration",
+      "Pen & Ink",
+      "Observation"
+    ],
+    "content": [
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Illustrations/Lamp_Decorative.jpg",
+          "alt": "Pen drawing of a decorative egg-shaped lamp among trees.",
+          "caption": "Decorative lamp, drawn on site.",
+          "layout": "portrait"
+        }
+      },
+      {
+        "type": "paragraph",
+        "value": "I made these in 2019 as coursework at IIT Bombay. The brief was to observe something ordinary on campus, so I chose the lights: street lamps, flood lights, tube lights and the paper lanterns students made for Garba night. Every drawing is by hand, in a sketchbook, with a <b>Micron pen</b>. Tone comes only from line, hatching and stippling."
+      },
+      {
+        "type": "heading",
+        "value": "Outdoors"
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/Illustrations/Lamp_Twin.jpg",
+              "alt": "Pen drawing of a pole with two lantern-style lamps.",
+              "label": "Decorative lamps"
+            },
+            {
+              "image": "images/Illustrations/Lamp_Wall.jpg",
+              "alt": "Pen drawing of a street lamp mounted on a building wall.",
+              "label": "Wall-hung street lamp"
+            },
+            {
+              "image": "images/Illustrations/Lamp_Flood.jpg",
+              "alt": "Pen drawing of a flood light mast seen from below.",
+              "label": "Flood lights"
+            }
+          ],
+          "aspect": "4 / 5",
+          "fit": "contain",
+          "caption": "Lamps around the campus."
+        }
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/Illustrations/Lamp_Street_Dark.jpg",
+              "alt": "Pen drawing of a street lamp against dense black hatching.",
+              "label": "Decorative street lamp"
+            },
+            {
+              "image": "images/Illustrations/Lamp_LED.jpg",
+              "alt": "Pen drawing of an LED street lamp head.",
+              "label": "LED street lamp"
+            }
+          ],
+          "aspect": "4 / 5",
+          "fit": "contain",
+          "caption": "The same subject, worked light on dark and dark on light."
+        }
+      },
+      {
+        "type": "heading",
+        "value": "Indoors"
+      },
+      {
+        "type": "video",
+        "value": {
+          "items": [
+            {
+              "image": "images/Illustrations/Lamp_Window.jpg",
+              "alt": "Pen drawing of paper lanterns hanging in front of a window.",
+              "label": "Paper lanterns at a window"
+            },
+            {
+              "image": "images/Illustrations/Lamp_Lantern.jpg",
+              "alt": "Pen drawing of a layered paper lantern.",
+              "label": "Paper lantern"
+            },
+            {
+              "image": "images/Illustrations/Lamp_Tube.jpg",
+              "alt": "Pen drawing of a fluorescent tube light under a stair.",
+              "label": "Fluorescent tube"
+            }
+          ],
+          "aspect": "4 / 5",
+          "fit": "contain",
+          "caption": "Paper lanterns made by IDC students for Garba night, and the tube lights used across the hostels."
+        }
+      },
+      {
+        "type": "image",
+        "value": {
+          "src": "images/Illustrations/Lamp_Ceiling.jpg",
+          "alt": "Pen drawing of a classroom ceiling with lights and fans in perspective.",
+          "caption": "Ceiling lights in a classroom."
         }
       }
     ]
