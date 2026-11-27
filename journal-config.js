@@ -45,8 +45,8 @@ window.JOURNAL = {
       { at: 5, label: 'Case' },
       { at: 9, label: 'Light' },
       { at: 12, label: 'Printing' },
-      { at: 15, label: 'Workflow' },
-      { at: 18, label: 'Outcome' }
+      { at: 16, label: 'Workflow' },
+      { at: 19, label: 'Outcome' }
     ]
   },
   'alley-creature': {

@@ -461,6 +461,15 @@
         }
       },
       {
+        "type": "video",
+        "value": {
+          "src": "images/LithophaneLamp/Lamp_Assembly.mp4",
+          "poster": "images/LithophaneLamp/Lamp_Assembly_poster.jpg",
+          "loop": true,
+          "caption": "Putting the lamp together and switching it on."
+        }
+      },
+      {
         "type": "heading",
         "value": "05. From One Gift to a Workflow"
       },
